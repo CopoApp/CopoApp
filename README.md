@@ -2,11 +2,17 @@
 
 > Project Mission Statement
 
+Our mission is to reunite lost pets with their families by providing a centralized real time platform
+that connects communities through location based alerts shared responsibility and compassionate action
+because pets are not just animals they are family
+
+
+
 ## Team
 
-  - teamMember: **Scrum Master, Developer**
-  - teamMember: **Developer**
-  - teamMember: **Developer**
+  - Azim: **Project Manager, Scrum Master, Developer**
+  - Jordi: **Developer**
+  - Mario: **Developer**
 
 ## Table of Contents
 - [Getting Started](#getting-started)
