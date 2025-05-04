@@ -13,6 +13,7 @@ because pets are not just animals they are family
   - Azim: **Project Manager, Scrum Master, Developer**
   - Jordi: **Developer**
   - Mario: **Developer**
+  - Josue: **Developer**
 
 ## Table of Contents
 - [Getting Started](#getting-started)
