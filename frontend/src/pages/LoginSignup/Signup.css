@@ -1,0 +1,16 @@
+.signupContainer {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 200px;
+  width: 600px;
+  background: #fff;
+  padding-bottom: 20px;
+}
+
+.haveAccount {
+  padding-left: 62px;
+  margin-top: 10px;
+  color: #797979;
+  font-size: 20px;
+}

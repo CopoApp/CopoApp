@@ -2,6 +2,12 @@ import { useContext, useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import CurrentUserContext from "../../contexts/current-user-context";
 import { registerUser } from "../../adapters/auth-adapter";
+import "./Signup.css";
+
+import user_icon from "../Assets/person.png";
+import email_icon from "../Assets/email.png";
+import password_icon from "../Assets/password.png";
+import user_avatar from "../Assets/userAvatar.png";
 
 // Controlling the sign up form is a good idea because we want to add (eventually)
 // more validation and provide real time feedback to the user about usernames and passwords
@@ -10,6 +16,7 @@ export default function SignUpPage() {
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
   const [errorText, setErrorText] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // users shouldn't be able to see the sign up page if they are already logged in.
@@ -20,10 +27,10 @@ export default function SignUpPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorText("");
-    if (!username || !password)
-      return setErrorText("Missing username or password");
+    if (!username || !email || !password)
+      return setErrorText("Missing username, email or password");
 
-    const [user, error] = await registerUser({ username, password });
+    const [user, error] = await registerUser({ username, email, password });
     if (error) return setErrorText(error.message);
 
     setCurrentUser(user);
@@ -33,6 +40,7 @@ export default function SignUpPage() {
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === "username") setUsername(value);
+    if (name === "email") setEmail(value);
     if (name === "password") setPassword(value);
   };
 
@@ -43,39 +51,100 @@ export default function SignUpPage() {
         onSubmit={handleSubmit}
         onChange={handleChange}
         aria-labelledby="create-heading"
+        className="signupContainer"
       >
-        <h2 id="create-heading">Create New User</h2>
-        <label htmlFor="username">Username</label>
-        <input
-          autoComplete="off"
-          type="text"
-          id="username"
-          name="username"
-          onChange={handleChange}
-          value={username}
-        />
+        <div className="userAvatar">
+          <img
+            src={user_avatar}
+            alt="blank profile picture"
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+        <div className="header">
+          <h2 className="text">Create New User</h2>
+          <div className="underline"></div>
+        </div>
+        {/* <label htmlFor="username">Username</label> */}
+        <div className="inputs">
+          <div className="input">
+            <img
+              src={user_icon}
+              alt="user icon"
+              style={{ width: "15px", height: "auto", padding: "none" }}
+              className="userIconLogin"
+            />
+            <input
+              autoComplete="off"
+              type="text"
+              placeholder="Username"
+              id="username"
+              name="username"
+              onChange={handleChange}
+              value={username}
+              required
+            />
+          </div>
+          <div className="input">
+            <img
+              src={email_icon}
+              alt="email icon"
+              style={{ width: "15px", height: "auto", padding: "none" }}
+              className="userEmailIcon"
+            />
+            <input
+              autoComplete="off"
+              type="text"
+              placeholder="Email"
+              id="email"
+              name="email"
+              onChange={handleChange}
+              value={email}
+              required
+            />
+          </div>
 
-        <label htmlFor="password">Password</label>
-        <input
-          autoComplete="off"
-          type="password"
-          id="password"
-          name="password"
-          onChange={handleChange}
-          value={password}
-        />
+          {/* <label htmlFor="password">Password</label> */}
+          <div className="input">
+            <img
+              src={password_icon}
+              alt="password icon"
+              style={{ width: "15px", height: "auto", padding: "none" }}
+              className="userPasswordIcon"
+            />
+            <input
+              autoComplete="off"
+              type="password"
+              placeholder="Password"
+              id="password"
+              name="password"
+              onChange={handleChange}
+              value={password}
+              required
+            />
+          </div>
 
-        {/* In reality, we'd want a LOT more validation on signup, so add more things if you have time
-        <label htmlFor="password-confirm">Password Confirm</label>
-        <input autoComplete="off" type="password" id="password-confirm" name="passwordConfirm" />
-      */}
+          {/* In reality, we'd want a LOT more validation on signup, so add more things if you have time
+            <label htmlFor="password-confirm">Password Confirm</label>
+            <input autoComplete="off" type="password" id="password-confirm" name="passwordConfirm" />
+          */}
+        </div>
 
-        <button>Sign Up Now!</button>
+        <div className="submit-container">
+          <button className="submit" type="submit">
+            Sign Up Now!
+          </button>
+        </div>
+        <div className="haveAccount">
+          Already have an account with us? <span className="loginSpan"></span>
+          <Link to="/login">Log in!</Link>
+        </div>
       </form>
       {!!errorText && <p>{errorText}</p>}
-      <p>
-        Already have an account with us? <Link to="/login">Log in!</Link>
-      </p>
     </>
   );
 }

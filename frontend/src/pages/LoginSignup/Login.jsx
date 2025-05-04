@@ -2,11 +2,13 @@ import { useContext, useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { logUserIn } from "../../adapters/auth-adapter";
 import CurrentUserContext from "../../contexts/current-user-context";
-import "./SignupLogin.css";
+import { NavLink } from "react-router-dom";
+import "./Login.css";
 
 import user_icon from "../Assets/person.png";
 import email_icon from "../Assets/email.png";
 import password_icon from "../Assets/password.png";
+import user_avatar from "../Assets/userAvatar.png";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -39,6 +41,19 @@ export default function LoginPage() {
         aria-labelledby="login-heading"
         className="loginContainer"
       >
+        <div className="userAvatar">
+          <img
+            src={user_avatar}
+            alt="blank profile picture"
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+
         <div className="header">
           <h2 className="text">Log In</h2>
           <div className="underline"></div>
@@ -87,7 +102,15 @@ export default function LoginPage() {
         </div>
 
         <div className="submit-container">
-          <div className="submit">Log in!</div>
+          <button className="submit" type="submit">
+            Login
+          </button>
+        </div>
+        <div className="noAccount">
+          Don't have an account?{" "}
+          <span className="signupSpan">
+            <NavLink to="/sign-up">Sign Up</NavLink>
+          </span>
         </div>
       </form>
       {!!errorText && <p>{errorText}</p>}
