@@ -7,9 +7,27 @@ class User {
 
   // Create a User instance with the password hidden
   // Instances of User can be sent to clients without exposing the password
-  constructor({ id, username, password_hash }) {
+  constructor({
+    id,
+    email,
+    username,
+    password_hash,
+    about_me,
+    profile_pic,
+    location,
+    location_latitude,
+    location_longitude,
+    saved_pets_count,
+  }) {
     this.id = id;
+    this.email = email;
     this.username = username;
+    this.about_me = about_me;
+    this.profile_pic = profile_pic;
+    this.location = location;
+    this.location_latitude = location_latitude;
+    this.location_longitude = location_longitude;
+    this.saved_pets_count = saved_pets_count;
     this.#passwordHash = password_hash;
   }
 
@@ -22,23 +40,35 @@ class User {
   // in the users table. Returns the newly created user, using
   // the constructor to hide the passwordHash.
   static async create(email, username, password) {
-    // hash the plain-text password using bcrypt before storing it in the database
-    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-
     const query = `INSERT INTO users (email, username, password_hash)
       VALUES (?, ?, ?) RETURNING *`;
-    const result = await knex.raw(query, [email, username, passwordHash]);
-
-    const rawUserData = result.rows[0];
-    return new User(rawUserData);
+    try {
+      // hash the plain-text password using bcrypt before storing it in the database
+      const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+      const result = await knex.raw(query, [email, username, passwordHash]);
+      if (!result || result.length === 0) {
+        throw new Error(`Query did not return the expected user data`);
+      }
+      const rawUserData = result.rows[0];
+      return new User(rawUserData);
+    } catch (error) {
+      console.error(`Error creating new user: ${error}`);
+      throw error;
+    }
   }
 
   // Fetches ALL users from the users table, uses the constructor
   // to format each user (and hide their password hash), and returns.
   static async list() {
     const query = `SELECT * FROM users`;
-    const result = await knex.raw(query);
-    return result.rows.map((rawUserData) => new User(rawUserData));
+    try {
+      const result = await knex.raw(query);
+      if (!result || result.length === 0)
+        throw new Error(`Query returned no data`);
+      return result.rows.map((rawUserData) => new User(rawUserData));
+    } catch (error) {
+      throw error;
+    }
   }
 
   // Fetches A single user from the users table that matches
@@ -59,18 +89,53 @@ class User {
     return rawUserData ? new User(rawUserData) : null;
   }
 
+  // Same as above but uses the username to find the user
+  static async findByEmail(email) {
+    const query = `SELECT * FROM users WHERE email = ?`;
+    const result = await knex.raw(query, [email]);
+    const rawUserData = result.rows[0];
+    return rawUserData ? new User(rawUserData) : null;
+  }
+
   // Updates the user that matches the given id with a new username.
   // Returns the modified user, using the constructor to hide the passwordHash.
-  static async update(id, username) {
-    const query = `
-      UPDATE users
-      SET username=?
-      WHERE id=?
-      RETURNING *
-    `;
-    const result = await knex.raw(query, [username, id]);
-    const rawUpdatedUser = result.rows[0];
+  static async update(userInformation) {
+    const {
+      userToModify,
+      username,
+      about_me,
+      profile_pic,
+      location,
+      location_latitude,
+      location_longitude,
+      saved_pets_count,
+    } = userInformation;
+
+    // Knex methods (where, update, returning) to allow for partial user information updates
+    const result = await knex("users")
+      .where("id", userToModify)
+      .update({
+        username,
+        about_me,
+        profile_pic,
+        location,
+        location_latitude,
+        location_longitude,
+        saved_pets_count,
+      })
+      .returning("*");
+
+    const rawUpdatedUser = result[0];
     return rawUpdatedUser ? new User(rawUpdatedUser) : null;
+  }
+
+  static async deleteUser(userId) {
+    try {
+      await knex("users").where("id", userId).del();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   static async deleteAll() {
