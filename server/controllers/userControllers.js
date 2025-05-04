@@ -1,12 +1,16 @@
-const User = require('../models/User');
+const User = require("../models/User");
 
 /* 
 GET /api/users
 Returns an array of all users in the database
 */
 exports.listUsers = async (req, res) => {
-  const users = await User.list();
-  res.send(users);
+  try {
+    const users = await User.list();
+    res.send(users);
+  } catch (error) {
+    res.send({ Error: error.message });
+  }
 };
 
 /* 
@@ -18,7 +22,7 @@ exports.showUser = async (req, res) => {
 
   const user = await User.find(id);
   if (!user) {
-    return res.status(404).send({ message: 'User not found.' });
+    return res.status(404).send({ message: "User not found." });
   }
 
   res.send(user);
@@ -29,9 +33,17 @@ PATCH /api/users/:id
 Updates a single user (if found) and only if authorized
 */
 exports.updateUser = async (req, res) => {
-  const { username } = req.body;
+  const {
+    username,
+    about_me,
+    profile_pic,
+    location,
+    location_latitude,
+    location_longitude,
+    saved_pets_count,
+  } = req.body;
   if (!username) {
-    return res.status(400).send({ message: 'New username required.' });
+    return res.status(400).send({ message: "New username required." });
   }
 
   // A user is only authorized to modify their own user information
@@ -43,10 +55,38 @@ exports.updateUser = async (req, res) => {
     return res.status(403).send({ message: "Unauthorized." });
   }
 
-  const updatedUser = await User.update(userToModify, username);
+  const updatedUser = await User.update({
+    userToModify,
+    username,
+    about_me,
+    profile_pic,
+    location,
+    location_latitude,
+    location_longitude,
+    saved_pets_count,
+  });
+
   if (!updatedUser) {
-    return res.status(404).send({ message: 'User not found.' });
+    return res.status(404).send({ message: "User not found." });
   }
 
   res.send(updatedUser);
+};
+
+exports.deleteUser = async (req, res) => {
+  const userToModify = Number(req.params.id);
+  const userRequestingChange = Number(req.session.userId);
+
+  // User should only be able to delete their own account
+  if (userToModify !== userRequestingChange) {
+    return res.status(403).send({ message: "Unauthorized." });
+  }
+
+  try {
+    await User.deleteUser(userRequestingChange);
+    req.session = null; // "erase" the cookie
+    res.status(200).send({ message: "User has been deleted" });
+  } catch (error) {
+    res.send({ message: error.message });
+  }
 };

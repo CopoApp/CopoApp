@@ -1,39 +1,70 @@
 const User = require("../models/User");
 
 exports.registerUser = async (req, res) => {
+  // User needs to be logged out before making a new account
+  if (req.session.userId) {
+    return res.status(400).send({
+      message:
+        "Session in progress. User must log out before registering for a new account",
+    });
+  }
+
   // Request needs a body
   if (!req.body) {
-    return res.status(400).send({ message: "Username and password required" });
+    return res
+      .status(400)
+      .send({ message: "Email, username, and password required" });
   }
 
-  // Body needs a username and password
-  const { email, username, password, role } = req.body;
-  if (!email || !username || !password || !role) {
-    return res.status(400).send({ message: "Username and password required" });
+  // Body needs an email, username, and password
+  const { email, username, password } = req.body;
+  if (!email || !username || !password) {
+    return res
+      .status(400)
+      .send({ message: "Email, username, and password required" });
   }
 
-  // User.create will handle hashing the password and storing in the database
-  const user = await User.create(username, password);
-
-  // Add the user id to the cookie and send the user data back
-  req.session.userId = user.id;
-  res.send(user);
+  // Try to create user
+  try {
+    const user = await User.create(email, username, password);
+    // Add the user id to the cookie and send the user data back
+    req.session.userId = user.id;
+    res.send(user);
+  } catch (error) {
+    // Handles user submitting a username or email that already exists
+    if (error.code === "23505") {
+      res.status(400).send({
+        message:
+          "Unique Constraint Violation: Username and email must be unique",
+      });
+    } else {
+      // All other unidentified errors are also sent to the client
+      res.status(400).send({ message: error.message });
+    }
+  }
 };
 
 exports.loginUser = async (req, res) => {
+  // User needs to be logged out before logging in with another account
+  if (req.session.userId) {
+    return res.status(400).send({
+      message: "Session in progress. User must log out before logging in",
+    });
+  }
+
   // Request needs a body
   if (!req.body) {
     return res.status(400).send({ message: "Username and password required" });
   }
 
   // Body needs a username and password
-  const { username, password } = req.body;
-  if (!username || !password) {
+  const { email, password } = req.body;
+  if (!email || !password) {
     return res.status(400).send({ message: "Username and password required" });
   }
 
-  // Username must be valid
-  const user = await User.findByUsername(username);
+  // Email must be valid
+  const user = await User.findByEmail(email);
   if (!user) {
     return res.status(404).send({ message: "User not found." });
   }
@@ -62,5 +93,6 @@ exports.showMe = async (req, res) => {
 
 exports.logoutUser = (req, res) => {
   req.session = null; // "erase" the cookie
-  res.status(204).send({ message: "User logged out." });
+  // Sends status 200 (OK) to let client know logout was sucessful
+  res.status(200).send({ message: "User logged out." });
 };
