@@ -36,44 +36,10 @@ exports.seed = async (knex) => {
   }
 
   for (let post of posts) {
-    await Post.create(
-      post.userId,
-      post.type,
-      post.title,
-      post.description,
-      post.userEmail,
-      post.contactPhone,
-      post.petName,
-      post.location,
-      post.latitude,
-      post.longitude
-    );
+    await Post.create(post);
   }
 
   for (let comment of comments) {
-    await Comment.create(
-      comment.user_id,
-      comment.post_id,
-      comment.content,
-      comment.location_embed,
-      comment.location_embed_latitude,
-      comment.location_embed_longitude
-    );
-  }
-
-  for (let img of post_images) {
-    await Post.attachImage(img.post_id, img.img_name, img.img_src);
-  }
-
-  for (let post of saved_posts) {
-    await Post.save(post.user_id, post.post_id);
-  }
-
-  for (let post of post_alerts) {
-    await Post.enableAlerts(post.user_id, post.post_id);
-  }
-
-  for (let img of comment_images) {
-    await Comment.attachImage(img.comment_id, img.img_name, img.img_src);
+    await Comment.create(comment);
   }
 };
