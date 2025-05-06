@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/PetForm.css";
 
 const breeds = ["Labrador", "German Shepherd", "Bulldog", "Poodle", "Mixed"]; // example list
 
@@ -39,7 +40,6 @@ export default function PetReportForm() {
 
       if (res.ok) {
         alert("Pet report submitted!");
-        // optionally reset form
       } else {
         alert("Failed to submit.");
       }
@@ -49,10 +49,7 @@ export default function PetReportForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ maxWidth: "500px", margin: "0 auto" }}
-    >
+    <form onSubmit={handleSubmit} className="pet-form">
       <h2>Report Lost Pet</h2>
 
       <label>Pet Name:</label>
@@ -96,12 +93,8 @@ export default function PetReportForm() {
         onChange={handleChange}
       />
       <div
-        style={{
-          width: "30px",
-          height: "30px",
-          backgroundColor: formData.color,
-          border: "1px solid #ccc",
-        }}
+        className="color-box"
+        style={{ backgroundColor: formData.color }}
       ></div>
 
       <label>Weight (kg):</label>
