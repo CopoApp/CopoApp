@@ -11,18 +11,25 @@ export default function UsersPage() {
       const [data, error] = await getAllUsers();
       if (error) setError(error);
       else if (data) setUsers(data);
-    }
+    };
     loadUsers();
   }, []);
 
-  if (error) return <p>Sorry, there was a problem loading users. Please try again later.</p>;
+  if (error)
+    return (
+      <p>Sorry, there was a problem loading users. Please try again later.</p>
+    );
 
-  return <>
-    <h1>Users</h1>
-    <ul>
-      {
-        users.map((user) => <li key={user.id}><UserLink user={user} /></li>)
-      }
-    </ul>
-  </>;
+  return (
+    <>
+      <h1>Users</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            <UserLink user={user} />
+          </li>
+        ))}
+      </ul>
+    </>
+  );
 }
