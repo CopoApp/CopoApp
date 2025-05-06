@@ -12,6 +12,7 @@ export default function SiteHeadingAndNav() {
           src="https://avatars.githubusercontent.com/u/209502179?s=200&v=4"
           alt="logo"
         />
+        Copo
       </a>
       <nav>
         <ul>
@@ -21,12 +22,16 @@ export default function SiteHeadingAndNav() {
           <li>
             <NavLink to="/learn-more">Learn More</NavLink>
           </li>
+  
           {currentUser ? (
             <>
               <li>
                 <NavLink to={`/users/${currentUser.id}`}>
                   {currentUser.username}
                 </NavLink>
+              </li>
+              <li>
+                <button onClick={handleLogout}>Log Out</button>
               </li>
             </>
           ) : (
@@ -43,4 +48,4 @@ export default function SiteHeadingAndNav() {
       </nav>
     </header>
   );
-}
+  

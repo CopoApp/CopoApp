@@ -9,7 +9,11 @@ import UserContext from "./contexts/current-user-context";
 import { checkForLoggedInUser } from "./adapters/auth-adapter";
 import UsersPage from "./pages/Users";
 import UserPage from "./pages/User";
+<<<<<<< HEAD
 import LearnMore from "./pages/LearnMore";
+=======
+import PetReportForm from "./pages/PetForm"; 
+>>>>>>> main
 
 export default function App() {
   const { setCurrentUser } = useContext(UserContext);
@@ -30,9 +34,16 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
+<<<<<<< HEAD
           <Route path="/learn-more" element={<LearnMore />} />
 
           <Route path="/users/:id" element={<UserPage />} />
+=======
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/users/:id" element={<UserPage />} />
+          <Route path="/report" element={<PetReportForm />} />{" "}
+          {/*  Added route */}
+>>>>>>> main
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

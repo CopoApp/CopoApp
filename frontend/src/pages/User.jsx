@@ -28,6 +28,7 @@ export default function UserPage() {
     navigate("/");
   };
 
+<<<<<<< HEAD
   if (error) return <p>Error loading user.</p>;
   if (!userProfile) return <p>Loading...</p>;
 
@@ -39,6 +40,26 @@ export default function UserPage() {
       <h1>{username}</h1>
       <p>Welcome to your profile!</p>
       {isCurrentUserProfile && (
+=======
+  if (error)
+    return (
+      <p>Sorry, there was a problem loading user. Please try again later.</p>
+    );
+
+  if (!userProfile) return null;
+
+  // When we update the username, the userProfile state won't change but the currentUser state will.
+  const profileUsername = isCurrentUserProfile
+    ? currentUser.username
+    : userProfile.username;
+
+  return (
+    <>
+      <h1>{profileUsername}</h1>
+      <p>If the user had any data, here it would be</p>
+      <p>Fake Bio or something</p>
+      {isCurrentUserProfile ? (
+>>>>>>> main
         <>
           <UpdateUsernameForm
             currentUser={currentUser}
@@ -46,6 +67,11 @@ export default function UserPage() {
           />
           <button onClick={handleLogout}>Log Out</button>
         </>
+<<<<<<< HEAD
+=======
+      ) : (
+        ""
+>>>>>>> main
       )}
     </>
   );
