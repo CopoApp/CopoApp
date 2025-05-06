@@ -1,13 +1,12 @@
 import { useContext, useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
-import CurrentUserContext from "../../contexts/current-user-context";
-import { registerUser } from "../../adapters/auth-adapter";
-import "./Signup.css";
+import CurrentUserContext from "../contexts/current-user-context";
+import { registerUser } from "../adapters/auth-adapter";
 
-import user_icon from "../Assets/person.png";
-import email_icon from "../Assets/email.png";
-import password_icon from "../Assets/password.png";
-import user_avatar from "../Assets/userAvatar.png";
+import user_icon from "./assets/person.png";
+import email_icon from "./assets/email.png";
+import password_icon from "./assets/password.png";
+import user_avatar from "./assets/userAvatar.png";
 
 // Controlling the sign up form is a good idea because we want to add (eventually)
 // more validation and provide real time feedback to the user about usernames and passwords
@@ -27,10 +26,32 @@ export default function SignUpPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorText("");
+
+    const formData = new FormData(event.target);
+    const username = formData.get("username");
+    const email = formData.get("email");
+    const password = formData.get("password");
+
     if (!username || !email || !password)
       return setErrorText("Missing username, email or password");
 
     const [user, error] = await registerUser({ username, email, password });
+
+    // Handle missing email, username or password
+    if (error && error.cause === 400)
+      return setErrorText(`Email, username, and password required`);
+
+    // Handle only unique emails and usernames
+    if (error && error.cause === 409)
+      return setErrorText(
+        `User with same email and username already exists. Please try again with a different email and username.`
+      );
+
+    if (error) {
+      console.error(error);
+      return setErrorText(error.message);
+    }
+
     if (error) return setErrorText(error.message);
 
     setCurrentUser(user);
@@ -46,7 +67,6 @@ export default function SignUpPage() {
 
   return (
     <>
-      <h1>Sign Up</h1>
       <form
         onSubmit={handleSubmit}
         onChange={handleChange}
@@ -133,7 +153,7 @@ export default function SignUpPage() {
             <input autoComplete="off" type="password" id="password-confirm" name="passwordConfirm" />
           */}
         </div>
-
+        {!!errorText && <p>{errorText}</p>}
         <div className="submit-container">
           <button className="submit" type="submit">
             Sign Up Now!
@@ -144,7 +164,6 @@ export default function SignUpPage() {
           <Link to="/login">Log in!</Link>
         </div>
       </form>
-      {!!errorText && <p>{errorText}</p>}
     </>
   );
 }

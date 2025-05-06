@@ -13,11 +13,8 @@ export const registerUser = async ({ username, email, password }) => {
   );
 };
 
-export const logUserIn = async ({ username, password }) => {
-  return fetchHandler(
-    `${baseUrl}/login`,
-    getPostOptions({ username, password })
-  );
+export const logUserIn = async ({ email, password }) => {
+  return fetchHandler(`${baseUrl}/login`, getPostOptions({ email, password }));
 };
 
 export const logUserOut = async () => {

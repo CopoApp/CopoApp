@@ -33,7 +33,7 @@ exports.registerUser = async (req, res) => {
   } catch (error) {
     // Handles user submitting a username or email that already exists
     if (error.code === "23505") {
-      res.status(400).send({
+      res.status(409).send({
         message:
           "Unique Constraint Violation: Username and email must be unique",
       });

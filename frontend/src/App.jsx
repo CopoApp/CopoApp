@@ -1,8 +1,9 @@
 import { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import "./styles/index.css";
 import Home from "./pages/Home";
-import SignUpPage from "./pages/LoginSignup/SignUp";
-import LoginPage from "./pages/LoginSignup/Login";
+import SignUpPage from "./pages/SignUp";
+import LoginPage from "./pages/Login";
 import SiteHeadingAndNav from "./components/SiteHeadingAndNav";
 import NotFoundPage from "./pages/NotFound";
 import UserContext from "./contexts/current-user-context";
