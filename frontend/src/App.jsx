@@ -13,12 +13,13 @@ import Feed from "./pages/Feed";
 import MyReports from "./pages/MyReports";
 import MakeAReport from "./pages/MakeAReport";
 import Profile from "./pages/Profile";
+import PetReportForm from "./pages/PetForm"; 
 
 export default function App() {
   const { setCurrentUser } = useContext(UserContext);
+
   useEffect(() => {
     const loadCurrentUser = async () => {
-      // we aren't concerned about an error happening here
       const [data] = await checkForLoggedInUser();
       if (data) setCurrentUser(data);
     };
