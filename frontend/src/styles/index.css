@@ -46,7 +46,7 @@ header {
   font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
-  color: #FFF;
+  color: #fff;
 }
 
 nav ul {
@@ -59,22 +59,56 @@ nav ul {
 
 nav a {
   display: block;
-  color: #FFF;
+  color: #fff;
 }
 
 form {
   padding: 1rem;
-  border: 1px solid #CCC;
+  border: 1px solid #ccc;
   width: 15rem;
 }
 
-form>h2 {
+form > h2 {
   margin-bottom: 1rem;
 }
 
 /* automatically added by NavLink component */
 .active {
-  color: #EEBC32;
+  color: #eebc32;
   font-weight: bold;
   font-style: italic;
+}
+
+.navbar {
+  color: #000;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 999;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #777;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  transition: color 0.2s ease;
+}
+
+.nav-icon {
+  font-size: 22px;
+  margin-bottom: 2px;
+}
+
+.nav-item.active {
+  color: #000;
+  font-weight: bold;
 }

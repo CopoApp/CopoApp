@@ -10,6 +10,9 @@ import { checkForLoggedInUser } from "./adapters/auth-adapter";
 import UsersPage from "./pages/Users";
 import UserPage from "./pages/User";
 import Feed from "./pages/Feed";
+import MyReports from "./pages/MyReports";
+import MakeAReport from "./pages/MakeAReport";
+import Profile from "./pages/Profile";
 
 export default function App() {
   const { setCurrentUser } = useContext(UserContext);
@@ -36,6 +39,10 @@ export default function App() {
           <Route path="/users/:id" element={<UserPage />} />
           {/* Community Feed Paths */}
           <Route path="/feed" element={<Feed />} />
+          <Route path="/reports-log" element={<MyReports />} />
+          <Route path="/report" element={<MakeAReport />} />
+          <Route path="/users/:user_id" element={<Profile />} />
+
           {/* Fallback Path */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

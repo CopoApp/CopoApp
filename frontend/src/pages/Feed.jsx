@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAllUsers } from "../adapters/user-adapter";
 import UserLink from "../components/UserLink";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function Feed() {
   const [users, setUsers] = useState([]);
@@ -17,7 +19,8 @@ export default function Feed() {
 
   return (
     <>
-      <p>Hello</p>
+      <h1>Community Feed</h1>
+      <Navbar />
     </>
   );
 }
