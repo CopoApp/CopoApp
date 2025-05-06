@@ -22,7 +22,7 @@ export default function SiteHeadingAndNav() {
           <li>
             <NavLink to="/learn-more">Learn More</NavLink>
           </li>
-  
+
           {currentUser ? (
             <>
               <li>
@@ -48,4 +48,4 @@ export default function SiteHeadingAndNav() {
       </nav>
     </header>
   );
-  
+}

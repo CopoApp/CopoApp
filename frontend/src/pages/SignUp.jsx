@@ -93,7 +93,7 @@ export default function SignUpPage() {
           <h2 className="text">Create New User</h2>
           <div className="underline" />
         </div>
-  
+
         <div className="inputs">
           <div className="input">
             <img src={user_icon} alt="user icon" className="userIconLogin" />
@@ -108,7 +108,7 @@ export default function SignUpPage() {
               required
             />
           </div>
-  
+
           <div className="input">
             <img src={email_icon} alt="email icon" className="userEmailIcon" />
             <input
@@ -122,7 +122,7 @@ export default function SignUpPage() {
               required
             />
           </div>
-  
+
           <div className="input">
             <img
               src={password_icon}
@@ -141,15 +141,15 @@ export default function SignUpPage() {
             />
           </div>
         </div>
-  
+
         {!!errorText && <p>{errorText}</p>}
-  
+
         <div className="submit-container">
           <button className="submit" type="submit">
             Sign Up Now!
           </button>
         </div>
-  
+
         <div className="haveAccount">
           Already have an account with us?{" "}
           <Link to="/login" className="loginSpan">
@@ -159,4 +159,4 @@ export default function SignUpPage() {
       </form>
     </>
   );
-  
+}

@@ -27,18 +27,18 @@ export default function UserPage() {
     setCurrentUser(null);
     navigate("/");
   };
- 
+
   if (error)
     return (
       <p>Sorry, there was a problem loading user. Please try again later.</p>
     );
-  
+
   if (!userProfile) return null;
-  
+
   const profileUsername = isCurrentUserProfile
     ? currentUser.username
     : userProfile.username;
-  
+
   return (
     <>
       <h1>{profileUsername}</h1>
@@ -51,9 +51,11 @@ export default function UserPage() {
             currentUser={currentUser}
             setCurrentUser={setCurrentUser}
           />
-          <button onClick={handleLogout}>Log Out</button>
+          <button type="button" onClick={handleLogout}>
+            Log Out
+          </button>
         </>
       )}
     </>
   );
-  
+}
