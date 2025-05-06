@@ -32,10 +32,8 @@ export default function SignUpPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorText("");
-<<<<<<< HEAD
     if (!username || !password)
       return setErrorText("Missing username or password");
-=======
 
     const formData = new FormData(event.target);
     const username = formData.get("username");
@@ -61,75 +59,24 @@ export default function SignUpPage() {
       console.error(error);
       return setErrorText(error.message);
     }
->>>>>>> main
 
     if (error) return setErrorText(error.message);
 
     setCurrentUser(user);
-<<<<<<< HEAD
     navigate(`/users/${user.id}`);
-=======
-    navigate("/");
->>>>>>> main
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === "username") setUsername(value);
-<<<<<<< HEAD
-=======
     if (name === "email") setEmail(value);
->>>>>>> main
     if (name === "password") setPassword(value);
   };
 
   return (
     <>
-<<<<<<< HEAD
       <h1>Sign Up</h1>
-=======
->>>>>>> main
-      <form
-        onSubmit={handleSubmit}
-        onChange={handleChange}
-        aria-labelledby="create-heading"
-<<<<<<< HEAD
-      >
-        <h2 id="create-heading">Create New User</h2>
-        <label htmlFor="username">Username</label>
-        <input
-          autoComplete="off"
-          type="text"
-          id="username"
-          name="username"
-          onChange={handleChange}
-          value={username}
-        />
-
-        <label htmlFor="password">Password</label>
-        <input
-          autoComplete="off"
-          type="password"
-          id="password"
-          name="password"
-          onChange={handleChange}
-          value={password}
-        />
-
-        {/* In reality, we'd want a LOT more validation on signup, so add more things if you have time
-        <label htmlFor="password-confirm">Password Confirm</label>
-        <input autoComplete="off" type="password" id="password-confirm" name="passwordConfirm" />
-      */}
-
-        <button>Sign Up Now!</button>
-      </form>
-      {!!errorText && <p>{errorText}</p>}
-      <p>
-        Already have an account with us? <Link to="/login">Log in!</Link>
-      </p>
-=======
-        className="signupContainer"
-      >
+      <form onSubmit={handleSubmit} className="signupContainer">
         <div className="userAvatar">
           <img
             src={user_avatar}
@@ -144,17 +91,12 @@ export default function SignUpPage() {
         </div>
         <div className="header">
           <h2 className="text">Create New User</h2>
-          <div className="underline"></div>
+          <div className="underline" />
         </div>
-        {/* <label htmlFor="username">Username</label> */}
+  
         <div className="inputs">
           <div className="input">
-            <img
-              src={user_icon}
-              alt="user icon"
-              style={{ width: "15px", height: "auto", padding: "none" }}
-              className="userIconLogin"
-            />
+            <img src={user_icon} alt="user icon" className="userIconLogin" />
             <input
               autoComplete="off"
               type="text"
@@ -166,16 +108,12 @@ export default function SignUpPage() {
               required
             />
           </div>
+  
           <div className="input">
-            <img
-              src={email_icon}
-              alt="email icon"
-              style={{ width: "15px", height: "auto", padding: "none" }}
-              className="userEmailIcon"
-            />
+            <img src={email_icon} alt="email icon" className="userEmailIcon" />
             <input
               autoComplete="off"
-              type="text"
+              type="email"
               placeholder="Email"
               id="email"
               name="email"
@@ -184,13 +122,11 @@ export default function SignUpPage() {
               required
             />
           </div>
-
-          {/* <label htmlFor="password">Password</label> */}
+  
           <div className="input">
             <img
               src={password_icon}
               alt="password icon"
-              style={{ width: "15px", height: "auto", padding: "none" }}
               className="userPasswordIcon"
             />
             <input
@@ -204,24 +140,23 @@ export default function SignUpPage() {
               required
             />
           </div>
-
-          {/* In reality, we'd want a LOT more validation on signup, so add more things if you have time
-            <label htmlFor="password-confirm">Password Confirm</label>
-            <input autoComplete="off" type="password" id="password-confirm" name="passwordConfirm" />
-          */}
         </div>
+  
         {!!errorText && <p>{errorText}</p>}
+  
         <div className="submit-container">
           <button className="submit" type="submit">
             Sign Up Now!
           </button>
         </div>
+  
         <div className="haveAccount">
-          Already have an account with us? <span className="loginSpan"></span>
-          <Link to="/login">Log in!</Link>
+          Already have an account with us?{" "}
+          <Link to="/login" className="loginSpan">
+            Log in!
+          </Link>
         </div>
       </form>
->>>>>>> main
     </>
   );
-}
+  
