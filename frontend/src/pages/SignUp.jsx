@@ -55,7 +55,7 @@ export default function SignUpPage() {
     if (error) return setErrorText(error.message);
 
     setCurrentUser(user);
-    navigate("/");
+    navigate("/feed");
   };
 
   const handleChange = (event) => {

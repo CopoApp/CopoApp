@@ -1,13 +1,14 @@
 import { useContext, useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import { logUserIn } from "../adapters/auth-adapter";
-import CurrentUserContext from "../contexts/current-user-context";
+import { logUserIn } from "../../adapters/auth-adapter";
+import CurrentUserContext from "../../contexts/current-user-context";
 import { NavLink } from "react-router-dom";
+import "./Login.css";
 
-import user_icon from "./assets/person.png";
-import email_icon from "./assets/email.png";
-import password_icon from "./assets/password.png";
-import user_avatar from "./assets/userAvatar.png";
+import user_icon from "../Assets/person.png";
+import email_icon from "../Assets/email.png";
+import password_icon from "../Assets/password.png";
+import user_avatar from "../Assets/userAvatar.png";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -25,30 +26,16 @@ export default function LoginPage() {
     event.preventDefault();
     setErrorText("");
 
-    const formData = new FormData(event.target);
-    const email = formData.get("username");
-    const password = formData.get("password");
-
-    const [user, error] = await logUserIn({ email, password });
-
-    // Handle Invalid email and password (404)
-    if (error && error.cause === 404)
-      return setErrorText(`Invalid Credentials`);
-
-    // Handle invalid password (401)
-    if (error && error.cause === 401) return setErrorText(`Incorrect Password`);
-
-    if (error) {
-      console.error(error);
-      return setErrorText(error.message);
-    }
+    const [user, error] = await logUserIn({ username, password });
+    if (error) return setErrorText(error.message);
 
     setCurrentUser(user);
-    navigate(`/feed`);
+    navigate(`/users/${user.id}`);
   };
 
   return (
     <>
+      <h1>Login Page</h1>
       <form
         onSubmit={handleSubmit}
         aria-labelledby="login-heading"
@@ -75,7 +62,7 @@ export default function LoginPage() {
         <div className="inputs">
           <div className="input">
             <img
-              src={email_icon}
+              src={user_icon}
               alt="user icon"
               style={{ width: "15px", height: "auto", padding: "none" }}
               className="userIconLogin"
@@ -113,7 +100,7 @@ export default function LoginPage() {
             />
           </div>
         </div>
-        {!!errorText && <p>{errorText}</p>}
+
         <div className="submit-container">
           <button className="submit" type="submit">
             Login
@@ -126,6 +113,7 @@ export default function LoginPage() {
           </span>
         </div>
       </form>
+      {!!errorText && <p>{errorText}</p>}
     </>
   );
 }
