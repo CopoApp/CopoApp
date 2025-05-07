@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import "../styles/index.css";
 import { createPost } from "../adapters/post-adapter";
+import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const breeds = ["Labrador", "German Shepherd", "Bulldog", "Poodle", "Mixed"]; // example list
 
 export default function PetReportForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     status: "Lost", 
     title: "",
@@ -38,12 +41,14 @@ export default function PetReportForm() {
     try {
       const [post, error] = await createPost(formData)
       console.log(`Post Id-${post.id} created sucessfully`)
+      navigate('/feed')
     } catch (error) {
       console.error(error)
     }
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="pet-form">
       <h2>Report Lost Pet</h2>
 
@@ -145,5 +150,7 @@ export default function PetReportForm() {
 
       <button type="submit">Submit</button>
     </form>
+    <Navbar />
+    </>
   );
 }
