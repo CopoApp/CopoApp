@@ -44,7 +44,7 @@ export default function LoginPage() {
     }
 
     setCurrentUser(user);
-    navigate(`/users/${user.id}`);
+    navigate(`/feed`);
   };
 
   return (

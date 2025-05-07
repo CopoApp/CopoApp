@@ -63,7 +63,7 @@ export default function SignUpPage() {
     if (error) return setErrorText(error.message);
 
     setCurrentUser(user);
-    navigate(`/users/${user.id}`);
+    navigate("/feed");
   };
 
   const handleChange = (event) => {
