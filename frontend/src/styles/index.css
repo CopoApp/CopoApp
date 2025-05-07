@@ -72,6 +72,39 @@ form > h2 {
   font-style: italic;
 }
 
+.navbar {
+  color: #000;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 999;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #777;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  transition: color 0.2s ease;
+}
+
+.nav-icon {
+  font-size: 22px;
+  margin-bottom: 2px;
+}
+
+.nav-item.active {
+  color: #000;
+  font-weight: bold;
+}
 /* Log In Page Styling */
 
 /* .input {
