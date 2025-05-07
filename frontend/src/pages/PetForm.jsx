@@ -1,50 +1,45 @@
 import React, { useState } from "react";
-import "../styles/PetForm.css";
+import "../styles/index.css";
+import { createPost } from "../adapters/post-adapter";
 
 const breeds = ["Labrador", "German Shepherd", "Bulldog", "Poodle", "Mixed"]; // example list
 
 export default function PetReportForm() {
   const [formData, setFormData] = useState({
-    petName: "",
-    breed: "",
-    lastSeen: "",
-    color: "#000000",
-    weight: "",
-    height: "",
-    photo: null,
-    description: "",
+    status: "Lost", // Lost by  default when the report is created
+    title: "",
+    content: "",
+    contact_email: "",
+    contact_phone_number: "",
+    pet_name: "",
+    pet_height: 0,
+    pet_weight: 0,
+    pet_breed: "",
+    pet_color: "",
+    last_seen_location: "",
+    last_seen_location_latitude: 0,
+    last_seen_location_longitude: 0,
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+
+  const handleChange = (event) => {
+    const { name, value, type, files } = event.target;
+  
+    
     if (type === "file") {
-      setFormData({ ...formData, photo: files[0] });
+      // To Do - Send image file to firebase
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const body = new FormData();
-    for (let key in formData) {
-      body.append(key, formData[key]);
-    }
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     try {
-      const res = await fetch("/api/pets", {
-        method: "POST",
-        body,
-      });
-
-      if (res.ok) {
-        alert("Pet report submitted!");
-      } else {
-        alert("Failed to submit.");
-      }
+      const [post, error] = await createPost(formData)
+      console.log(`Post Id-${post.id} created sucessfully`)
     } catch (error) {
-      console.error("Error:", error);
+      console.error(error)
     }
   };
 
@@ -55,20 +50,20 @@ export default function PetReportForm() {
       <label>Pet Name:</label>
       <input
         type="text"
-        name="petName"
-        value={formData.petName}
+        name="pet_name"
+        value={formData.pet_name}
         onChange={handleChange}
         required
       />
 
       <label>Breed:</label>
       <select
-        name="breed"
-        value={formData.breed}
+        name="pet_breed"
+        value={formData.pet_breed}
         onChange={handleChange}
         required
       >
-        <option value="">Select breed</option>
+        <option value=""></option>
         {breeds.map((b) => (
           <option key={b} value={b}>
             {b}
@@ -79,8 +74,8 @@ export default function PetReportForm() {
       <label>Last Seen Location:</label>
       <input
         type="text"
-        name="lastSeen"
-        value={formData.lastSeen}
+        name="last_seen_location"
+        value={formData.last_seen_location}
         onChange={handleChange}
         required
       />
@@ -88,8 +83,8 @@ export default function PetReportForm() {
       <label>Color:</label>
       <input
         type="color"
-        name="color"
-        value={formData.color}
+        name="pet_color"
+        value={formData.pet_color}
         onChange={handleChange}
       />
       <div
@@ -100,8 +95,8 @@ export default function PetReportForm() {
       <label>Weight (kg):</label>
       <input
         type="number"
-        name="weight"
-        value={formData.weight}
+        name="pet_weight"
+        value={formData.pet_weight}
         onChange={handleChange}
         required
       />
@@ -109,8 +104,8 @@ export default function PetReportForm() {
       <label>Height (cm):</label>
       <input
         type="number"
-        name="height"
-        value={formData.height}
+        name="pet_height"
+        value={formData.pet_height}
         onChange={handleChange}
         required
       />
@@ -125,10 +120,28 @@ export default function PetReportForm() {
 
       <label>Description / Additional Info:</label>
       <textarea
-        name="description"
-        value={formData.description}
+        name="content"
+        value={formData.content}
         onChange={handleChange}
       ></textarea>
+
+      <label>Contact Email (Optional):</label>
+      <input
+        type="text"
+        name="contact_email"
+        value={formData.contact_email}
+        onChange={handleChange}
+        required
+      />
+
+      <label>Contact Phone Number (Optional):</label>
+      <input
+        type="text"
+        name="contact_phone_number"
+        value={formData.contact_phone_number}
+        onChange={handleChange}
+        required
+      />
 
       <button type="submit">Submit</button>
     </form>
