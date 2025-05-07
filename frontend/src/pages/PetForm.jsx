@@ -6,7 +6,7 @@ const breeds = ["Labrador", "German Shepherd", "Bulldog", "Poodle", "Mixed"]; //
 
 export default function PetReportForm() {
   const [formData, setFormData] = useState({
-    status: "Lost", // Lost by  default when the report is created
+    status: "Lost", 
     title: "",
     content: "",
     contact_email: "",
