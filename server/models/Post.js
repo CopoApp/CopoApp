@@ -46,7 +46,11 @@ class Post {
   static async list() {
     try {
       // Selects all of the post information and only the username from the users table by joining on the author_user_id
-      const result = await knex.select('posts.*', 'users.username as author').from('posts').leftJoin('users','author_user_id', 'users.id').returning('*');
+      const result = await knex
+        .select("posts.*", "users.username as author")
+        .from("posts")
+        .leftJoin("users", "author_user_id", "users.id")
+        .returning("*");
       if (!result || result.length === 0)
         throw new Error(`Query returned no data`);
       return result;
@@ -126,23 +130,32 @@ class Post {
 
   static async getUserPosts(userId) {
     try {
-      const result = await knex.select('posts.*', 'users.username as author').from('posts').where("author_user_id", userId).leftJoin('users','author_user_id', 'users.id').returning('*');
+      const result = await knex
+        .select("posts.*", "users.username as author", "post_images.img_src")
+        .from("posts")
+        .leftJoin("users", "posts.author_user_id", "users.id")
+        .leftJoin("post_images", "posts.id", "post_images.post_id")
+        .where("posts.author_user_id", userId);
+
       if (!result) throw new Error(`Query did not return any data`);
       if (result.length === 0) throw new Error(`User has no posts`);
+
       return result;
     } catch (error) {
       throw error;
     }
   }
 
-  static async attachImage(post_id, img_name, img_src) {
-    const query = `INSERT INTO post_images (post_id, img_name, img_src)
-    VALUES (?, ?, ?) RETURNING *`;
+  static async attachImage(imageInformation) {
+    const result = await knex("post_images")
+      .insert(imageInformation)
+      .returning("*");
 
-    const result = await knex.raw(query, [post_id, img_name, img_src]);
+    return result[0];
+  }
 
-    const rawUserData = result.rows[0];
-    return rawUserData;
+  static async getImagesForPost(postId) {
+    // To do
   }
 
   static async save(user_id, post_id) {

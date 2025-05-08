@@ -1,0 +1,38 @@
+// Multer parses incoming file information
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+// AWS allows for uploads to S3 bucket
+const { S3Client } = require("@aws-sdk/client-s3");
+
+// Main interface for making requests to S3
+const s3 = new S3Client({
+  // Region of the S3 bucket
+  region: process.env.AWS_REGION,
+  // Credentials to authenticate requests to AWS S3 bucket
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+// Multer S3 config
+// upload.js
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.S3_BUCKET_NAME,
+    key: (req, file, cb) => {
+      const postRoutes = "/api/posts/:id/images";
+      const filename = Date.now().toString() + "-" + file.originalname;
+      if (req.route.path === postRoutes) {
+        cb(null, `report-pictures/${filename}`);
+      }
+    },
+  }),
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Only image files are allowed!"), false);
+  },
+});
+
+module.exports = upload;

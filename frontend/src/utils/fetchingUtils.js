@@ -15,6 +15,12 @@ export const getPostOptions = (body) => ({
   body: JSON.stringify(body),
 });
 
+export const getFilePostOptions = (body) => ({
+  method: "POST",
+  credentials: "include",
+  body: body,
+});
+
 export const getPatchOptions = (body) => ({
   method: "PATCH",
   credentials: "include",

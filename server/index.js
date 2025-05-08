@@ -5,6 +5,7 @@
 require("dotenv").config();
 const path = require("path");
 const express = require("express");
+const upload = require("./awsConfig");
 
 // middleware imports
 const handleCookieSessions = require("./middleware/handleCookieSessions");
@@ -17,6 +18,7 @@ const authControllers = require("./controllers/authControllers");
 const userControllers = require("./controllers/userControllers");
 const postControllers = require("./controllers/postControllers");
 const commentControllers = require("./controllers/commentControllers");
+const postImageControllers = require("./controllers/postImageControllers");
 const app = express();
 
 // middleware
@@ -85,6 +87,34 @@ app.delete(
   checkAuthentication,
   commentControllers.deleteComment
 ); // Delete a comment
+
+///////////////////////////////
+// Post Images Routes
+///////////////////////////////
+
+// These actions require users to be logged in (authentication)
+app.post(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  upload.array("files", 5),
+  postImageControllers.createImageForPost
+); // Creates a new image in the database for a post
+
+app.get(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  postImageControllers.getImageForUserPosts
+); // Creates a new image in the database for a post
+
+app.get("/api/posts", checkAuthentication, postControllers.listPosts); // Sends array of all posts
+app.get("/api/posts/:id", checkAuthentication, postControllers.getPost); // Sends specific user post
+app.patch("/api/posts/:id", checkAuthentication, postControllers.updatePost); // Updates specific user post
+app.delete("/api/posts/:id", checkAuthentication, postControllers.deletePost); // Removes a Post
+app.get(
+  "/api/users/:id/posts",
+  checkAuthentication,
+  postControllers.getUserPosts
+); // Gets all posts for a specific user
 
 ///////////////////////////////
 // Fallback Routes

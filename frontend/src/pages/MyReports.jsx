@@ -21,11 +21,11 @@ export default function MyReports() {
 
   return (
     <div>
-      {
-        userPosts.length > 0 ? userPosts.map((post) => {
-          return <ReportCard key={post.id} reportInformation={post}/>
-        }) : `No posts`
-      }
+      {userPosts.length > 0
+        ? userPosts.map((post) => {
+            return <ReportCard key={post.id} reportInformation={post} />;
+          })
+        : `No posts`}
       <Navbar />
     </div>
   );
