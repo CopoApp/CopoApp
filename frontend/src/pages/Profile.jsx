@@ -82,6 +82,7 @@ export default function UserPage() {
     try {
       const [userProfile, error] = await updateUserProfile(id, formData);
       console.log(`User Id - ${userProfile.id} updated successfully`);
+      setUserProfile(userProfile);
     } catch (error) {
       console.error(error);
       setError("Failed to save profile changes. Please try again.");
