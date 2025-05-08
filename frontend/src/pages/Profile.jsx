@@ -3,10 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import CurrentUserContext from "../contexts/current-user-context";
 import { getUser } from "../adapters/user-adapter";
 import { logUserOut } from "../adapters/auth-adapter";
-// import { UpdateUsernameForm } from "../components/UpdateUsernameForm";
 import Navbar from "../components/Navbar";
 import { updateUserProfile } from "../adapters/user-adapter";
-
 
 export default function UserPage() {
   const navigate = useNavigate();
@@ -18,16 +16,12 @@ export default function UserPage() {
 
   const [formData, setFormData] = useState({
     username: "",
-    email: "",
     about_me: "",
     profile_pic: "",
     location: "",
     location_latitude: 0,
     location_longitude: 0,
-    saved_pets_count: 0,
-    created_at: "",
-    updated_at: ""
-  })
+  });
 
   useEffect(() => {
     const loadUser = async () => {
@@ -43,19 +37,14 @@ export default function UserPage() {
     if (userProfile) {
       setFormData({
         username: userProfile.username || "",
-        email: userProfile.email || "",
         about_me: userProfile.about_me || "",
         profile_pic: userProfile.profile_pic || "",
         location: userProfile.location || "",
         location_latitude: userProfile.location_latitude || 0,
         location_longitude: userProfile.location_longitude || 0,
-        saved_pets_count: userProfile.saved_pets_count || 0,
-        created_at: userProfile.created_at || "",
-        updated_at: userProfile.updated_at || ""
       });
     }
   }, [userProfile]);
-  
 
   const handleLogout = async () => {
     logUserOut();
@@ -66,10 +55,11 @@ export default function UserPage() {
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
 
+    console.log(value);
     if (type === "file") {
       // To do - Send image file to the firebase
     } else {
-      setFormData({ ...formData, [name]: value})
+      setFormData({ ...formData, [name]: value });
     }
   };
 
@@ -86,47 +76,64 @@ export default function UserPage() {
 
   const handleSaveChanges = async (event) => {
     event.preventDefault();
+
+    console.log(formData);
+
     try {
-      const [userProfile, error] = await updateUserProfile(id, formData)
-      console.log(`User Id - ${userProfile.id} updated successfully`)
+      const [userProfile, error] = await updateUserProfile(id, formData);
+      console.log(`User Id - ${userProfile.id} updated successfully`);
     } catch (error) {
       console.error(error);
-      setError("Failed to save profile changes. Please try again.")
+      setError("Failed to save profile changes. Please try again.");
     }
   };
 
   if (error)
     return (
-      <p>Sorry, there was a problem loading the user. Please try again later.</p>
+      <p>
+        Sorry, there was a problem loading the user. Please try again later.
+      </p>
     );
 
   if (!userProfile) return null;
 
   return (
     <>
-      <div className="profile-container" style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
+      <div
+        className="profile-container"
+        style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}
+      >
         <h1>{userProfile.username}'s Profile</h1>
 
         <div style={{ textAlign: "center", marginBottom: "1rem" }}>
           <img
             src={userProfile.profile_pic || "https://via.placeholder.com/150"}
             alt="Profile"
-            style={{ width: 150, height: 150, borderRadius: "50%", objectFit: "cover" }}
+            style={{
+              width: 150,
+              height: 150,
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
           />
           {isCurrentUserProfile && (
             <div>
-              <input type="file" accept="image/*" onChange={handleProfilePictureChange} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+              />
             </div>
           )}
         </div>
 
         <div className="profile-fields">
           <div style={{ marginBottom: "1rem" }}>
-            <label>Email:</label>
+            <label>Username:</label>
             <input
               type="text"
-              name="email"
-              value={formData.email}
+              name="username"
+              value={formData.username}
               onChange={handleInputChange}
               disabled={!isCurrentUserProfile}
               style={{ width: "100%", padding: "0.5rem" }}
@@ -159,13 +166,7 @@ export default function UserPage() {
 
         {isCurrentUserProfile && (
           <>
-            {/* <UpdateUsernameForm
-              currentUser={currentUser}
-              setCurrentUser={setCurrentUser}
-            /> */}
-            <button onClick={handleSaveChanges} >
-              Save Changes
-            </button>
+            <button onClick={handleSaveChanges}>Save Changes</button>
             <button onClick={handleLogout}>Log Out</button>
           </>
         )}
