@@ -8,10 +8,9 @@ import NotFoundPage from "./pages/NotFound";
 import UserContext from "./contexts/current-user-context";
 import { checkForLoggedInUser } from "./adapters/auth-adapter";
 import UsersPage from "./pages/Users";
-import UserPage from "./pages/User";
+import UserPage from "./pages/Profile";
 import Feed from "./pages/Feed";
 import MyReports from "./pages/MyReports";
-import MakeAReport from "./pages/MakeAReport";
 import Profile from "./pages/Profile";
 import PetReportForm from "./pages/PetForm"; 
 
@@ -41,13 +40,14 @@ export default function App() {
           {/* Community Feed Paths */}
           <Route path="/feed" element={<Feed />} />
           <Route path="/reports-log" element={<MyReports />} />
-          <Route path="/report" element={<MakeAReport />} />
-          <Route path="/users/:user_id" element={<Profile />} />
+          <Route path="/report" element={<PetReportForm />} />
+          <Route path="/users/:id" element={<Profile />} />
 
           {/* Fallback Path */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+      
     </>
   );
 }
