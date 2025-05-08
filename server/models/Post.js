@@ -45,7 +45,8 @@ class Post {
   // Fetches ALL posts from the posts table
   static async list() {
     try {
-      const result = await knex("posts").returning("*");
+      // Selects all of the post information and only the username from the users table by joining on the author_user_id
+      const result = await knex.select('posts.*', 'users.username as author').from('posts').leftJoin('users','author_user_id', 'users.id').returning('*');
       if (!result || result.length === 0)
         throw new Error(`Query returned no data`);
       return result;
@@ -125,9 +126,7 @@ class Post {
 
   static async getUserPosts(userId) {
     try {
-      const result = await knex("posts")
-        .where("author_user_id", userId)
-        .returning("*");
+      const result = await knex.select('posts.*', 'users.username as author').from('posts').where("author_user_id", userId).leftJoin('users','author_user_id', 'users.id').returning('*');
       if (!result) throw new Error(`Query did not return any data`);
       if (result.length === 0) throw new Error(`User has no posts`);
       return result;

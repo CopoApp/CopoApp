@@ -1,35 +1,41 @@
-import { NavLink } from "react-router-dom";
-import { useContext } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import CurrentUserContext from "../contexts/current-user-context";
 
 export default function SiteHeadingAndNav() {
+  const location = useLocation();
+  const { pathname } = location
+  const [currentPage, setCurrentPage] = useState('')
   const { currentUser } = useContext(CurrentUserContext);
+
+  useEffect(() => {
+    if (pathname === '/') setCurrentPage('')
+    if (pathname === '/feed') setCurrentPage('Feed')
+    if (pathname === '/reports-log') setCurrentPage('My Reports')
+    if (pathname === '/report') setCurrentPage('Report Missing Pet')
+    if (pathname.includes('/users')) setCurrentPage('Profile')
+  })
 
   return (
     <header>
       <a id="logo" href="/">
-        Copo
+        O
       </a>
+      <h2>{currentPage}</h2>
       <nav>
         <ul>
-          <li>
-            <NavLink to="/"> Home </NavLink>
-          </li>
-
-          {currentUser ? (
+          {
+          currentUser && pathname === '/' ? (
             <>
               <li>
-                <NavLink to="/users" end={true}>
-                  Users
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to={`/users/${currentUser.id}`}>
-                  {currentUser.username}
+                <NavLink to={`/feed`}>
+                  Home
                 </NavLink>
               </li>
             </>
-          ) : (
+          ) : 
+          pathname === '/' && 
+          (
             <>
               <li>
                 <NavLink to="/login">Login</NavLink>
