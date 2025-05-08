@@ -1,11 +1,31 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import Navbar from "../components/Navbar";
+import CurrentUserContext from "../contexts/current-user-context";
+import { getUserPosts } from "../adapters/post-adapter";
+import ReportCard from "../components/PetCard";
 
 export default function MyReports() {
+  const [userPosts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
+  const { currentUser } = useContext(CurrentUserContext);
+
+  useEffect(() => {
+    const loadReports = async () => {
+      const [posts, error] = await getUserPosts(currentUser.id);
+      if (error) setError(error);
+      else if (posts) setPosts(posts);
+    };
+    loadReports();
+  }, [currentUser]);
+
   return (
     <div>
-      <h1>My Reports</h1>
-      {/* Logic for listing reports goes here */}
+      {
+        userPosts.length > 0 ? userPosts.map((post) => {
+          return <ReportCard key={post.id} reportInformation={post}/>
+        }) : `No posts`
+      }
       <Navbar />
     </div>
   );

@@ -11,3 +11,11 @@ const baseUrl = "/api/posts";
 export const createPost = async (postInformation) => {
   return fetchHandler(baseUrl, getPostOptions(postInformation));
 };
+
+export const getAllPosts = async () => {
+  return await fetchHandler(baseUrl);
+};
+
+export const getUserPosts = async (id) => {
+  return await fetchHandler(`/api/users/${id}/posts`);
+};
