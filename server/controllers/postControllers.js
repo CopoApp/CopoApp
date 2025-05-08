@@ -44,7 +44,7 @@ exports.createPost = async (req, res) => {
     });
     res.send(post);
   } catch (error) {
-    console.error(`An error occured while creating the post`);
+    console.error(`An error occured while creating the post: ${error}`);
     res.status(400).send({
       message: error,
     });

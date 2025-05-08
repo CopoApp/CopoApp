@@ -1,25 +1,30 @@
 import { useEffect, useState } from "react";
-import { getAllUsers } from "../adapters/user-adapter";
+import { getAllPosts } from "../adapters/post-adapter";
 import UserLink from "../components/UserLink";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import ReportCard from "../components/PetCard";
 
 export default function Feed() {
-  const [users, setUsers] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadReports = async () => {
-      const [data, error] = await getAllUsers();
+      const [posts, error] = await getAllPosts();
       if (error) setError(error);
-      else if (data) setUsers(data);
+      else if (posts) setPosts(posts);
     };
     loadReports();
   }, []);
 
   return (
     <>
-      <h1>Community Feed</h1>
+      {
+        posts.map((post) => {
+          return <ReportCard key={post.id} reportInformation={post}/>
+        })
+      }
       <Navbar />
     </>
   );

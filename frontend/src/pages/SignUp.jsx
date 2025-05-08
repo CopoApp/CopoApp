@@ -32,6 +32,8 @@ export default function SignUpPage() {
     const email = formData.get("email");
     const password = formData.get("password");
 
+    console.log(username, email, password)
+
     if (!username || !email || !password)
       return setErrorText("Missing username, email or password");
 
