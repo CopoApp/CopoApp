@@ -9,7 +9,8 @@
     "migrate": "cd server && npm run migrate",
     "seed": "cd server && npm run seed",
     "start": "cd server && npm i && npm start",
-    "dev": "cd server && npm run dev",
+    "dev": "npm-run-parallel dev:backend dev:frontend",
+    "dev:backend": "cd server && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "connect": "psql -U postgres -d react_auth_example",
     "lint": "eslint . --fix"
@@ -18,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "npm-run-parallel": "^0.6.0",
     "prettier": "^3.5.3"
   }
 }
