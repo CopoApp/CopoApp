@@ -58,7 +58,7 @@ export default function UserPage() {
       ) : (
         ""
       )}
-    <Navbar />
+      <Navbar />
     </>
   );
 }

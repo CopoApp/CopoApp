@@ -1,5 +1,8 @@
 const knex = require("../db/knex");
 const Post = require("../models/Post");
+const { s3 } = require("../awsConfig");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+require("dotenv").config();
 
 /* 
 POST /api/posts
@@ -138,17 +141,33 @@ Removes a post from the DB
 exports.deletePost = async (req, res) => {
   const userId = req.session.userId;
   const postId = req.params.id;
-  try {
-    // Verify user owns the post
-    const isUserAuthor = await Post.verifyPostOwnerShip(postId, userId);
-    if (!isUserAuthor) {
-      return res.status(403).send({ message: "Unauthorized." });
-    }
-    await Post.deletePost(postId);
-    res.status(200).send({ message: "Post has been deleted" });
-  } catch (error) {
-    res.send({ message: error.message });
+
+  // Verify user owns the post
+  const isUserAuthor = await Post.verifyPostOwnership(postId, userId);
+  if (!isUserAuthor) {
+    return res.status(403).send({ message: "Unauthorized." });
   }
+
+  // Delete post images from S3
+
+  // 1. Get list of posts from the DB
+  const postImages = await Post.getPostImages(postId);
+
+  // 2. Delete every image that belongs to the post in the S3 Bucket
+  for (let img of postImages) {
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: img.img_name,
+    });
+    await s3.send(command);
+  }
+
+  // Delete post from the database
+  const deletedPost = await Post.deletePost(postId);
+
+  res
+    .status(200)
+    .send({ message: "Post has been deleted", deletedPost: deletedPost });
 };
 
 exports.getUserPosts = async (req, res) => {

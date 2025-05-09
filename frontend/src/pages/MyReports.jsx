@@ -12,6 +12,8 @@ export default function MyReports() {
 
   useEffect(() => {
     const loadReports = async () => {
+      if (currentUser === null) return console.log(`No user session detected`);
+      console.log(`User session detected!`);
       const [posts, error] = await getUserPosts(currentUser.id);
       if (error) setError(error);
       else if (posts) setPosts(posts);

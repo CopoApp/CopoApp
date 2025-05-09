@@ -20,6 +20,9 @@ const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.S3_BUCKET_NAME,
+    metadata: (req, file, cb) => {
+      cb(null, { post_id: req.params.id });
+    },
     key: (req, file, cb) => {
       const postRoutes = "/api/posts/:id/images";
       const filename = Date.now().toString() + "-" + file.originalname;
@@ -36,4 +39,4 @@ const upload = multer({
   },
 });
 
-module.exports = upload;
+module.exports = { upload, s3 };

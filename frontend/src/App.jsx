@@ -12,7 +12,7 @@ import UserPage from "./pages/Profile";
 import Feed from "./pages/Feed";
 import MyReports from "./pages/MyReports";
 import Profile from "./pages/Profile";
-import PetReportForm from "./pages/PetForm"; 
+import PetReportForm from "./pages/PetForm";
 
 export default function App() {
   const { setCurrentUser } = useContext(UserContext);
@@ -47,7 +47,6 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      
     </>
   );
 }

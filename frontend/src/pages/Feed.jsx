@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { getAllPosts } from "../adapters/post-adapter";
-import UserLink from "../components/UserLink";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ReportCard from "../components/PetCard";
 
@@ -20,11 +18,9 @@ export default function Feed() {
 
   return (
     <>
-      {
-        posts.map((post) => {
-          return <ReportCard key={post.id} reportInformation={post}/>
-        })
-      }
+      {posts.map((post) => {
+        return <ReportCard key={post.id} reportInformation={post} />;
+      })}
       <Navbar />
     </>
   );

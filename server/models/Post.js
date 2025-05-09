@@ -68,7 +68,7 @@ class Post {
     }
   }
 
-  static async verifyPostOwnerShip(postId, userId) {
+  static async verifyPostOwnership(postId, userId) {
     const result = await knex("posts").where({
       id: postId,
       author_user_id: userId,
@@ -121,7 +121,12 @@ class Post {
 
   static async deletePost(id) {
     try {
-      await knex("posts").where("id", id).del();
+      // Deletes post and post_image
+      const deletedPost = await knex("posts")
+        .where("id", id)
+        .returning("*")
+        .del();
+      return deletedPost[0];
     } catch (error) {
       console.error(error);
       throw error;
@@ -161,7 +166,16 @@ class Post {
       })
       .returning("*");
 
-    return result ? true : false;
+    return result;
+  }
+
+  static async getPostImages(postId) {
+    const result = await knex
+      .select("post_images.img_name")
+      .from("post_images")
+      .where("post_id", postId);
+
+    return result;
   }
 
   static async save(user_id, post_id) {

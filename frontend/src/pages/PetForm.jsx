@@ -3,6 +3,7 @@ import "../styles/index.css";
 import { createPost, attachPostImages } from "../adapters/post-adapter";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import FileAttachmentButton from "../components/FileAttachmentButton";
 
 const breeds = ["Labrador", "German Shepherd", "Bulldog", "Poodle", "Mixed"]; // example list
 
@@ -37,7 +38,10 @@ export default function PetReportForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // The attachPostImages function depends on the creation of a post that has a post id. .then is used once the post promise is fulfilled to try to create the image
+    // User cannot attach more than five files
+    if (fileData.length > 5) return;
+
+    // The attachPostImages function depends on the post id. The post promise must be fulfilled before trying to create the image
     const postPromise = createPost(formData);
 
     postPromise
@@ -45,22 +49,22 @@ export default function PetReportForm() {
         const [postData, error] = post;
 
         // Only try to attach post images if there are any
-        if (fileData.length > 0) {
-          // Create new formdata object for the images
-          const imageFormData = new FormData();
+        if (fileData.length === 0) return;
 
-          // Attach all of the files to the formdata before sending to backend
-          fileData.forEach((file) => imageFormData.append("files", file));
+        // Create new formdata object for the images
+        const imageFormData = new FormData();
 
-          return attachPostImages(postData.id, imageFormData);
-        }
+        // Attach all of the files to the formdata before sending to backend
+        fileData.forEach((file) => imageFormData.append("files", file));
+        return attachPostImages(postData.id, imageFormData);
       })
       .then(() => {
-        console.log(`Post and images created sucessfully!`);
+        // Yes I am using an emoji
+        console.log(`Post created sucessfully! 🎉`);
         navigate("/feed");
       })
       .catch((error) => {
-        console.error(error);
+        console.error(`Error while creating post:`, error);
       });
   };
 
@@ -111,25 +115,22 @@ export default function PetReportForm() {
           required
         />
 
-        <label>Color:</label>
-        <input
-          type="color"
-          name="pet_color"
-          value={formData.pet_color}
-          onChange={handleChange}
-        />
-        <div
-          className="color-box"
-          style={{ backgroundColor: formData.color }}
-        ></div>
+        <div className="color-input-container">
+          <label>Color:</label>
+          <input
+            type="color"
+            name="pet_color"
+            value={formData.pet_color}
+            onChange={handleChange}
+          />
+        </div>
 
-        <label>Weight (kg):</label>
+        <label>Weight (lb):</label>
         <input
           type="number"
           name="pet_weight"
           value={formData.pet_weight}
           onChange={handleChange}
-          required
         />
 
         <label>Height (cm):</label>
@@ -138,28 +139,30 @@ export default function PetReportForm() {
           name="pet_height"
           value={formData.pet_height}
           onChange={handleChange}
-          required
         />
 
-        <label>Photo:</label>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          name="photo"
-          onChange={handleChange}
-        />
-
+        {/* List of files that user attached */}
         <ul>
           {fileData.map((file, index) => (
             <li key={file.name}>
               <button value={index} onClick={handleRemoveImage}>
-                X
+                Remove Image
               </button>
               {file.name}
             </li>
           ))}
         </ul>
+
+        <p style={{ display: fileData.length > 5 ? "block" : "none" }}>
+          You can only upload up to 5 files
+        </p>
+
+        <label>Photos:</label>
+        <FileAttachmentButton
+          fileData={fileData}
+          setFileData={setFileData}
+          handleChange={handleChange}
+        ></FileAttachmentButton>
 
         <label>Description / Additional Info:</label>
         <textarea
@@ -174,7 +177,6 @@ export default function PetReportForm() {
           name="contact_email"
           value={formData.contact_email}
           onChange={handleChange}
-          required
         />
 
         <label>Contact Phone Number (Optional):</label>
@@ -183,7 +185,6 @@ export default function PetReportForm() {
           name="contact_phone_number"
           value={formData.contact_phone_number}
           onChange={handleChange}
-          required
         />
 
         <button type="submit">Submit</button>

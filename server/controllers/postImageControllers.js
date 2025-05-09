@@ -7,30 +7,49 @@ Creates a new post and returns its information
 */
 exports.createImageForPost = async (req, res) => {
   const { id } = req.params;
-  const promises = [];
+  const images = [];
 
   req.files.forEach((file) => {
     const promise = Post.attachImage({
       post_id: id,
-      img_name: file.originalname,
+      img_name: file.key,
       img_src: file.location,
     });
-    promises.push(promise);
+    images.push(promise);
   });
 
-  Promise.all(promises)
+  Promise.all(images)
     .then((imageInformation) => {
       // Considers the first image user submitted as the cover image
       const postId = imageInformation[0].post_id;
       const coverImageSrc = imageInformation[0].img_src;
-      const coverImagePromise = Post.setCoverImage(postId, coverImageSrc);
-      coverImagePromise.then(() => {
+      Post.setCoverImage(postId, coverImageSrc).then(() => {
         res.send(imageInformation);
       });
     })
     .catch((error) => {
       console.error(error);
     });
+};
+
+/*
+DELETE api/posts/:id
+Removes a post from the DB
+*/
+exports.deletePost = async (req, res) => {
+  const userId = req.session.userId;
+  const postId = req.params.id;
+  try {
+    // Verify user owns the post
+    const isUserAuthor = await Post.verifyPostOwnerShip(postId, userId);
+    if (!isUserAuthor) {
+      return res.status(403).send({ message: "Unauthorized." });
+    }
+    await Post.deletePost(postId);
+    res.status(200).send({ message: "Post has been deleted" });
+  } catch (error) {
+    res.send({ message: error.message });
+  }
 };
 
 /* 
@@ -112,26 +131,6 @@ exports.updatePost = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.send({ message: error });
-  }
-};
-
-/*
-DELETE api/posts/:id
-Removes a post from the DB
-*/
-exports.deletePost = async (req, res) => {
-  const userId = req.session.userId;
-  const postId = req.params.id;
-  try {
-    // Verify user owns the post
-    const isUserAuthor = await Post.verifyPostOwnerShip(postId, userId);
-    if (!isUserAuthor) {
-      return res.status(403).send({ message: "Unauthorized." });
-    }
-    await Post.deletePost(postId);
-    res.status(200).send({ message: "Post has been deleted" });
-  } catch (error) {
-    res.send({ message: error.message });
   }
 };
 
