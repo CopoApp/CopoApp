@@ -20,7 +20,13 @@ exports.createImageForPost = async (req, res) => {
 
   Promise.all(promises)
     .then((imageInformation) => {
-      res.send(imageInformation);
+      // Considers the first image user submitted as the cover image
+      const postId = imageInformation[0].post_id;
+      const coverImageSrc = imageInformation[0].img_src;
+      const coverImagePromise = Post.setCoverImage(postId, coverImageSrc);
+      coverImagePromise.then(() => {
+        res.send(imageInformation);
+      });
     })
     .catch((error) => {
       console.error(error);

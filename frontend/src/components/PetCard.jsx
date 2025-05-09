@@ -1,8 +1,14 @@
 import React from "react";
 
 export default function ReportCard({ reportInformation }) {
-  const { author, status, pet_name, last_seen_location, content, img_src } =
-    reportInformation;
+  const {
+    author,
+    status,
+    pet_name,
+    last_seen_location,
+    content,
+    cover_img_src,
+  } = reportInformation;
 
   return (
     <div className="report-card">
@@ -11,8 +17,8 @@ export default function ReportCard({ reportInformation }) {
         <p className="status">{status}</p>
       </div>
       <div className="image-container">
-        {img_src ? (
-          <img src={img_src} alt={"Pet image"} className="pet-image" />
+        {cover_img_src ? (
+          <img src={cover_img_src} alt={"Pet image"} className="pet-image" />
         ) : (
           <div className="placeholder-image">No Image</div>
         )}

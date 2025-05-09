@@ -23,8 +23,6 @@ exports.createPost = async (req, res) => {
     last_seen_location_longitude,
   } = req.body;
 
-  console.log(req.body)
-
   try {
     const post = await Post.create({
       userId,

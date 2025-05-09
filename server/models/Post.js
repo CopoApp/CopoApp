@@ -131,10 +131,9 @@ class Post {
   static async getUserPosts(userId) {
     try {
       const result = await knex
-        .select("posts.*", "users.username as author", "post_images.img_src")
+        .select("posts.*", "users.username as author")
         .from("posts")
         .leftJoin("users", "posts.author_user_id", "users.id")
-        .leftJoin("post_images", "posts.id", "post_images.post_id")
         .where("posts.author_user_id", userId);
 
       if (!result) throw new Error(`Query did not return any data`);
@@ -154,8 +153,15 @@ class Post {
     return result[0];
   }
 
-  static async getImagesForPost(postId) {
-    // To do
+  static async setCoverImage(postId, imageSource) {
+    const result = await knex("posts")
+      .where("id", postId)
+      .update({
+        cover_img_src: imageSource,
+      })
+      .returning("*");
+
+    return result ? true : false;
   }
 
   static async save(user_id, post_id) {

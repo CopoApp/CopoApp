@@ -52,7 +52,7 @@ export default function PetReportForm() {
     postPromise
       .then((post) => {
         const [postData, error] = post;
-        attachPostImages(postData.id, imageFormData);
+        return attachPostImages(postData.id, imageFormData);
       })
       .then(() => {
         console.log(`Post and images created sucessfully`);
@@ -62,8 +62,6 @@ export default function PetReportForm() {
         console.error(error);
       });
   };
-
-  const handleImage = async (event) => {};
 
   return (
     <>
@@ -141,6 +139,12 @@ export default function PetReportForm() {
           name="photo"
           onChange={handleChange}
         />
+
+        <ul>
+          {fileData.map((file) => (
+            <li key={file.name}>{file.name}</li>
+          ))}
+        </ul>
 
         <label>Description / Additional Info:</label>
         <textarea
