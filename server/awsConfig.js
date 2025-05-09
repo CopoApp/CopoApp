@@ -16,7 +16,6 @@ const s3 = new S3Client({
 });
 
 // Multer S3 config
-// upload.js
 const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -24,11 +23,13 @@ const upload = multer({
     key: (req, file, cb) => {
       const postRoutes = "/api/posts/:id/images";
       const filename = Date.now().toString() + "-" + file.originalname;
+      // If the origin of the request is from a the /api/posts endpoint the image gets added to the report-pictures folder
       if (req.route.path === postRoutes) {
         cb(null, `report-pictures/${filename}`);
       }
     },
   }),
+  // FIlters files of only image type
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) cb(null, true);
     else cb(new Error("Only image files are allowed!"), false);

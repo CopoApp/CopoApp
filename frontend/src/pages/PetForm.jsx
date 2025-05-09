@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/index.css";
 import { createPost, attachPostImages } from "../adapters/post-adapter";
 import Navbar from "../components/Navbar";
@@ -24,13 +24,11 @@ export default function PetReportForm() {
     last_seen_location_longitude: 0,
   });
   const [fileData, setFileData] = useState([]);
-  const [postId, setPostId] = useState(undefined);
 
   const handleChange = (event) => {
     const { name, value, type, files } = event.target;
 
     if (type === "file") {
-      // To Do - Send image file to firebase
       setFileData([...fileData, files[0]]);
     } else {
       setFormData({ ...formData, [name]: value });
@@ -39,28 +37,40 @@ export default function PetReportForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Create new formdata object for the images
-    const imageFormData = new FormData();
-
-    // Attach all of the files to the formdata before sending to backend
-    fileData.forEach((file) => imageFormData.append("files", file));
-
-    // Form Data Handling
+    // The attachPostImages function depends on the creation of a post that has a post id. .then is used once the post promise is fulfilled to try to create the image
     const postPromise = createPost(formData);
 
     postPromise
       .then((post) => {
         const [postData, error] = post;
-        return attachPostImages(postData.id, imageFormData);
+
+        // Only try to attach post images if there are any
+        if (fileData.length > 0) {
+          // Create new formdata object for the images
+          const imageFormData = new FormData();
+
+          // Attach all of the files to the formdata before sending to backend
+          fileData.forEach((file) => imageFormData.append("files", file));
+
+          return attachPostImages(postData.id, imageFormData);
+        }
       })
       .then(() => {
-        console.log(`Post and images created sucessfully`);
+        console.log(`Post and images created sucessfully!`);
         navigate("/feed");
       })
       .catch((error) => {
         console.error(error);
       });
+  };
+
+  const handleRemoveImage = (event) => {
+    event.preventDefault();
+    const removeIndex = Number(event.target.value);
+    const updatedFileData = fileData.filter(
+      (value, index) => index !== removeIndex
+    );
+    setFileData(updatedFileData);
   };
 
   return (
@@ -141,8 +151,13 @@ export default function PetReportForm() {
         />
 
         <ul>
-          {fileData.map((file) => (
-            <li key={file.name}>{file.name}</li>
+          {fileData.map((file, index) => (
+            <li key={file.name}>
+              <button value={index} onClick={handleRemoveImage}>
+                X
+              </button>
+              {file.name}
+            </li>
           ))}
         </ul>
 
