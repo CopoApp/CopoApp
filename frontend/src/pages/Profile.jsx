@@ -1,19 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CurrentUserContext from "../contexts/current-user-context";
-import { getUser } from "../adapters/user-adapter";
+import { getUser, updateUserProfile } from "../adapters/user-adapter";
 import { logUserOut } from "../adapters/auth-adapter";
 import Navbar from "../components/Navbar";
-import { updateUserProfile } from "../adapters/user-adapter";
+import "../styles/index.css";
 
-export default function UserPage() {
+export default function EditProfile() {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
+  const { id } = useParams();
+  const isCurrentUserProfile = currentUser?.id === Number(id);
+
   const [userProfile, setUserProfile] = useState(null);
   const [error, setError] = useState(null);
-  const { id } = useParams();
-  const isCurrentUserProfile = currentUser && currentUser.id === Number(id);
-
   const [formData, setFormData] = useState({
     username: "",
     about_me: "",
@@ -22,17 +22,25 @@ export default function UserPage() {
     location_latitude: 0,
     location_longitude: 0,
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Load user profile data
   useEffect(() => {
     const loadUser = async () => {
+      setIsLoading(true);
       const [user, error] = await getUser(id);
-      if (error) return setError(error);
-      setUserProfile(user);
+      if (error) {
+        setError(error);
+      } else {
+        setUserProfile(user);
+      }
+      setIsLoading(false);
     };
-
     loadUser();
   }, [id]);
 
+  // Sync formData with userProfile when loaded
   useEffect(() => {
     if (userProfile) {
       setFormData({
@@ -47,131 +55,171 @@ export default function UserPage() {
   }, [userProfile]);
 
   const handleLogout = async () => {
-    logUserOut();
+    await logUserOut();
     setCurrentUser(null);
     navigate("/");
   };
 
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
-
-    console.log(value);
-    if (type === "file") {
-      // To do - Send image file to the firebase
+    if (type === "file" && files?.[0]) {
+      const imageUrl = URL.createObjectURL(files[0]); // TEMP: Replace with actual upload
+      setFormData((prev) => ({ ...prev, profile_pic: imageUrl }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file); // TEMP: Replace with actual upload
-      setFormData((prev) => ({
-        ...prev,
-        profile_pic: imageUrl,
-      }));
-    }
-  };
-
-  const handleSaveChanges = async (event) => {
-    event.preventDefault();
-
-    console.log(formData);
-
+  const handleSaveChanges = async (e) => {
+    e.preventDefault();
     try {
-      const [userProfile, error] = await updateUserProfile(id, formData);
-      console.log(`User Id - ${userProfile.id} updated successfully`);
-      setUserProfile(userProfile);
-    } catch (error) {
-      console.error(error);
+      setError(null);
+      const [updatedUserProfile, updateError] = await updateUserProfile(
+        id,
+        formData
+      );
+      if (error) throw new Error(updateError);
+      setUserProfile(updatedUserProfile, updateError);
+      setIsEditing(false);
+    } catch (err) {
       setError("Failed to save profile changes. Please try again.");
     }
   };
 
-  if (error)
+  if (isLoading) {
     return (
-      <p>
-        Sorry, there was a problem loading the user. Please try again later.
-      </p>
+      <div className="profile-container">
+        <p style={{ textAlign: "center" }}>Loading profile...</p>
+      </div>
     );
+  }
+
+  if (error && !userProfile) {
+    return (
+      <div className="profile-container">
+        <p className="error-message">
+          Sorry, there was a problem loading the user. Please try again later.
+        </p>
+      </div>
+    );
+  }
 
   if (!userProfile) return null;
 
   return (
     <>
-      <div
-        className="profile-container"
-        style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}
-      >
+      <div className="profile-container">
         <h1>{userProfile.username}'s Profile</h1>
 
-        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+        <div className="profile-image-container">
           <img
+            className="profile-image"
             src={userProfile.profile_pic || "https://via.placeholder.com/150"}
             alt="Profile"
-            style={{
-              width: 150,
-              height: 150,
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
           />
-          {isCurrentUserProfile && (
-            <div>
+          {isCurrentUserProfile && isEditing && (
+            <div className="file-input-container">
               <input
                 type="file"
+                id="profile-image-input"
+                className="file-input"
                 accept="image/*"
-                onChange={handleProfilePictureChange}
+                onChange={handleInputChange}
               />
+              <label htmlFor="profile-image-input" className="file-input-label">
+                Choose new photo
+              </label>
             </div>
           )}
         </div>
 
-        <div className="profile-fields">
-          <div style={{ marginBottom: "1rem" }}>
-            <label>Username:</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              disabled={!isCurrentUserProfile}
-              style={{ width: "100%", padding: "0.5rem" }}
-            />
+        <form onSubmit={handleSaveChanges}>
+          <div className="form-group">
+            <label className="form-label">Username</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="username"
+                className="form-control"
+                value={formData.username}
+                onChange={handleInputChange}
+              />
+            ) : (
+              <div className="static-text">{formData.username}</div>
+            )}
           </div>
 
-          <div style={{ marginBottom: "1rem" }}>
-            <label>Bio:</label>
-            <textarea
-              name="about_me"
-              value={formData.about_me || ""}
-              onChange={handleInputChange}
-              disabled={!isCurrentUserProfile}
-              style={{ width: "100%", padding: "0.5rem" }}
-            />
+          <div className="form-group">
+            <label className="form-label">Bio</label>
+            {isEditing ? (
+              <textarea
+                name="about_me"
+                className="form-control"
+                value={formData.about_me}
+                onChange={handleInputChange}
+              />
+            ) : (
+              <div className="static-text">
+                {formData.about_me || "No bio provided yet."}
+              </div>
+            )}
           </div>
 
-          <div style={{ marginBottom: "1rem" }}>
-            <label>Location:</label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location || ""}
-              onChange={handleInputChange}
-              disabled={!isCurrentUserProfile}
-              style={{ width: "100%", padding: "0.5rem" }}
-            />
+          <div className="form-group">
+            <label className="form-label">Location</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="location"
+                className="form-control"
+                value={formData.location}
+                onChange={handleInputChange}
+              />
+            ) : (
+              <div className="static-text">
+                {formData.location || "No location specified."}
+              </div>
+            )}
           </div>
-        </div>
 
-        {isCurrentUserProfile && (
-          <>
-            <button onClick={handleSaveChanges}>Save Changes</button>
-            <button onClick={handleLogout}>Log Out</button>
-          </>
-        )}
+          {error && <div className="error-message">{error}</div>}
+
+          {isCurrentUserProfile && (
+            <div className="button-group">
+              {isEditing ? (
+                <>
+                  <button type="submit" className="btn btn-primary">
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            </div>
+          )}
+        </form>
       </div>
+
       <Navbar />
     </>
   );
