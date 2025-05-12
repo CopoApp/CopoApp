@@ -21,6 +21,12 @@ export const getFilePostOptions = (body) => ({
   body: body,
 });
 
+export const getFilePatchOptions = (body) => ({
+  method: "PATCH",
+  credentials: "include",
+  body: body,
+});
+
 export const getPatchOptions = (body) => ({
   method: "PATCH",
   credentials: "include",

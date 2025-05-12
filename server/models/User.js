@@ -14,6 +14,7 @@ class User {
     password_hash,
     about_me,
     profile_pic,
+    profile_pic_name,
     location,
     location_latitude,
     location_longitude,
@@ -24,6 +25,7 @@ class User {
     this.username = username;
     this.about_me = about_me;
     this.profile_pic = profile_pic;
+    this.profile_pic_name = profile_pic_name;
     this.location = location;
     this.location_latitude = location_latitude;
     this.location_longitude = location_longitude;
@@ -97,34 +99,20 @@ class User {
 
   // Updates the user that matches the given id with a new username.
   // Returns the modified user, using the constructor to hide the passwordHash.
-  static async update(userInformation) {
-    const {
-      userToModify,
-      username,
-      about_me,
-      profile_pic,
-      location,
-      location_latitude,
-      location_longitude,
-      saved_pets_count,
-    } = userInformation;
-
+  static async update(userToModify, userInformation) {
     // Knex methods (where, update, returning) to allow for partial user information updates
     const result = await knex("users")
       .where("id", userToModify)
-      .update({
-        username,
-        about_me,
-        profile_pic,
-        location,
-        location_latitude,
-        location_longitude,
-        saved_pets_count,
-      })
+      .update(userInformation)
       .returning("*");
 
     const rawUpdatedUser = result[0];
     return rawUpdatedUser ? new User(rawUpdatedUser) : null;
+  }
+
+  static async getProfilePicture (userId) {
+    const result = await knex.select('profile_pic_name').from("users").where("id", userId)
+    return result[0].profile_pic_name ?? null
   }
 
   static async deleteUser(userId) {

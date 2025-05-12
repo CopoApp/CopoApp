@@ -25,10 +25,14 @@ const upload = multer({
     },
     key: (req, file, cb) => {
       const postRoutes = "/api/posts/:id/images";
+      const userRoutes = "/api/users/:id";
       const filename = Date.now().toString() + "-" + file.originalname;
       // If the origin of the request is from a the /api/posts endpoint the image gets added to the report-pictures folder
       if (req.route.path === postRoutes) {
         cb(null, `report-pictures/${filename}`);
+      }
+      if (req.route.path === userRoutes) {
+        cb(null, `user-profile-pictures/${filename}`);
       }
     },
   }),

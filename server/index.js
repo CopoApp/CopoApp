@@ -44,7 +44,7 @@ app.delete("/api/auth/logout", authControllers.logoutUser);
 // Express lets us pass a piece of middleware to run for a specific endpoint
 app.get("/api/users", checkAuthentication, userControllers.listUsers); // Sends back an array of users
 app.get("/api/users/:id", checkAuthentication, userControllers.showUser); // Send specific user object
-app.patch("/api/users/:id", checkAuthentication, userControllers.updateUser); // Sends updated user object
+app.patch("/api/users/:id", checkAuthentication, upload.single("profile_pic", 1), userControllers.updateUser); // Sends updated user object
 app.delete("/api/users/:id", checkAuthentication, userControllers.deleteUser); // Removes user
 
 ///////////////////////////////
