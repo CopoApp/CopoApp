@@ -40,7 +40,7 @@ export default function PetReportForm() {
     event.preventDefault();
     try {
       const [post, error] = await createPost(formData)
-      console.log(`Post Id-${post.id} created sucessfully`)
+      console.log(`Post Id-${post.id} created successfully`)
       navigate('/feed')
     } catch (error) {
       console.error(error)

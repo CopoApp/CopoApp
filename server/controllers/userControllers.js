@@ -42,6 +42,8 @@ exports.updateUser = async (req, res) => {
     location_longitude,
     saved_pets_count,
   } = req.body;
+  console.log(req.body);
+
   if (!username) {
     return res.status(400).send({ message: "New username required." });
   }
