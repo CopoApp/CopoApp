@@ -12,6 +12,8 @@ export default function MyReports() {
 
   useEffect(() => {
     const loadReports = async () => {
+      if (currentUser === null) return console.log(`No user session detected`);
+      console.log(`User session detected!`);
       const [posts, error] = await getUserPosts(currentUser.id);
       if (error) setError(error);
       else if (posts) setPosts(posts);
@@ -21,11 +23,11 @@ export default function MyReports() {
 
   return (
     <div>
-      {
-        userPosts.length > 0 ? userPosts.map((post) => {
-          return <ReportCard key={post.id} reportInformation={post}/>
-        }) : `No posts`
-      }
+      {userPosts.length > 0
+        ? userPosts.map((post) => {
+            return <ReportCard key={post.id} reportInformation={post} />;
+          })
+        : `No posts`}
       <Navbar />
     </div>
   );

@@ -5,6 +5,7 @@
 require("dotenv").config();
 const path = require("path");
 const express = require("express");
+const { upload } = require("./awsConfig");
 
 // middleware imports
 const handleCookieSessions = require("./middleware/handleCookieSessions");
@@ -17,6 +18,7 @@ const authControllers = require("./controllers/authControllers");
 const userControllers = require("./controllers/userControllers");
 const postControllers = require("./controllers/postControllers");
 const commentControllers = require("./controllers/commentControllers");
+const postImageControllers = require("./controllers/postImageControllers");
 const app = express();
 
 // middleware
@@ -42,7 +44,7 @@ app.delete("/api/auth/logout", authControllers.logoutUser);
 // Express lets us pass a piece of middleware to run for a specific endpoint
 app.get("/api/users", checkAuthentication, userControllers.listUsers); // Sends back an array of users
 app.get("/api/users/:id", checkAuthentication, userControllers.showUser); // Send specific user object
-app.patch("/api/users/:id", checkAuthentication, userControllers.updateUser); // Sends updated user object
+app.patch("/api/users/:id", checkAuthentication, upload.single("profile_pic", 1), userControllers.updateUser); // Sends updated user object
 app.delete("/api/users/:id", checkAuthentication, userControllers.deleteUser); // Removes user
 
 ///////////////////////////////
@@ -51,6 +53,7 @@ app.delete("/api/users/:id", checkAuthentication, userControllers.deleteUser); /
 
 // These actions require users to be logged in (authentication)
 app.post("/api/posts", checkAuthentication, postControllers.createPost); // Creates a new post and sends its data back to the client
+
 app.get("/api/posts", checkAuthentication, postControllers.listPosts); // Sends array of all posts
 app.get("/api/posts/:id", checkAuthentication, postControllers.getPost); // Sends specific user post
 app.patch("/api/posts/:id", checkAuthentication, postControllers.updatePost); // Updates specific user post
@@ -60,6 +63,30 @@ app.get(
   checkAuthentication,
   postControllers.getUserPosts
 ); // Gets all posts for a specific user
+
+///////////////////////////////
+// Post Images Routes
+///////////////////////////////
+
+app.post(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  // Set maximum amount of attachments to five
+  upload.array("files", 5),
+  postImageControllers.createImageForPost
+); // Creates a new image in the database for a post
+
+app.get(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  postImageControllers.getImages
+); // Get images for a post
+
+app.delete(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  postImageControllers.deleteImages
+); // Remove images from a post
 
 ///////////////////////////////
 // Comment Routes

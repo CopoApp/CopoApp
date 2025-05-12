@@ -3,6 +3,7 @@
 import {
   fetchHandler,
   getPatchOptions,
+  getFilePatchOptions,
   getPostOptions,
 } from "../utils/fetchingUtils";
 
@@ -21,9 +22,8 @@ export const getUser = async (id) => {
 };
 
 export const updateUserProfile = async (id, userProfileInformation) => {
-  console.log(userProfileInformation);
   return fetchHandler(
     `${baseUrl}/${id}`,
-    getPatchOptions(userProfileInformation)
+    getFilePatchOptions(userProfileInformation)
   );
 };

@@ -12,7 +12,8 @@ import UserPage from "./pages/Profile";
 import Feed from "./pages/Feed";
 import MyReports from "./pages/MyReports";
 import Profile from "./pages/Profile";
-import PetReportForm from "./pages/PetForm"; 
+import PetReportForm from "./pages/PetReportForm";
+import Test from "./pages/Test";
 
 export default function App() {
   const { setCurrentUser } = useContext(UserContext);
@@ -43,11 +44,13 @@ export default function App() {
           <Route path="/report" element={<PetReportForm />} />
           <Route path="/users/:id" element={<Profile />} />
 
+          {/* Dev Testing */}
+          <Route path="/test" element={<Test />} />
+
           {/* Fallback Path */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      
     </>
   );
 }

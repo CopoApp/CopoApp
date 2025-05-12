@@ -46,7 +46,25 @@ class Post {
   static async list() {
     try {
       // Selects all of the post information and only the username from the users table by joining on the author_user_id
-      const result = await knex.select('posts.*', 'users.username as author').from('posts').leftJoin('users','author_user_id', 'users.id').returning('*');
+      const result = await knex
+        .select("posts.*", "users.username as author")
+        .from("posts")
+        .leftJoin("users", "author_user_id", "users.id")
+        .returning("*");
+      if (!result || result.length === 0)
+        throw new Error(`Query returned no data`);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async listImages(postId) {
+    try {
+      const result = await knex("post_images")
+        .where("post_id", postId)
+        .returning("*");
+
       if (!result || result.length === 0)
         throw new Error(`Query returned no data`);
       return result;
@@ -64,7 +82,7 @@ class Post {
     }
   }
 
-  static async verifyPostOwnerShip(postId, userId) {
+  static async verifyPostOwnership(postId, userId) {
     const result = await knex("posts").where({
       id: postId,
       author_user_id: userId,
@@ -117,7 +135,12 @@ class Post {
 
   static async deletePost(id) {
     try {
-      await knex("posts").where("id", id).del();
+      // Deletes post and post_image
+      const deletedPost = await knex("posts")
+        .where("id", id)
+        .returning("*")
+        .del();
+      return deletedPost[0];
     } catch (error) {
       console.error(error);
       throw error;
@@ -126,23 +149,60 @@ class Post {
 
   static async getUserPosts(userId) {
     try {
-      const result = await knex.select('posts.*', 'users.username as author').from('posts').where("author_user_id", userId).leftJoin('users','author_user_id', 'users.id').returning('*');
+      const result = await knex
+        .select("posts.*", "users.username as author")
+        .from("posts")
+        .leftJoin("users", "posts.author_user_id", "users.id")
+        .where("posts.author_user_id", userId);
+
       if (!result) throw new Error(`Query did not return any data`);
       if (result.length === 0) throw new Error(`User has no posts`);
+
       return result;
     } catch (error) {
       throw error;
     }
   }
 
-  static async attachImage(post_id, img_name, img_src) {
-    const query = `INSERT INTO post_images (post_id, img_name, img_src)
-    VALUES (?, ?, ?) RETURNING *`;
+  static async attachImage(imageInformation) {
+    const result = await knex("post_images")
+      .insert(imageInformation)
+      .returning("*");
 
-    const result = await knex.raw(query, [post_id, img_name, img_src]);
+    return result[0];
+  }
 
-    const rawUserData = result.rows[0];
-    return rawUserData;
+  static async setCoverImage(postId, imageSource) {
+    const result = await knex("posts")
+      .where("id", postId)
+      .update({
+        cover_img_src: imageSource,
+      })
+      .returning("*");
+
+    return result;
+  }
+
+  static async getPostImages(postId) {
+    const result = await knex
+      .select("post_images.img_name")
+      .from("post_images")
+      .where("post_id", postId);
+
+    return result;
+  }
+
+  static async deleteImage(imageId) {
+    try {
+      const deletedImage = await knex("post_images")
+        .where("id", imageId)
+        .returning("*")
+        .del();
+      return deletedImage[0];
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   static async save(user_id, post_id) {

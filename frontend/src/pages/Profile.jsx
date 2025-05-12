@@ -5,6 +5,7 @@ import { getUser, updateUserProfile } from "../adapters/user-adapter";
 import { logUserOut } from "../adapters/auth-adapter";
 import Navbar from "../components/Navbar";
 import "../styles/index.css";
+import user_placeholder from './Assets/user_placeholder.svg'
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function EditProfile() {
   const isCurrentUserProfile = currentUser?.id === Number(id);
 
   const [userProfile, setUserProfile] = useState(null);
+  // State to keep track of selected user profile picture for preview
+  const [selectedImage, setSelectedImage] = useState('');
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     username: "",
@@ -62,21 +65,43 @@ export default function EditProfile() {
 
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === "file" && files?.[0]) {
-      const imageUrl = URL.createObjectURL(files[0]); // TEMP: Replace with actual upload
-      setFormData((prev) => ({ ...prev, profile_pic: imageUrl }));
+
+    const img = files?.[0]
+
+    
+
+    if (type === "file" && img) {
+      setSelectedImage(URL.createObjectURL(img))
+      setFormData((prev) => ({ ...prev, profile_pic: img }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+  const handleProfilePicRemoval = () => {
+    // Update profile picture preview
+    setSelectedImage(user_placeholder)
+    // Set profile_pic to null for database
+    setFormData((prev) => ({ ...prev, remove_picture: true }));
+  }
+
   const handleSaveChanges = async (e) => {
     e.preventDefault();
+
+    // Create formdata before sending to backend so that it can be read properly
+    const payload = new FormData();
+
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+          payload.append(key, formData[key]);
+      }
+    }
+
     try {
       setError(null);
       const [updatedUserProfile, updateError] = await updateUserProfile(
         id,
-        formData
+        payload
       );
       if (error) throw new Error(updateError);
       setUserProfile(updatedUserProfile, updateError);
@@ -114,7 +139,7 @@ export default function EditProfile() {
         <div className="profile-image-container">
           <img
             className="profile-image"
-            src={userProfile.profile_pic || "https://via.placeholder.com/150"}
+            src={(selectedImage && isEditing ? selectedImage : userProfile.profile_pic) || user_placeholder}
             alt="Profile"
           />
           {isCurrentUserProfile && isEditing && (
@@ -129,6 +154,13 @@ export default function EditProfile() {
               <label htmlFor="profile-image-input" className="file-input-label">
                 Choose new photo
               </label>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleProfilePicRemoval}
+              >
+                Remove Photo
+              </button>
             </div>
           )}
         </div>
@@ -143,6 +175,7 @@ export default function EditProfile() {
                 className="form-control"
                 value={formData.username}
                 onChange={handleInputChange}
+                required
               />
             ) : (
               <div className="static-text">{formData.username}</div>
@@ -194,7 +227,10 @@ export default function EditProfile() {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={() => setIsEditing(false)}
+                    onClick={() => {
+                      setIsEditing(false)
+                      setSelectedImage(userProfile.profile_pic)
+                    }}
                   >
                     Cancel
                   </button>
