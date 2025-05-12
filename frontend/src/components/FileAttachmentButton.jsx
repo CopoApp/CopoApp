@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 const FileAttachmentButton = ({ handleChange }) => {
-  // Stores an 'invisible' reference in memory to the actual input element so that its functionality its still available
+  // Stores an 'invisible' reference to the actual input element so that its functionality its still available
   const fileInput = useRef(null);
 
   return (

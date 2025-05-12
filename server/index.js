@@ -68,13 +68,25 @@ app.get(
 // Post Images Routes
 ///////////////////////////////
 
-// These actions require users to be logged in (authentication)
 app.post(
   "/api/posts/:id/images",
   checkAuthentication,
+  // Set maximum amount of attachments to five
   upload.array("files", 5),
   postImageControllers.createImageForPost
 ); // Creates a new image in the database for a post
+
+app.get(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  postImageControllers.getImages
+); // Get images for a post
+
+app.delete(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  postImageControllers.deleteImages
+); // Remove images from a post
 
 ///////////////////////////////
 // Comment Routes

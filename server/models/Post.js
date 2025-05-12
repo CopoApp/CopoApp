@@ -59,6 +59,20 @@ class Post {
     }
   }
 
+  static async listImages(postId) {
+    try {
+      const result = await knex("post_images")
+        .where("post_id", postId)
+        .returning("*");
+
+      if (!result || result.length === 0)
+        throw new Error(`Query returned no data`);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async findPost(id) {
     try {
       const result = await knex("posts").where("id", id);
@@ -176,6 +190,19 @@ class Post {
       .where("post_id", postId);
 
     return result;
+  }
+
+  static async deleteImage(imageId) {
+    try {
+      const deletedImage = await knex("post_images")
+        .where("id", imageId)
+        .returning("*")
+        .del();
+      return deletedImage[0];
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   static async save(user_id, post_id) {
