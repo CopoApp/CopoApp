@@ -268,21 +268,6 @@ a {
   text-align: center;
 }
 
-.bookmark-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.bookmark-icon {
-  width: 32px; 
-  height: 32px;
-  object-fit: contain; 
-}
-
-
-
 /* Container for the pet image */
 .image-container {
   width: 100%;
@@ -332,7 +317,6 @@ a {
   line-height: 1.4;
 }
 
-/* Styling for the homepage */
 .home-container {
   display: flex;
   flex-direction: column;

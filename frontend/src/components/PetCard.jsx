@@ -8,8 +8,10 @@ export default function ReportCard({ reportInformation }) {
     setBookmarked(!bookmarked);
     if (!bookmarked) {
       saveBookmark(id);
+      console.log("Your bookmark is saved")
     } else {
       removeBookmark(id);
+      console.log("you removed your saved bookmark")
     }
   };
 
