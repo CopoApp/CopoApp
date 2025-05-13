@@ -52,11 +52,11 @@ exports.updateUser = async (req, res) => {
     location_latitude,
     location_longitude,
     saved_pets_count,
-    remove_picture // Optional
   } = req.body;
 
   // Check if user attached any files
-  const pictureData = req.file
+  const pictureData = req?.file
+  const isUserRemovingPfp = req.query.del
   
   const userInformation = {
     username,
@@ -67,19 +67,26 @@ exports.updateUser = async (req, res) => {
     saved_pets_count,
   }
 
-  // If user wants to remove their profile picture
-  if (remove_picture) {
-    const imageName = await User.getProfilePicture(userToModify)
+  // Check if user already has a picture
+  const imageName = await User.getProfilePicture(userToModify)
+  
+  // Update S3
+  if (isUserRemovingPfp || pictureData && imageName) {
     // Delete image from S3
     const command = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: imageName,
     });
     await s3.send(command);
+  }
+
+  // Update database entry
+  if (isUserRemovingPfp) {
     // Update information for database
     userInformation.profile_pic = null
     userInformation.profile_pic_name = null
   } else if (pictureData) {
+    // Remove old picture from S3
     userInformation.profile_pic = pictureData.location
     userInformation.profile_pic_name = pictureData.key
   }

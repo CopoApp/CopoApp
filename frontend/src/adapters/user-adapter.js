@@ -21,9 +21,10 @@ export const getUser = async (id) => {
   return fetchHandler(`${baseUrl}/${id}`);
 };
 
-export const updateUserProfile = async (id, userProfileInformation) => {
-  return fetchHandler(
-    `${baseUrl}/${id}`,
+export const updateUserProfile = async (id, userProfileInformation, deletingPfp) => {
+  console.log( `${baseUrl}/${id}?del=${deletingPfp}`)
+ return fetchHandler(
+    `${baseUrl}/${id}?del=${deletingPfp}`,
     getFilePatchOptions(userProfileInformation)
   );
 };
