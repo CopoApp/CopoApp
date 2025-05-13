@@ -120,7 +120,7 @@ export default function PetReportForm() {
           <input
             type="color"
             name="pet_color"
-            value={formData.pet_color}
+            value={formData.pet_color || '#000000'}
             onChange={handleChange}
           />
         </div>

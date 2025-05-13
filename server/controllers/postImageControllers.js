@@ -45,7 +45,7 @@ exports.getImages = async (req, res) => {
     const images = await Post.listImages(postId);
     res.send(images);
   } catch (error) {
-    res.send({ Error: error.message });
+    res.status(404).send({message: error})
   }
 };
 
