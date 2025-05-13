@@ -43,7 +43,7 @@ const Navbar = () => {
         className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
       >
       <img src={profileIcon} alt="Profile" className="nav-icon" />
-      <span className="nav-text">Profile</span>
+    <span className="nav-text">Profile</span>
       </NavLink>
     </nav>
   );
