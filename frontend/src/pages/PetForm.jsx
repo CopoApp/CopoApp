@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../styles/index.css";
 import { createPost } from "../adapters/post-adapter";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const breeds = ["Labrador", "German Shepherd", "Bulldog", "Poodle", "Mixed"]; // example list
 

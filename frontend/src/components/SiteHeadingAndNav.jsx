@@ -13,6 +13,7 @@ export default function SiteHeadingAndNav() {
     if (pathname === '/feed') setCurrentPage('Feed')
     if (pathname === '/reports-log') setCurrentPage('My Reports')
     if (pathname === '/report') setCurrentPage('Report Missing Pet')
+    if (pathname.startsWith('/posts/')) setCurrentPage('Report Details')
     if (pathname.includes('/users')) setCurrentPage('Profile')
   })
 

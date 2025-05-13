@@ -19,3 +19,7 @@ export const getAllPosts = async () => {
 export const getUserPosts = async (id) => {
   return await fetchHandler(`/api/users/${id}/posts`);
 };
+
+export const getPostDetails = async (id) => {
+  return await fetchHandler(`${baseUrl}/${id}`)
+}
