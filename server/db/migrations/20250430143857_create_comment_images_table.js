@@ -11,7 +11,7 @@ exports.up = function (knex) {
       .unsigned() // Only accepts positive numbers
       .references("id")
       .inTable("comments")
-      // When the post is deleted images are removed from db
+      // When the comment is deleted the image is deleted as well from the comment_images table
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
 

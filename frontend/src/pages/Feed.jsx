@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllPosts } from "../adapters/post-adapter";
-import UserLink from "../components/UserLink";
+// import UserLink from "../components/UserLink";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ReportCard from "../components/PetCard";

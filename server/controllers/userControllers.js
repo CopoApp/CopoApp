@@ -1,4 +1,7 @@
 const User = require("../models/User");
+const { s3 } = require("../awsConfig");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+require("dotenv").config();
 
 /* 
 GET /api/users
@@ -32,22 +35,7 @@ exports.showUser = async (req, res) => {
 PATCH /api/users/:id
 Updates a single user (if found) and only if authorized
 */
-exports.updateUser = async (req, res) => {
-  const {
-    username,
-    about_me,
-    profile_pic,
-    location,
-    location_latitude,
-    location_longitude,
-    saved_pets_count,
-  } = req.body;
-  console.log(req.body);
-
-  if (!username) {
-    return res.status(400).send({ message: "New username required." });
-  }
-
+exports.updateUser = async (req, res) => {  
   // A user is only authorized to modify their own user information
   // e.g. User 5 sends a PATCH /api/users/5 request -> success!
   // e.g. User 5 sends a PATCH /api/users/4 request -> 403!
@@ -57,22 +45,47 @@ exports.updateUser = async (req, res) => {
     return res.status(403).send({ message: "Unauthorized." });
   }
 
-  const updatedUser = await User.update({
-    userToModify,
+  const {
     username,
     about_me,
-    profile_pic,
     location,
     location_latitude,
     location_longitude,
     saved_pets_count,
-  });
+    remove_picture // Optional
+  } = req.body;
 
-  if (!updatedUser) {
-    return res.status(404).send({ message: "User not found." });
+  // Check if user attached any files
+  const pictureData = req.file
+  
+  const userInformation = {
+    username,
+    about_me,
+    location,
+    location_latitude,
+    location_longitude,
+    saved_pets_count,
   }
 
-  res.send(updatedUser);
+  // If user wants to remove their profile picture
+  if (remove_picture) {
+    const imageName = await User.getProfilePicture(userToModify)
+    // Delete image from S3
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: imageName,
+    });
+    await s3.send(command);
+    // Update information for database
+    userInformation.profile_pic = null
+    userInformation.profile_pic_name = null
+  } else if (pictureData) {
+    userInformation.profile_pic = pictureData.location
+    userInformation.profile_pic_name = pictureData.key
+  }
+
+  const updatedUser = await User.update(userToModify, userInformation);
+  return res.send(updatedUser)
 };
 
 exports.deleteUser = async (req, res) => {

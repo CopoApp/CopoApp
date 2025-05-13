@@ -2,7 +2,6 @@ import { useContext } from "react";
 import CurrentUserContext from "../contexts/current-user-context";
 import { NavLink, useParams } from "react-router-dom";
 
-
 const Navbar = () => {
   // if (!userId) return <></>;
   const { currentUser } = useContext(CurrentUserContext);
@@ -33,7 +32,7 @@ const Navbar = () => {
       </NavLink>
 
       <NavLink
-        to={ currentUser ?`/users/${currentUser.id}` : ``}
+        to={currentUser ? `/users/${currentUser.id}` : ``}
         className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
       >
         <span className="nav-icon">👤</span>

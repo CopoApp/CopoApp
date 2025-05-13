@@ -4,7 +4,6 @@ import "../styles/index.css";
 export default function Home() {
   return (
     <div className="home-container">
-      <Navbar />
       <h1 className="copo-title">Welcome to Copo</h1>
       <div className="copo-sections">
         <div className="copo-section">
