@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Missing useState import
+import React, { useState } from "react";
 
 export default function ReportCard({ reportInformation }) {
   const { id, author, status, pet_name, last_seen_location, content, photo } = reportInformation;
@@ -21,13 +21,13 @@ export default function ReportCard({ reportInformation }) {
       <div className="status-container">
         <p className="status">{status}</p>
       </div>
-      <div className="image-container">
+      {/*<div className="image-container">
         {photo ? (
-          <img src={photo} alt={pet_name} className="pet-image" />
+          <img src={''} alt={''} className="pet-image" />
         ) : (
           <div className="placeholder-image">No Image</div>
         )}
-      </div>
+      </div>*/}
       <h3 className="pet-name">{pet_name}</h3>
       <p className="pet-location">Last Seen: {last_seen_location}</p>
       <p className="pet-description">{content}</p>
