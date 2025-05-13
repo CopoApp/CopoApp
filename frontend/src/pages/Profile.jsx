@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CurrentUserContext from "../contexts/current-user-context";
 import { getUser, updateUserProfile } from "../adapters/user-adapter";
@@ -9,6 +9,7 @@ import user_placeholder from './Assets/user_placeholder.svg'
 
 export default function EditProfile() {
   const navigate = useNavigate();
+  const pfpRef = useRef('')
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
   const { id } = useParams();
   const isCurrentUserProfile = currentUser?.id === Number(id);
@@ -68,9 +69,9 @@ export default function EditProfile() {
 
     const img = files?.[0]
 
-    
-
     if (type === "file" && img) {
+      // Delete remove_picture property in case user removed picture and added one again
+      pfpRef.current = ''
       setSelectedImage(URL.createObjectURL(img))
       setFormData((prev) => ({ ...prev, profile_pic: img }));
     } else {
@@ -81,8 +82,12 @@ export default function EditProfile() {
   const handleProfilePicRemoval = () => {
     // Update profile picture preview
     setSelectedImage(user_placeholder)
-    // Set profile_pic to null for database
-    setFormData((prev) => ({ ...prev, remove_picture: true }));
+    // Update formData
+    setFormData((prev) => ({ ...prev, profile_pic: '' }));
+    // If user already has a profile picture it sets the pfpRef to true to trigger the old picture deletion in the backend
+    if (userProfile.profile_pic) {
+      pfpRef.current = true
+    } 
   }
 
   const handleSaveChanges = async (e) => {
@@ -101,11 +106,14 @@ export default function EditProfile() {
       setError(null);
       const [updatedUserProfile, updateError] = await updateUserProfile(
         id,
-        payload
+        payload, 
+        pfpRef.current
       );
       if (error) throw new Error(updateError);
       setUserProfile(updatedUserProfile, updateError);
       setIsEditing(false);
+      // Reset the pfpRef
+      pfpRef.current = ''
     } catch (err) {
       setError("Failed to save profile changes. Please try again.");
     }
@@ -158,6 +166,7 @@ export default function EditProfile() {
                 type="button"
                 className="btn btn-danger"
                 onClick={handleProfilePicRemoval}
+                style={{display: formData.profile_pic ? 'block' : 'none'}}
               >
                 Remove Photo
               </button>
