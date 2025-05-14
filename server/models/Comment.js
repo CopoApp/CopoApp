@@ -14,7 +14,7 @@ class Comment {
     }
   }
 
-  static async create(commentInformation) {
+  static async create(commentInformation, images) {
     const {
       user_id,
       post_id,
@@ -25,7 +25,8 @@ class Comment {
     } = commentInformation;
 
     try {
-      const result = await knex("comments").insert(
+      // 1st create post
+      const comment = await knex("comments").insert(
         {
           user_id,
           post_id,
@@ -36,10 +37,35 @@ class Comment {
         },
         // Additional "*" argument to tell insert function to return all the data. Shortahand for .returning()
         "*"
-      );
+      )
+
+      const createdCommentId = comment[0]?.id
+
+      const createdImages = []
+
+      if (images?.length > 0){
+        for (const image of images) {
+          const newImage = await knex("comment_images").insert(
+            {
+              comment_id: createdCommentId,
+              img_name: image.img_name,
+              img_src: image.img_src,
+            },
+            '*'
+          )
+          createdImages.push(newImage[0])
+        }
+      }
+      
+
+      const result = {...comment[0], images: images}
+      
+      // 2. Use the created comment information to attach the images
+
       if (!result || result.length === 0)
         throw new Error(`Comment could not be inserted. Please try again.`);
-      return result[0];
+
+      return result
     } catch (error) {
       throw error;
     }

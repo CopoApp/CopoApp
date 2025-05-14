@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import "../styles/index.css";
 import Navbar from '../components/Navbar';
 import Comment from '../components/Comment'
+import NewComment from "../components/NewComment";
 
 export default function ReportDetails() {
     const { id } = useParams();
@@ -80,7 +81,7 @@ export default function ReportDetails() {
           <p><strong>Contact Phone:</strong> {report.contact_phone_number}</p>
           <p><strong>Description:</strong> {report.content}</p>
         </div>
-          <Comment />
+        <Comment />
      <Navbar/>
     </>
       );

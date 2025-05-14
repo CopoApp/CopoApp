@@ -10,7 +10,7 @@ export default function ReportCard({ reportInformation }) {
     pet_name,
     last_seen_location,
     content,
-    cover_img_src,
+    images
   } = reportInformation;
 
   return (
@@ -20,8 +20,8 @@ export default function ReportCard({ reportInformation }) {
         <p className="status">{status}</p>
       </div>
       <div className="image-container">
-        {cover_img_src ? (
-          <img src={cover_img_src} alt={"Pet image"} className="pet-image" />
+        {images?.length > 0 ? (
+          <img src={images[0].img_src} alt={"Pet image"} className="pet-image" />
         ) : (
           <div className="placeholder-image">No Image</div>
         )}

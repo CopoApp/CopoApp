@@ -8,21 +8,26 @@ Creates a new post and returns its information
 exports.createComment = async (req, res) => {
   const userId = req.session.userId;
   const postId = req.params.id;
-  try {
-    const comment = await Comment.create({
-      // request body must be spread first in case a request tries to manipulate user or post id values
-      ...req.body,
-      // below user and post id replace any other potential id values
-      user_id: userId,
-      post_id: postId,
-    });
-    res.send(comment);
-  } catch (error) {
-    console.error(`An error occured while creating the comment`);
-    res.status(404).send({
-      message: error,
-    });
-  }
+  const { content } = req.body
+  const images = []
+  
+  req.files.forEach((file) => {
+    images.push({
+      img_name: file.key,
+      img_src: file.location
+    })
+  })
+
+  const result = await Comment.create({
+    user_id: userId,
+    post_id: postId,
+    content,
+    // location_embed,
+    // location_embed_latitude,
+    // location_embed_longitude,
+  }, images)
+
+  res.send(result)
 };
 
 /* 

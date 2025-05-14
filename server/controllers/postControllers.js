@@ -26,30 +26,34 @@ exports.createPost = async (req, res) => {
     last_seen_location_longitude,
   } = req.body;
 
-  try {
-    const post = await Post.create({
-      userId,
-      status,
-      title,
-      content,
-      contact_email,
-      contact_phone_number,
-      pet_name,
-      pet_height,
-      pet_weight,
-      pet_breed,
-      pet_color,
-      last_seen_location,
-      last_seen_location_latitude,
-      last_seen_location_longitude,
-    });
-    res.send(post);
-  } catch (error) {
-    console.error(`An error occured while creating the post: ${error}`);
-    res.status(400).send({
-      message: error,
-    });
-  }
+  const images = []
+
+  req.files.forEach((file) => {
+    images.push({
+      img_name: file.key,
+      img_src: file.location
+    })
+  })
+
+  const result = await Post.create({
+    userId,
+    status,
+    title,
+    content,
+    contact_email,
+    contact_phone_number,
+    pet_name,
+    pet_height,
+    pet_weight,
+    pet_breed,
+    pet_color,
+    last_seen_location,
+    last_seen_location_latitude,
+    last_seen_location_longitude,
+  }, images)
+
+
+  res.send(result)
 };
 
 /* 
@@ -174,6 +178,7 @@ exports.getUserPosts = async (req, res) => {
   const userId = req.session.userId;
   try {
     const posts = await Post.getUserPosts(userId);
+    console.log(posts)
     res.send(posts);
   } catch (error) {
     res.send({ message: error.message });

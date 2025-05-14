@@ -9,8 +9,8 @@ import {
 
 const baseUrl = "/api/posts";
 
-export const createPost = async (postInformation) => {
-  return fetchHandler(baseUrl, getFilePostOptions(postInformation));
+export const createComment = async (postId, commentInformation) => {
+  return fetchHandler(`${baseUrl}/${postId}/comments`, getFilePostOptions(commentInformation));
 };
 
 export const attachPostImages = async (postId, imageInformation) => {

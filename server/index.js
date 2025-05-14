@@ -52,7 +52,7 @@ app.delete("/api/users/:id", checkAuthentication, userControllers.deleteUser); /
 ///////////////////////////////
 
 // These actions require users to be logged in (authentication)
-app.post("/api/posts", checkAuthentication, postControllers.createPost); // Creates a new post and sends its data back to the client
+app.post("/api/posts", checkAuthentication, upload.array('files', 5), postControllers.createPost); // Creates a new post and sends its data back to the client
 
 app.get("/api/posts", checkAuthentication, postControllers.listPosts); // Sends array of all posts
 app.get("/api/posts/:id", checkAuthentication, postControllers.getPost); // Sends specific user post
@@ -100,6 +100,7 @@ app.get(
 app.post(
   "/api/posts/:id/comments",
   checkAuthentication,
+  upload.array('files', 5),
   commentControllers.createComment
 ); // Create comments on a post
 app.patch(

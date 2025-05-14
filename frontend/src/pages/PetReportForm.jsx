@@ -38,34 +38,24 @@ export default function PetReportForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     // User cannot attach more than five files
     if (fileData.length > 5) return;
 
-    // The attachPostImages function depends on the post id. The post promise must be fulfilled before trying to create the image
-    const postPromise = createPost(formData);
+    const data = new FormData();
 
-    postPromise
-      .then((post) => {
-        const [postData, error] = post;
+    for (let item in formData ){
+      data.append(item, formData[item])
+    }
 
-        // Only try to attach post images if there are any
-        if (fileData.length === 0) return;
+    fileData.forEach((file) => data.append('files', file))
 
-        // Create new formdata object for the images
-        const imageFormData = new FormData();
-
-        // Attach all of the files to the formdata before sending to backend
-        fileData.forEach((file) => imageFormData.append("files", file));
-        return attachPostImages(postData.id, imageFormData);
-      })
-      .then(() => {
-        // Yes I am using an emoji
-        console.log(`Post created sucessfully! 🎉`);
-        navigate("/feed");
-      })
-      .catch((error) => {
-        console.error(`Error while creating post:`, error);
-      });
+    const [post, error] = await createPost(data)
+    
+    if (post) {
+      console.log(`Post created sucessfully! 🎉`);
+      navigate("/feed");
+    }
   };
 
   const handleRemoveImage = (event) => {

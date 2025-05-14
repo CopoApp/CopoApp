@@ -15,6 +15,7 @@ export default function MyReports() {
       if (currentUser === null) return console.log(`No user session detected`);
       console.log(`User session detected!`);
       const [posts, error] = await getUserPosts(currentUser.id);
+      console.log(posts)
       if (error) setError(error);
       else if (posts) setPosts(posts);
     };

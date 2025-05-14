@@ -1,7 +1,7 @@
 const knex = require("../db/knex");
 
 class Post {
-  static async create(postInformation) {
+  static async create(postInformation, images) {
     const {
       userId,
       status,
@@ -18,42 +18,88 @@ class Post {
       last_seen_location_latitude,
       last_seen_location_longitude,
     } = postInformation;
+    
+    try {
+      // 1st create post
+      const post = await knex("posts").insert(
+        {
+          author_user_id: userId,
+          status,
+          title,
+          content,
+          contact_email,
+          contact_phone_number,
+          pet_name,
+          pet_height,
+          pet_weight,
+          pet_breed,
+          pet_color,
+          last_seen_location,
+          last_seen_location_latitude,
+          last_seen_location_longitude,
+        },
+        // Additional "*" argument to tell insert function to return all the data. Shortahand for .returning()
+        "*"
+      )
 
-    const result = await knex("posts")
-      .insert({
-        author_user_id: userId,
-        status,
-        title,
-        content,
-        contact_email,
-        contact_phone_number,
-        pet_name,
-        pet_height,
-        pet_weight,
-        pet_breed,
-        pet_color,
-        last_seen_location,
-        last_seen_location_latitude,
-        last_seen_location_longitude,
-      })
-      .returning("*");
+      const createdPostId = post[0]?.id
 
-    const rawUserData = result[0];
-    return rawUserData;
+      const createdImages = []
+
+      if (images?.length > 0){
+        for (const image of images) {
+          const newImage = await knex("post_images").insert(
+            {
+              post_id: createdPostId,
+              img_name: image.img_name,
+              img_src: image.img_src,
+            },
+            '*'
+          )
+          createdImages.push(newImage[0])
+        }
+      }
+      
+
+      const result = {...post[0], images: images}
+      
+      // 2. Use the created comment information to attach the images
+
+      if (!result || result.length === 0)
+        throw new Error(`Comment could not be inserted. Please try again.`);
+
+      return result
+    } catch (error) {
+      throw error;
+    }
   }
 
   // Fetches ALL posts from the posts table
   static async list() {
     try {
       // Selects all of the post information and only the username from the users table by joining on the author_user_id
-      const result = await knex
+      const images = await knex.select('*').from('post_images');
+
+      const posts = await knex
         .select("posts.*", "users.username as author")
         .from("posts")
         .leftJoin("users", "author_user_id", "users.id")
         .returning("*");
+
+      const result = posts.map((post) => {
+        const postImages = []
+        for (let image of images) {
+          if (image.post_id === post.id) {
+            postImages.push(image)
+          }
+        }
+        return {...post, 'images': postImages}
+      })
+
       if (!result || result.length === 0)
         throw new Error(`Query returned no data`);
-      return result;
+
+      return result
     } catch (error) {
       throw error;
     }
@@ -75,8 +121,9 @@ class Post {
 
   static async findPost(id) {
     try {
-      const result = await knex("posts").where("id", id);
-      return result[0];
+      const post = await knex("posts").where("id", id);
+      const images = await await knex("post_images").where("post_id", id);
+      return { ...post[0], 'images': images }
     } catch (error) {
       throw error;
     }
@@ -148,20 +195,24 @@ class Post {
   }
 
   static async getUserPosts(userId) {
-    try {
-      const result = await knex
-        .select("posts.*", "users.username as author")
-        .from("posts")
-        .leftJoin("users", "posts.author_user_id", "users.id")
-        .where("posts.author_user_id", userId);
+      // Selects all of the post information and only the username from the users table by joining on the author_user_id
+      const posts = await knex
+      .select("posts.*", "users.username as author")
+      .from("posts")
+      .leftJoin("users", "posts.author_user_id", "users.id")
+      .where("posts.author_user_id", userId);
 
-      if (!result) throw new Error(`Query did not return any data`);
-      if (result.length === 0) throw new Error(`User has no posts`);
+      const result = []
 
-      return result;
-    } catch (error) {
-      throw error;
-    }
+      for (let post of posts) {
+        const postImages = await knex.select('*').from('post_images').where('post_id', post.id);
+        result.push({...post, 'images': postImages})
+      }
+
+      if (!result || result.length === 0)
+        throw new Error(`Query returned no data`);
+
+      return result
   }
 
   static async attachImage(imageInformation) {
