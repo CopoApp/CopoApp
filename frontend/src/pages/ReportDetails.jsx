@@ -1,16 +1,19 @@
 import { getPostDetails, getPostImages } from "../adapters/post-adapter";
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import "../styles/index.css";
 import Navbar from '../components/Navbar';
 import Comment from '../components/Comment'
+import CurrentUserContext from "../contexts/current-user-context";
 
 export default function ReportDetails() {
+    const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
     const { id } = useParams();
     const [report, setReport] = useState(null);
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isEditing, setIsEditing] = useState(false)
 
     useEffect(() => {
         const loadReportDetails = async () => {
@@ -20,6 +23,7 @@ export default function ReportDetails() {
                     throw new Error('Failed to fetch report details')
                 }
                 setReport(reportInfo)
+                if (currentUser.id !== reportInfo.author_user_id) setIsEditing(false)
                 console.log(`Post id details - ${reportInfo.id} fetched successfully`)
             } catch (error) {
                 console.error("Error fetching report:", error)
@@ -38,15 +42,22 @@ export default function ReportDetails() {
         loadReportDetails();
     }, [id]);
   
-
+    
+    // console.log(report.id)
 
     if (loading) return <p>Loading Report Details...</p>
     if (error) return <p>Error: {error}</p>
     if (!report) return <p>No report found.</p>
+    
 
     return (
     <>
         <div className="report-details">
+            {currentUser.id !== report.author_user_id ? (
+            <></>
+            ) : (
+                <button type="submit"> Edit Post </button>
+            )}
           <h2>{report.pet_name}</h2>
 
           {/* <ul>{report.img_src}</ul> */}
