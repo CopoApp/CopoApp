@@ -14,9 +14,8 @@ export default function Home() {
           <h2 className="copo-oval">Meet the Team</h2>
           <ul>
             <li>Azim: Project Manager, Scrum Master, and Full-Stack Developer</li>
-            <li>Jordi: Database Administrator and Full-Stack Developer</li>
-            <li>Mario: UI/UX Designer and Front-End Developer</li>
-            <li>Josue: Full-Stack Developer</li>
+            <li>Jordi: Database Administrator, CSS Designer, and Full-Stack Developer</li>
+            <li>Mario: Designer and Full-Stack Developer</li>
           </ul>
         </div>
         <div className="copo-section">
