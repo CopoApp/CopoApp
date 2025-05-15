@@ -10,10 +10,10 @@ because pets are not just animals they are family
 
 ## Team
 
-  - Azim: **Project Manager, Scrum Master, Developer**
-  - Jordi: **Developer**
-  - Mario: **Developer**
-  - Josue: **Developer**
+  - Azim: **Project Manager, Scrum Master, Full-Stack Developer**
+  - Jordi: **UX/UI Designer, Full-Stack Developer**
+  - Mario: **Designer, Full-Stack Developer**
+
 
 ## Table of Contents
 - [Getting Started](#getting-started)
