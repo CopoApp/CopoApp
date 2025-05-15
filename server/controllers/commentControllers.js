@@ -8,21 +8,26 @@ Creates a new post and returns its information
 exports.createComment = async (req, res) => {
   const userId = req.session.userId;
   const postId = req.params.id;
-  try {
-    const comment = await Comment.create({
-      // request body must be spread first in case a request tries to manipulate user or post id values
-      ...req.body,
-      // below user and post id replace any other potential id values
-      user_id: userId,
-      post_id: postId,
-    });
-    res.send(comment);
-  } catch (error) {
-    console.error(`An error occured while creating the comment`);
-    res.status(404).send({
-      message: error,
-    });
-  }
+  const { content } = req.body
+  const images = []
+  
+  req.files?.forEach((file) => {
+    images.push({
+      img_name: file.key,
+      img_src: file.location
+    })
+  })
+
+  const result = await Comment.create({
+    user_id: userId,
+    post_id: postId,
+    content,
+    // location_embed,
+    // location_embed_latitude,
+    // location_embed_longitude,
+  }, images)
+
+  res.send(result)
 };
 
 /* 
@@ -30,7 +35,7 @@ GET /api/posts
 Returns an array of all posts in the database
 */
 exports.listComments = async (req, res) => {
-  const postId = req.params.id;
+  const postId = Number(req.params.id);
   try {
     const posts = await Comment.list(postId);
     res.send(posts);
@@ -47,6 +52,16 @@ exports.updateComment = async (req, res) => {
   const userId = req.session.userId;
   const commentId = req.params.id;
 
+  const {
+    content,
+    location_embed,
+    location_embed_latitude,
+    location_embed_longitude,
+    deletedImages
+  } = req.body;
+
+  const addedImages = req.files?.map((file) => {return { img_name: file.key, img_src : file.location }})
+
   try {
     // A user is only authorized to modify their own comment information
     const isUserAuthorized = await Comment.verifyCommentOwnership(
@@ -59,9 +74,12 @@ exports.updateComment = async (req, res) => {
     }
 
     const updatedComment = await Comment.updateComment({
-      ...req.body,
+      content,
+      location_embed,
+      location_embed_latitude,
+      location_embed_longitude,
       commentId,
-    });
+    }, addedImages, deletedImages);
 
     res.send(updatedComment);
   } catch (error) {

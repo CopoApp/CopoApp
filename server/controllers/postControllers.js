@@ -26,30 +26,34 @@ exports.createPost = async (req, res) => {
     last_seen_location_longitude,
   } = req.body;
 
-  try {
-    const post = await Post.create({
-      userId,
-      status,
-      title,
-      content,
-      contact_email,
-      contact_phone_number,
-      pet_name,
-      pet_height,
-      pet_weight,
-      pet_breed,
-      pet_color,
-      last_seen_location,
-      last_seen_location_latitude,
-      last_seen_location_longitude,
-    });
-    res.send(post);
-  } catch (error) {
-    console.error(`An error occured while creating the post: ${error}`);
-    res.status(400).send({
-      message: error,
-    });
-  }
+  const images = []
+
+  req.files.forEach((file) => {
+    images.push({
+      img_name: file.key,
+      img_src: file.location
+    })
+  })
+
+  const result = await Post.create({
+    userId,
+    status,
+    title,
+    content,
+    contact_email,
+    contact_phone_number,
+    pet_name,
+    pet_height,
+    pet_weight,
+    pet_breed,
+    pet_color,
+    last_seen_location,
+    last_seen_location_latitude,
+    last_seen_location_longitude,
+  }, images)
+
+
+  res.send(result)
 };
 
 /* 
@@ -84,6 +88,7 @@ PATCH /api/posts/:id
 Updates a single post (if found) and only if authorized
 */
 exports.updatePost = async (req, res) => {
+
   const userId = req.session.userId;
   const postId = req.params.id;
   const {
@@ -102,13 +107,15 @@ exports.updatePost = async (req, res) => {
     last_seen_location_longitude,
   } = req.body;
 
+  const addedImages = req.files?.map((file) => {return { img_name: file?.key, img_src : file?.location }})
+
+
   try {
     // A user is only authorized to modify their own post information
-    const isUserAuthor = await Post.verifyPostOwnerShip(postId, userId);
+    const isUserAuthor = await Post.verifyPostOwnership(postId, userId);
 
-    if (!isUserAuthor) {
-      return res.status(403).send({ message: "Unauthorized." });
-    }
+    if (!isUserAuthor) return res.status(403).send({ message: "Unauthorized." });
+    
 
     const updatedPost = await Post.updatePost({
       postId,
@@ -125,7 +132,7 @@ exports.updatePost = async (req, res) => {
       last_seen_location,
       last_seen_location_latitude,
       last_seen_location_longitude,
-    });
+    }, addedImages);
 
     res.send(updatedPost);
   } catch (error) {
@@ -148,20 +155,6 @@ exports.deletePost = async (req, res) => {
     return res.status(403).send({ message: "Unauthorized." });
   }
 
-  // Delete post images from S3
-
-  // 1. Get list of posts from the DB
-  const postImages = await Post.getPostImages(postId);
-
-  // 2. Delete every image that belongs to the post in the S3 Bucket
-  for (let img of postImages) {
-    const command = new DeleteObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME,
-      Key: img.img_name,
-    });
-    await s3.send(command);
-  }
-
   // Delete post from the database
   const deletedPost = await Post.deletePost(postId);
 
@@ -174,8 +167,44 @@ exports.getUserPosts = async (req, res) => {
   const userId = req.session.userId;
   try {
     const posts = await Post.getUserPosts(userId);
+    console.log(posts)
     res.send(posts);
   } catch (error) {
     res.send({ message: error.message });
   }
+};
+
+/*
+DELETE api/posts/:id
+Removes an image(s) from S3 and the Database
+*/
+exports.deleteImages = async (req, res) => {
+  const userId = req.session.userId;
+  const postId = req.params.id;
+  const images = req.body;
+  const deletedImages = [];
+
+  // Verify user owns the post
+  const isUserAuthor = await Post.verifyPostOwnership(postId, userId);
+  if (!isUserAuthor) {
+    return res.status(403).send({ message: "Unauthorized." });
+  }
+
+  // Remove images from S3
+  // Delete every image that user request to delete
+  for (let img of images) {
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: img.img_name,
+    });
+    await s3.send(command);
+    // Delete image(s) from the database
+    const deletedPost = await Post.deleteImage(img.id);
+    deletedImages.push(deletedPost);
+  }
+
+  res.status(200).send({
+    message: "Images sucessfully deleted",
+    deletedImages,
+  });
 };
