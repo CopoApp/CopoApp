@@ -53,3 +53,9 @@ export const deletePostImages = async (id, userPostInformation) => {
     deleteOptions(userPostInformation)
   )
 }
+
+export const deletePost = async (id, postInfo) => {
+  return await fetchHandler(`${baseUrl}/${id}`,
+    deleteOptions(postInfo)
+  )
+}

@@ -1,6 +1,7 @@
-import { getPostDetails, getPostImages,updatePostDetails, deletePostImages } from "../adapters/post-adapter";
+import { getPostDetails, getPostImages,updatePostDetails, deletePostImages, deletePost } from "../adapters/post-adapter";
 import { useParams } from 'react-router-dom'
 import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from "react-router-dom";
 import "../styles/index.css";
 import Navbar from '../components/Navbar';
 import Comment from '../components/Comment'
@@ -20,11 +21,11 @@ export default function ReportDetails() {
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState({});
     const [fileData, setFileData] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadReportDetails = async () => {
             const [reportDetails, error] = await getPostDetails(id);
-            // console.log(reportDetails)
             if (error) return
             setReport(reportDetails)
         }
@@ -118,6 +119,15 @@ export default function ReportDetails() {
     if (error) return <p>Error: {error}</p>
     if (!report) return <p>No report found.</p>
     
+    const handleDeletePost = async (event) => {
+        event.preventDefault();
+
+        const [res, error] = await deletePost(id)
+        if (error) return 
+        setReport(res)
+        setIsEditing(false)
+        navigate("/reports-log");
+    }
     
 
     return (
@@ -127,6 +137,11 @@ export default function ReportDetails() {
             <></>
             ) : (
                 <button type="button" onClick={handleEdit}>{ isEditing ? 'Exit Editing' : 'Edit Post'}</button>
+            )}
+            {isEditing ? (
+                <button type="button" onClick={handleDeletePost}>Delete Post</button>
+            ): (
+                <></>
             )}
 
           <h2 style={{display: isEditing ? 'none' : 'block'}} >{report.pet_name}</h2>
