@@ -11,7 +11,7 @@ exports.createComment = async (req, res) => {
   const { content } = req.body
   const images = []
   
-  req.files.forEach((file) => {
+  req.files?.forEach((file) => {
     images.push({
       img_name: file.key,
       img_src: file.location
@@ -35,7 +35,7 @@ GET /api/posts
 Returns an array of all posts in the database
 */
 exports.listComments = async (req, res) => {
-  const postId = req.params.id;
+  const postId = Number(req.params.id);
   try {
     const posts = await Comment.list(postId);
     res.send(posts);
@@ -52,6 +52,16 @@ exports.updateComment = async (req, res) => {
   const userId = req.session.userId;
   const commentId = req.params.id;
 
+  const {
+    content,
+    location_embed,
+    location_embed_latitude,
+    location_embed_longitude,
+    deletedImages
+  } = req.body;
+
+  const addedImages = req.files?.map((file) => {return { img_name: file.key, img_src : file.location }})
+
   try {
     // A user is only authorized to modify their own comment information
     const isUserAuthorized = await Comment.verifyCommentOwnership(
@@ -64,9 +74,12 @@ exports.updateComment = async (req, res) => {
     }
 
     const updatedComment = await Comment.updateComment({
-      ...req.body,
+      content,
+      location_embed,
+      location_embed_latitude,
+      location_embed_longitude,
       commentId,
-    });
+    }, addedImages, deletedImages);
 
     res.send(updatedComment);
   } catch (error) {

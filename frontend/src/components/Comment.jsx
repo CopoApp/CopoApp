@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react"
 import { getUser } from "../adapters/user-adapter"
+import { getPostComments } from "../adapters/comment-adapter";
 import CurrentUserContext from "../contexts/current-user-context";
 import FileAttachmentButton from "./FileAttachmentButton";
 import { createComment } from "../adapters/comment-adapter";
@@ -19,14 +20,22 @@ export default Comment = () => {
 
     const [newComment, setNewComment] = useState(null)
 
+    const [postComment, setPostComments] = useState([])
+
     useEffect(() => {
         const loadUserInformation = async () => {
             const [userInformation, error] = await getUser(currentUser.id)
             if (error) return
             setUserInformation(userInformation)
         }
+        const loadPostComments = async () => {
+            const [comments, error] = await getPostComments(id)
+            if (error) return
+            setPostComments(comments)
+        }
+        loadPostComments();
         loadUserInformation();
-    }, [currentUser])
+    }, [currentUser, newComment])
     
     const handleChange = (event) => {
         const { type, files } = event.target;
@@ -68,7 +77,7 @@ export default Comment = () => {
     return <form onSubmit={handleSubmit}>
         <img src={userInformation.profile_pic} alt="profile picture" style={{height: "100px"}}
         />
-        <input type="text" onChange={handleChange} name="content"/>
+        <input type="text" onChange={handleChange} name="content" value={content}/>
         <img src="" alt="" />
         <FileAttachmentButton handleChange={handleChange}/>
         <button type="submit" name="images">Submit</button>
@@ -83,18 +92,18 @@ export default Comment = () => {
 
             }
         </ul>
-        <ul>
-            <li>
-                {newComment?.content}
-            </li>
-            {
-                newComment ? newComment.images.map((source, index) => {
-                    return <li key={index}>
-                        <img src={source.img_src} alt="Attached Image" style={{height: "100px"}}/>
-                    </li>
+        <ul>             
+             {
+                postComment.length > 0 && postComment.map((source, index) => {
+                    return<li key={index}>
+                        <p>{source?.content}</p>
+                     {
+                        source.images.length > 0 && source.images.map(img => {
+                            return <img src={img.img_src} alt="Attached Image" style={{height: "100px"}}/>
+                        })
+                     }
+                     </li>
                 })
-                : 
-                ''
             }
         </ul>
     </form>

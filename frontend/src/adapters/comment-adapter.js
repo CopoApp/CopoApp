@@ -13,15 +13,8 @@ export const createComment = async (postId, commentInformation) => {
   return fetchHandler(`${baseUrl}/${postId}/comments`, getFilePostOptions(commentInformation));
 };
 
-export const attachPostImages = async (postId, imageInformation) => {
-  return fetchHandler(
-    `${baseUrl}/${postId}/images`,
-    getFilePostOptions(imageInformation)
-  );
-};
-
-export const getUserPostImages = async (postId) => {
-  return await fetchHandler(`${baseUrl}/${postId}/images`);
+export const getPostComments = async (postId) => {
+  return await fetchHandler(`${baseUrl}/${postId}/comments`);
 };
 
 export const getAllPosts = async () => {

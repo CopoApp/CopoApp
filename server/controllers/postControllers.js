@@ -104,15 +104,17 @@ exports.updatePost = async (req, res) => {
     last_seen_location,
     last_seen_location_latitude,
     last_seen_location_longitude,
+    deletedImages // Array 
   } = req.body;
 
+  const addedImages = req.files?.map((file) => {return { img_name: file.key, img_src : file.location }})
+  
   try {
     // A user is only authorized to modify their own post information
-    const isUserAuthor = await Post.verifyPostOwnerShip(postId, userId);
+    const isUserAuthor = await Post.verifyPostOwnership(postId, userId);
 
-    if (!isUserAuthor) {
-      return res.status(403).send({ message: "Unauthorized." });
-    }
+    if (!isUserAuthor) return res.status(403).send({ message: "Unauthorized." });
+    
 
     const updatedPost = await Post.updatePost({
       postId,
@@ -129,7 +131,7 @@ exports.updatePost = async (req, res) => {
       last_seen_location,
       last_seen_location_latitude,
       last_seen_location_longitude,
-    });
+    }, deletedImages, addedImages);
 
     res.send(updatedPost);
   } catch (error) {
@@ -150,20 +152,6 @@ exports.deletePost = async (req, res) => {
   const isUserAuthor = await Post.verifyPostOwnership(postId, userId);
   if (!isUserAuthor) {
     return res.status(403).send({ message: "Unauthorized." });
-  }
-
-  // Delete post images from S3
-
-  // 1. Get list of posts from the DB
-  const postImages = await Post.getPostImages(postId);
-
-  // 2. Delete every image that belongs to the post in the S3 Bucket
-  for (let img of postImages) {
-    const command = new DeleteObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME,
-      Key: img.img_name,
-    });
-    await s3.send(command);
   }
 
   // Delete post from the database

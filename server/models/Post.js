@@ -1,4 +1,7 @@
 const knex = require("../db/knex");
+const { s3 } = require("../awsConfig");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
+require("dotenv").config();
 
 class Post {
   static async create(postInformation, images) {
@@ -137,7 +140,7 @@ class Post {
     return result.length > 0;
   }
 
-  static async updatePost(postInformation) {
+  static async updatePost(postInformation, deletedImages, addedImages) {
     const {
       postId,
       status,
@@ -156,7 +159,8 @@ class Post {
     } = postInformation;
 
     try {
-      const result = await knex("posts")
+      // Update post
+      const updatedPost = await knex("posts")
         .where("id", postId)
         .update({
           status,
@@ -174,7 +178,35 @@ class Post {
           last_seen_location_longitude,
         })
         .returning("*");
-      return result[0];
+
+      // Delete Images 
+        for (let image of deletedImages) {
+          // delete from S3
+          const command = new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: image.img_name,
+          });
+          await s3.send(command);
+
+          // Delete from database
+          await knex("post_images")
+          .where("id", image.id)
+          .del();
+        }
+      
+      // Update Images in the database
+      for (let image of addedImages) {
+        await knex("post_images")
+        .insert({
+          post_id: postId,
+          img_name: image.img_name,
+          img_src: image.img_src
+        })
+      }
+
+      const updatedPostImages = await knex.select('*').from('post_images').where('post_id', postId);
+
+      return { ...updatedPost, 'images': updatedPostImages }
     } catch (error) {
       throw error;
     }
@@ -182,11 +214,24 @@ class Post {
 
   static async deletePost(id) {
     try {
+        // 1. Get list of posts from the DB
+      const postImages = await Post.getPostImages(id);
+
+      // 2. Delete every image that belongs to the post in the S3 Bucket
+      for (let img of postImages) {
+        const command = new DeleteObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: img.img_name,
+        });
+        await s3.send(command);
+      }
+
       // Deletes post and post_image
       const deletedPost = await knex("posts")
         .where("id", id)
         .returning("*")
         .del();
+      
       return deletedPost[0];
     } catch (error) {
       console.error(error);
