@@ -205,15 +205,29 @@ class Post {
     }
   }
 
-  static async save(user_id, post_id) {
-    const query = `INSERT INTO saved_posts (user_id, post_id)
-    VALUES (?, ?) RETURNING *`;
+  static async saveBookmark(user_id, post_id) {
+    const bookmark = await knex("saved_posts")
+    .insert({ user_id , post_id })
+    .returning("*");
 
-    const result = await knex.raw(query, [user_id, post_id]);
-
-    const rawUserData = result.rows[0];
-    return rawUserData;
+    return bookmark[0];
   }
+
+static async deleteBookmark(user_id, post_id) {
+  const deleted = await knex("saved_posts")
+    .where( 'post_id', post_id)
+    .andWhere('user_id', user_id)
+    .del();
+
+    return deleted
+}
+
+// Get all bookmarks for a user
+static async getBookmarks(user_id) {
+  return await knex("saved_posts")
+    .where( "user_id",  user_id )
+    .returning('*')
+}
 
   static async enableAlerts(user_id, post_id) {
     const query = `INSERT INTO post_alerts (user_id, post_id)

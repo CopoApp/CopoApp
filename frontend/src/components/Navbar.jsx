@@ -32,6 +32,14 @@ const Navbar = () => {
       </NavLink>
 
       <NavLink
+        to="/bookmarks"
+        className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+      >
+        <span className="nav-icon">🔖</span>
+        <span className="nav-text">Bookmarks</span>
+      </NavLink>
+
+      <NavLink
         to={currentUser ? `/users/${currentUser.id}` : ``}
         className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
       >

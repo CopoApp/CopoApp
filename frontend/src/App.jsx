@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import PetReportForm from "./pages/PetReportForm";
 import Test from "./pages/Test";
 import ReportDetails from "./pages/ReportDetails";
+import SavedReports from "./pages/SavedReports"
 
 export default function App() {
   const { setCurrentUser } = useContext(UserContext);
@@ -45,6 +46,8 @@ export default function App() {
           <Route path="/report" element={<PetReportForm />} />
           <Route path="/posts/:id" element={<ReportDetails/>}/>
           <Route path="/users/:id" element={<Profile />} />
+          <Route path="/bookmarks" element={<SavedReports />} />
+
 
           {/* Dev Testing */}
           <Route path="/test" element={<Test />} />

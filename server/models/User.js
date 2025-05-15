@@ -78,6 +78,7 @@ class User {
   // to format the user and returns or returns null if not.
   static async find(id) {
     const result = await knex("users").where("id", id).returning("*");
+    console.log(result)
     return result ? new User(result[0]) : null;
   }
 
