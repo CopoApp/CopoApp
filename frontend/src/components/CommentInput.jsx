@@ -16,7 +16,7 @@ export default function CommentInput({ handleUpdate }) {
 
   useEffect(() => {
     const loadUserInformation = async () => {
-      const [userInformation, error] = await getUser(currentUser?.id);
+      const [userInformation, error] = await getUser(currentUser.id);
       if (error) return;
       setUserInformation(userInformation);
     };

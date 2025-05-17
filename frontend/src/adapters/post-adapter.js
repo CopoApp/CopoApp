@@ -6,20 +6,18 @@ import {
   getFilePostOptions,
   getFilePatchOptions,
   getPostOptions,
-  deleteOptions
-} from "../utils/fetchingUtils";
+  deleteOptions,
+  getDeleteOptions,
+} from '../utils/fetchingUtils';
 
-const baseUrl = "/api/posts";
+const baseUrl = '/api/posts';
 
 export const createPost = async (postInformation) => {
   return fetchHandler(baseUrl, getFilePostOptions(postInformation));
 };
 
 export const attachPostImages = async (postId, imageInformation) => {
-  return fetchHandler(
-    `${baseUrl}/${postId}/images`,
-    getFilePostOptions(imageInformation)
-  );
+  return fetchHandler(`${baseUrl}/${postId}/images`, getFilePostOptions(imageInformation));
 };
 
 export const getUserPostImages = async (postId) => {
@@ -35,27 +33,21 @@ export const getUserPosts = async (id) => {
 };
 
 export const getPostDetails = async (id) => {
-  return await fetchHandler(`${baseUrl}/${id}`)
-}
+  return await fetchHandler(`${baseUrl}/${id}`);
+};
 
 export const getPostImages = async (id) => {
-  return await fetchHandler(`${baseUrl}/${id}/images`)
-}
+  return await fetchHandler(`${baseUrl}/${id}/images`);
+};
 
 export const updatePostDetails = async (id, userPostInformation) => {
-  return await fetchHandler(`${baseUrl}/${id}`,
-    getFilePatchOptions(userPostInformation)
-  )
-}
+  return await fetchHandler(`${baseUrl}/${id}`, getFilePatchOptions(userPostInformation));
+};
 
 export const deletePostImages = async (id, userPostInformation) => {
-  return await fetchHandler(`${baseUrl}/${id}/images`,
-    deleteOptions(userPostInformation)
-  )
-}
+  return await fetchHandler(`${baseUrl}/${id}/images`, getDeleteOptions(userPostInformation));
+};
 
-export const deletePost = async (id, postInfo) => {
-  return await fetchHandler(`${baseUrl}/${id}`,
-    deleteOptions(postInfo)
-  )
-}
+export const deletePost = async (id) => {
+  return await fetchHandler(`${baseUrl}/${id}`, deleteOptions);
+};
