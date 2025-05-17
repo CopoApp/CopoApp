@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import "../styles/index.css";
 import Navbar from '../components/Navbar';
 import Comment from '../components/Comment'
-import NewComment from "../components/NewComment";
+import CommentSection from "../components/CommentSection";
 
 export default function ReportDetails() {
     const { id } = useParams();
@@ -29,13 +29,6 @@ export default function ReportDetails() {
                 setLoading(false)
             }
         };
-        const loadReportImages = async () => {
-            const [reportImages, error] = await getPostImages(id);
-            if (error) return
-            setImages(reportImages)
-        }
-
-        loadReportImages();
         loadReportDetails();
     }, [id]);
   
@@ -81,7 +74,7 @@ export default function ReportDetails() {
           <p><strong>Contact Phone:</strong> {report.contact_phone_number}</p>
           <p><strong>Description:</strong> {report.content}</p>
         </div>
-        <Comment />
+       <CommentSection />
      <Navbar/>
     </>
       );

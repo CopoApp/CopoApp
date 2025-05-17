@@ -6,7 +6,14 @@ const basicFetchOptions = {
 export const deleteOptions = {
   method: "DELETE",
   credentials: "include",
-};
+}
+
+export const getDeleteOptions = (body) => ({
+  method: "DELETE",
+  credentials: "include",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(body),
+});
 
 export const getPostOptions = (body) => ({
   method: "POST",

@@ -1,110 +1,135 @@
-import { useState, useEffect, useContext } from "react"
-import { getUser } from "../adapters/user-adapter"
-import { getPostComments } from "../adapters/comment-adapter";
-import CurrentUserContext from "../contexts/current-user-context";
-import FileAttachmentButton from "./FileAttachmentButton";
-import { createComment } from "../adapters/comment-adapter";
-import { useParams } from 'react-router-dom'
+import { useState, useEffect, useContext } from 'react';
+import CurrentUserContext from '../contexts/current-user-context';
+import FileAttachmentButton from './FileAttachmentButton';
+import { updateComment, deleteCommentImages } from '../adapters/comment-adapter';
+import { deleteComment } from '../adapters/comment-adapter';
 
+export default function Comment({ comment, setPostComments, handleUpdate, currentComment }) {
+  const { currentUser } = useContext(CurrentUserContext);
+  // State to manage the data entered in the form
+  const [commentData, setCommentData] = useState(comment);
+  // State to manage attached files
+  const [fileData, setFileData] = useState([]);
+  // State to manage removed images
+  const [removedImages, setRemovedImages] = useState([]);
 
-export default Comment = () => {
-    const { id } = useParams();
-    const { currentUser } = useContext(CurrentUserContext);
-    const [userInformation, setUserInformation] = useState([]) 
-    // State to manage attached files
-    const [fileData, setFileData] = useState([]);
-    // State to manage the data entered in the form
-    const [content, setContent] = useState('');
-    // State to manage the preview images when user attaches an image
-    const [preview, setPreview] = useState([])
+  const [isEditing, setIsEditing] = useState(false);
 
-    const [newComment, setNewComment] = useState(null)
+  const handleChange = (event) => {
+    const { type, files } = event.target;
 
-    const [postComment, setPostComments] = useState([])
+    const img = files?.[0];
 
-    useEffect(() => {
-        const loadUserInformation = async () => {
-            const [userInformation, error] = await getUser(currentUser.id)
-            if (error) return
-            setUserInformation(userInformation)
-        }
-        const loadPostComments = async () => {
-            const [comments, error] = await getPostComments(id)
-            if (error) return
-            setPostComments(comments)
-        }
-        loadPostComments();
-        loadUserInformation();
-    }, [currentUser, newComment])
-    
-    const handleChange = (event) => {
-        const { type, files } = event.target;
-
-        const img = files?.[0]
-
-        if (type === "file" && img) {
-          setFileData([...fileData, files[0]]);
-          setPreview([...preview, URL.createObjectURL(img) ])
-        } else {
-          setContent(event.target.value) 
-        }
+    if (type === 'file' && img) {
+      setFileData([...fileData, files[0]]);
+    } else {
+      setCommentData({ ...commentData, content: event.target.value });
     }
+  };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+  const userCanEdit = (userId) => currentUser.id === userId;
 
-        const body = new FormData();
-        body.append('content', content)
-        fileData.forEach(file => body.append('files', file) ) 
-        const [comment, error] = await createComment(id, body)
-        setNewComment(comment)
-        setFileData([])
-        setContent('')
-        setPreview([])
-    }
+  const handleEdit = (content) => {
+    setIsEditing(!isEditing);
+    setCommentData({ ...commentData, content: content });
+    setFileData([]);
+    handleUpdate(comment);
+  };
 
-    const handleRemoveImage = (event) => {
-        event.preventDefault();
-        const removeIndex = Number(event.target.value);
-        const updatedFileData = fileData.filter(
-          (value, index) => index !== removeIndex
-        );
-        const updatedPreviewData = preview.filter((value, index) => index !== removeIndex)
-        setPreview(updatedPreviewData)
-        setFileData(updatedFileData);
-    };
+  const handleSubmit = async () => {
+    const form = new FormData();
 
-    return <form onSubmit={handleSubmit}>
-        <img src={userInformation.profile_pic} alt="profile picture" style={{height: "100px"}}
-        />
-        <input type="text" onChange={handleChange} name="content" value={content}/>
-        <img src="" alt="" />
-        <FileAttachmentButton handleChange={handleChange}/>
-        <button type="submit" name="images">Submit</button>
-        <ul>
-            {
-                preview.map((source, index) => {
-                    return <li key={index}>
-                        <img src={source} alt="Attached Image" style={{height: "100px"}}/>
-                        <button type="button" value={index} onClick={handleRemoveImage}>Delete Image</button>
-                    </li>
-                })
+    for (let file of fileData) form.append('files', file);
+    form.append('content', commentData.content);
 
-            }
-        </ul>
-        <ul>             
-             {
-                postComment.length > 0 && postComment.map((source, index) => {
-                    return<li key={index}>
-                        <p>{source?.content}</p>
-                     {
-                        source.images.length > 0 && source.images.map(img => {
-                            return <img src={img.img_src} alt="Attached Image" style={{height: "100px"}}/>
-                        })
-                     }
-                     </li>
-                })
-            }
-        </ul>
-    </form>
-} 
+    const [res, error] = await updateComment(comment.id, form);
+    await deleteCommentImages(comment.id, removedImages);
+
+    setIsEditing(false);
+    setFileData([]);
+    setRemovedImages([]);
+    setCommentData({ ...comment, content: '' });
+    handleUpdate(null);
+  };
+
+  const handleRemoveImage = (commentId, imageId) => {
+    const updatedImages = comment.images.filter((image) => {
+      if (image.id === imageId) return setRemovedImages([...removedImages, image]);
+      return image;
+    });
+
+    setPostComments((previousComments) =>
+      previousComments.map((comment) =>
+        comment.id === commentId ? { ...comment, images: updatedImages } : comment
+      )
+    );
+  };
+
+  const removeAttachedFile = (event) =>
+    setFileData((fileData) => fileData.filter((_, index) => index !== Number(event.target.value)));
+
+  const handleDelete = async () => {
+    deleteComment(comment.id).then(([res, err]) => handleUpdate(res));
+  };
+
+  return (
+    <li key={comment.id} className="comment-container">
+      {comment.profile_pic && (
+        <img src={comment?.profile_pic} alt="Profile Picture" style={{ height: '100px' }} />
+      )}
+      {<p>{comment.username}</p>}
+      {currentComment?.id === comment.id && isEditing && userCanEdit(comment.user_id) ? (
+        <input type="text" value={commentData.content} onChange={handleChange} />
+      ) : (
+        <p>{comment?.content}</p>
+      )}
+      <ul className="image-list-container">
+        {comment.images.length > 0 &&
+          comment.images.map((img) => {
+            return (
+              <li key={img.id}>
+                <img src={img.img_src} alt="Attached Image" style={{ height: '100px' }} />
+                {currentComment?.id === comment.id && isEditing && (
+                  <button onClick={() => handleRemoveImage(comment.id, img.id)}>
+                    Remove Image
+                  </button>
+                )}
+              </li>
+            );
+          })}
+      </ul>
+      <ul>
+        {currentComment?.id === comment.id &&
+          isEditing &&
+          fileData.map((file, index) => {
+            return (
+              <li key={index}>
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="Attached Image"
+                  style={{ height: '100px' }}
+                />
+                <button value={index} onClick={removeAttachedFile}>
+                  Remove Attached Image
+                </button>
+              </li>
+            );
+          })}
+      </ul>
+      {currentComment?.id === comment.id && isEditing && (
+        <FileAttachmentButton handleChange={handleChange} />
+      )}
+      {userCanEdit(comment.user_id) && (
+        <button value={comment.id} onClick={() => handleEdit(comment?.content)}>
+          {currentComment?.id === comment.id && isEditing ? 'Stop Editing' : 'Edit Comment'}
+        </button>
+      )}
+      {currentComment?.id === comment.id && isEditing && (
+        <button onClick={handleSubmit}>Save Changes</button>
+      )}
+      {userCanEdit(comment.user_id) && (
+        <button onClick={() => handleDelete()}>Delete Comment</button>
+      )}
+    </li>
+  );
+}

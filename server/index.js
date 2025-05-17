@@ -89,6 +89,12 @@ app.delete(
   commentControllers.deleteComment
 ); // Delete a comment
 
+app.delete(
+  "/api/comments/:id/images",
+  checkAuthentication,
+  commentControllers.deleteCommentImage
+); // Delete a comment
+
 ///////////////////////////////
 // Fallback Routes
 ///////////////////////////////
