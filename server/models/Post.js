@@ -140,7 +140,7 @@ class Post {
     return result.length > 0;
   }
 
-  static async updatePost(postInformation, deletedImages, addedImages) {
+  static async updatePost(postInformation, addedImages) {
     const {
       postId,
       status,
@@ -179,35 +179,40 @@ class Post {
         })
         .returning("*");
 
-      // Delete Images 
-        for (let image of deletedImages) {
-          // delete from S3
-          const command = new DeleteObjectCommand({
-            Bucket: process.env.S3_BUCKET_NAME,
-            Key: image.img_name,
-          });
-          await s3.send(command);
+      // // Delete Images 
+      // if (deletedImages.length > 0) {
+      //   for (let image of deletedImages) {
+      //     // delete from S3
+      //     const command = new DeleteObjectCommand({
+      //       Bucket: process.env.S3_BUCKET_NAME,
+      //       Key: image.img_name,
+      //     });
+      //     await s3.send(command);
 
-          // Delete from database
-          await knex("post_images")
-          .where("id", image.id)
-          .del();
-        }
+      //     // Delete from database
+      //     await knex("post_images")
+      //     .where("id", image.id)
+      //     .del();
+      //   }
+      // }
       
       // Update Images in the database
-      for (let image of addedImages) {
-        await knex("post_images")
-        .insert({
-          post_id: postId,
-          img_name: image.img_name,
-          img_src: image.img_src
-        })
+      if (addedImages.length > 0) {
+        for (let image of addedImages) {
+          await knex("post_images")
+          .insert({
+            post_id: postId,
+            img_name: image.img_name,
+            img_src: image.img_src
+          })
+        }
       }
 
       const updatedPostImages = await knex.select('*').from('post_images').where('post_id', postId);
 
-      return { ...updatedPost, 'images': updatedPostImages }
+      return { ...updatedPost[0], 'images': updatedPostImages }
     } catch (error) {
+      console.log( Error(error))
       throw error;
     }
   }

@@ -62,6 +62,12 @@ app.get(
   postControllers.getUserPosts
 ); // Gets all posts for a specific user
 
+app.delete(
+  "/api/posts/:id/images",
+  checkAuthentication,
+  postControllers.deleteImages
+); // Remove images from a post
+
 ///////////////////////////////
 // Comment Routes
 ///////////////////////////////

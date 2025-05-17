@@ -1,43 +1,45 @@
 const basicFetchOptions = {
-  method: "GET",
-  credentials: "include",
+  method: 'GET',
+  credentials: 'include',
 };
 
-export const deleteOptions = {
-  method: "DELETE",
-  credentials: "include",
-}
+export const deleteOptions = (body) => ({
+  method: 'DELETE',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body),
+});
 
 export const getDeleteOptions = (body) => ({
-  method: "DELETE",
-  credentials: "include",
-  headers: { "Content-Type": "application/json" },
+  method: 'DELETE',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body),
 });
 
 export const getPostOptions = (body) => ({
-  method: "POST",
-  credentials: "include",
-  headers: { "Content-Type": "application/json" },
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body),
 });
 
 export const getFilePostOptions = (body) => ({
-  method: "POST",
-  credentials: "include",
+  method: 'POST',
+  credentials: 'include',
   body: body,
 });
 
 export const getFilePatchOptions = (body) => ({
-  method: "PATCH",
-  credentials: "include",
+  method: 'PATCH',
+  credentials: 'include',
   body: body,
 });
 
 export const getPatchOptions = (body) => ({
-  method: "PATCH",
-  credentials: "include",
-  headers: { "Content-Type": "application/json" },
+  method: 'PATCH',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body),
 });
 
@@ -51,9 +53,7 @@ export const fetchHandler = async (url, options = {}) => {
         cause: status,
       });
 
-    const isJson = (headers.get("content-type") || "").includes(
-      "application/json"
-    );
+    const isJson = (headers.get('content-type') || '').includes('application/json');
     const responseData = await (isJson ? response.json() : response.text());
 
     return [responseData, null];
