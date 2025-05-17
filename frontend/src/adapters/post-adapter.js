@@ -4,13 +4,15 @@ import {
   fetchHandler,
   getPatchOptions,
   getFilePostOptions,
+  getFilePatchOptions,
   getPostOptions,
+  deleteOptions
 } from "../utils/fetchingUtils";
 
 const baseUrl = "/api/posts";
 
 export const createPost = async (postInformation) => {
-  return fetchHandler(baseUrl, getPostOptions(postInformation));
+  return fetchHandler(baseUrl, getFilePostOptions(postInformation));
 };
 
 export const attachPostImages = async (postId, imageInformation) => {
@@ -38,4 +40,22 @@ export const getPostDetails = async (id) => {
 
 export const getPostImages = async (id) => {
   return await fetchHandler(`${baseUrl}/${id}/images`)
+}
+
+export const updatePostDetails = async (id, userPostInformation) => {
+  return await fetchHandler(`${baseUrl}/${id}`,
+    getFilePatchOptions(userPostInformation)
+  )
+}
+
+export const deletePostImages = async (id, userPostInformation) => {
+  return await fetchHandler(`${baseUrl}/${id}/images`,
+    deleteOptions(userPostInformation)
+  )
+}
+
+export const deletePost = async (id, postInfo) => {
+  return await fetchHandler(`${baseUrl}/${id}`,
+    deleteOptions(postInfo)
+  )
 }
