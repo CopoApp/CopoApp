@@ -2,15 +2,28 @@
 // with the provided body and the remaining options
 import {
   fetchHandler,
-  getPatchOptions,
   getFilePostOptions,
-  getPostOptions,
+  getFilePatchOptions,
+  getDeleteOptions,
+  deleteOptions
 } from "../utils/fetchingUtils";
 
 const baseUrl = "/api/posts";
 
 export const createComment = async (postId, commentInformation) => {
   return fetchHandler(`${baseUrl}/${postId}/comments`, getFilePostOptions(commentInformation));
+};
+
+export const updateComment = async (commentId, commentInformation) => {
+  return fetchHandler(`/api/comments/${commentId}`, getFilePatchOptions(commentInformation));
+};
+
+export const deleteCommentImages = async (commentId, imageInformation) => {
+  return fetchHandler(`/api/comments/${commentId}/images`, getDeleteOptions(imageInformation));
+};
+
+export const deleteComment = async (commentId) => {
+  return fetchHandler(`/api/comments/${commentId}`, deleteOptions);
 };
 
 export const getPostComments = async (postId) => {

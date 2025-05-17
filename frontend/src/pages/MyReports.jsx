@@ -1,9 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
-import Navbar from "../components/Navbar";
-import CurrentUserContext from "../contexts/current-user-context";
-import { getUserPosts } from "../adapters/post-adapter";
-import ReportCard from "../components/PetCard";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect, useState, useContext } from 'react';
+import Navbar from '../components/Navbar';
+import CurrentUserContext from '../contexts/current-user-context';
+import { getUserPosts } from '../adapters/post-adapter';
+import ReportCard from '../components/PetCard';
 
 export default function MyReports() {
   const [userPosts, setPosts] = useState([]);
@@ -15,7 +15,6 @@ export default function MyReports() {
       if (currentUser === null) return console.log(`No user session detected`);
       console.log(`User session detected!`);
       const [posts, error] = await getUserPosts(currentUser.id);
-      console.log(posts)
       if (error) setError(error);
       else if (posts) setPosts(posts);
     };

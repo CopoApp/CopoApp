@@ -44,10 +44,7 @@ exports.listComments = async (req, res) => {
   }
 };
 
-/* 
-PATCH /api/posts/:id
-Updates a single post (if found) and only if authorized
-*/
+
 exports.updateComment = async (req, res) => {
   const userId = req.session.userId;
   const commentId = req.params.id;
@@ -57,10 +54,12 @@ exports.updateComment = async (req, res) => {
     location_embed,
     location_embed_latitude,
     location_embed_longitude,
-    deletedImages
   } = req.body;
 
+
   const addedImages = req.files?.map((file) => {return { img_name: file.key, img_src : file.location }})
+
+ 
 
   try {
     // A user is only authorized to modify their own comment information
@@ -79,7 +78,7 @@ exports.updateComment = async (req, res) => {
       location_embed_latitude,
       location_embed_longitude,
       commentId,
-    }, addedImages, deletedImages);
+    }, addedImages);
 
     res.send(updatedComment);
   } catch (error) {
@@ -107,6 +106,28 @@ exports.deleteComment = async (req, res) => {
     }
 
     await Comment.deleteComment(commentId);
+    res.status(200).send({ message: "Comment has been deleted" });
+  } catch (error) {
+    res.send({ message: error.message });
+  }
+};
+
+exports.deleteCommentImage = async (req, res) => {
+  const userId = req.session.userId;
+  const commentId = req.params.id;
+  const images = req.body
+  try {
+    // Verify user owns the post
+    const isUserAuthorized = await Comment.verifyCommentOwnership(
+      commentId,
+      userId
+    );
+
+    if (!isUserAuthorized) {
+      return res.status(403).send({ message: "Unauthorized." });
+    }
+
+    await Comment.deleteImage(images);
     res.status(200).send({ message: "Comment has been deleted" });
   } catch (error) {
     res.send({ message: error.message });
