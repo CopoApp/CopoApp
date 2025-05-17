@@ -3,12 +3,10 @@ const basicFetchOptions = {
   credentials: 'include',
 };
 
-export const deleteOptions = (body) => ({
+export const deleteOptions = {
   method: 'DELETE',
   credentials: 'include',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(body),
-});
+};
 
 export const getDeleteOptions = (body) => ({
   method: 'DELETE',

@@ -12,7 +12,6 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
   const [fileData, setFileData] = useState([]);
   // State to manage removed images
   const [removedImages, setRemovedImages] = useState([]);
-
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (event) => {
@@ -69,7 +68,8 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
     setFileData((fileData) => fileData.filter((_, index) => index !== Number(event.target.value)));
 
   const handleDelete = async () => {
-    deleteComment(comment.id).then(([res, err]) => handleUpdate(res));
+    const [res, err] = await deleteComment(comment.id);
+    if (res) handleUpdate(res);
   };
 
   return (
