@@ -7,9 +7,11 @@ class Comment {
   static async list(postId) {
     try {
       const comments = await knex("comments")
-        .where("post_id", postId)
-        .returning("*");
-      
+      .where("post_id", postId)
+      .join('users', 'comments.user_id', '=', 'users.id')
+      .select('comments.*', 'users.username', 'users.profile_pic')
+    
+
       const result = []
 
       for (let comment of comments) {
@@ -94,7 +96,7 @@ class Comment {
     return result.length > 0;
   }
 
-  static async updateComment(commentInformation, addedImages, deletedImages) {
+  static async updateComment(commentInformation, addedImages) {
     const {
       commentId,
       content,
@@ -115,21 +117,6 @@ class Comment {
         },
         "*")
         .returning("*");
-
-      // Delete Images 
-        for (let image of deletedImages) {
-          // delete from S3
-          const command = new DeleteObjectCommand({
-            Bucket: process.env.S3_BUCKET_NAME,
-            Key: image.img_name,
-          });
-          await s3.send(command);
-
-          // Delete from database
-          await knex("comment_images")
-          .where("id", image.id)
-          .del();
-        }
       
       // Update Images in the database
       for (let image of addedImages) {
@@ -143,7 +130,7 @@ class Comment {
 
       const updatedCommentImages = await knex.select('*').from('comment_images').where('comment_id', commentId);
 
-      return { ...updatedComment, 'images': updatedCommentImages }
+      return { ...updatedComment[0], 'images': updatedCommentImages }
     } catch (error) {
       throw error;
     }
@@ -151,6 +138,18 @@ class Comment {
 
   static async deleteComment(commentId) {
     try {
+      // Delete images related to comment from S3
+      const commentImages = await knex.select('*').from('comment_images').where('comment_id', commentId);
+      for (let image of commentImages) {
+        // delete from S3
+        const command = new DeleteObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: image.img_name,
+        });
+        await s3.send(command);
+      }
+
+      // This deletion cascades on the comment_images table
       await knex("comments").where("id", commentId).del();
     } catch (error) {
       console.error(error);
@@ -158,7 +157,22 @@ class Comment {
     }
   }
 
-  static async attachImage(comment_id, img_name, img_src) {}
+  static async deleteImage(images) {
+      // Delete Images 
+        for (let image of images) {
+          // delete from S3
+          const command = new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: image.img_name,
+          });
+          await s3.send(command);
+
+          // Delete from database
+          await knex("comment_images")
+          .where("id", image.id)
+          .del();
+        }
+  }
 }
 
 module.exports = Comment;

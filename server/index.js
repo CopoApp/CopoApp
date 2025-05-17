@@ -43,7 +43,12 @@ app.delete("/api/auth/logout", authControllers.logoutUser);
 // Express lets us pass a piece of middleware to run for a specific endpoint
 app.get("/api/users", checkAuthentication, userControllers.listUsers); // Sends back an array of users
 app.get("/api/users/:id", checkAuthentication, userControllers.showUser); // Send specific user object
-app.patch("/api/users/:id", checkAuthentication, upload.single("profile_pic", 1), userControllers.updateUser); // Sends updated user object
+app.patch(
+  "/api/users/:id",
+  checkAuthentication,
+  upload.single("profile_pic", 1),
+  userControllers.updateUser
+); // Sends updated user object
 app.delete("/api/users/:id", checkAuthentication, userControllers.deleteUser); // Removes user
 
 ///////////////////////////////
@@ -51,10 +56,20 @@ app.delete("/api/users/:id", checkAuthentication, userControllers.deleteUser); /
 ///////////////////////////////
 
 // These actions require users to be logged in (authentication)
-app.post("/api/posts", checkAuthentication, upload.array('files', 5), postControllers.createPost); // Creates a new post and sends its data back to the client
+app.post(
+  "/api/posts",
+  checkAuthentication,
+  upload.array("files", 5),
+  postControllers.createPost
+); // Creates a new post and sends its data back to the client
 app.get("/api/posts", checkAuthentication, postControllers.listPosts); // Sends array of all posts
 app.get("/api/posts/:id", checkAuthentication, postControllers.getPost); // Sends specific user post
-app.patch("/api/posts/:id", checkAuthentication, upload.array('files', 5),postControllers.updatePost); // Updates specific user post
+app.patch(
+  "/api/posts/:id",
+  checkAuthentication,
+  upload.array("files", 5),
+  postControllers.updatePost
+); // Updates specific user post
 app.delete("/api/posts/:id", checkAuthentication, postControllers.deletePost); // Removes a Post
 app.get(
   "/api/users/:id/posts",
@@ -80,19 +95,25 @@ app.get(
 app.post(
   "/api/posts/:id/comments",
   checkAuthentication,
-  upload.array('files', 5),
+  upload.array("files", 5),
   commentControllers.createComment
 ); // Create comments on a post
 app.patch(
   "/api/comments/:id",
   checkAuthentication,
-  upload.array('files', 5),
+  upload.array("files", 5),
   commentControllers.updateComment
 ); // Update a comment
 app.delete(
   "/api/comments/:id",
   checkAuthentication,
   commentControllers.deleteComment
+); // Delete a comment
+
+app.delete(
+  "/api/comments/:id/images",
+  checkAuthentication,
+  commentControllers.deleteCommentImage
 ); // Delete a comment
 
 ///////////////////////////////

@@ -593,3 +593,9 @@ textarea.form-control {
   }
 }
 
+/* Comment Card */
+.comment-container {
+  display: flex;
+  flex-direction: row;
+}
+
