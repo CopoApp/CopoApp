@@ -16,6 +16,7 @@ import CommentSection from '../components/CommentSection';
 import FileAttachmentButton from '../components/FileAttachmentButton';
 
 const breeds = ['Labrador', 'German Shepherd', 'Bulldog', 'Poodle', 'Mixed']; // example list
+const statuses = ['Lost', 'Found', 'Searching'];
 
 export default function ReportDetails() {
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
@@ -196,14 +197,20 @@ export default function ReportDetails() {
         <label htmlFor="status" style={{ display: isEditing ? 'block' : 'none' }}>
           Status:{' '}
         </label>
-        <input
+        <select
           onChange={handleInput}
           name="status"
           id="status"
-          type="text"
           value={formData?.status}
           style={{ display: isEditing ? 'block' : 'none' }}
-        />
+          required
+        >
+          {statuses.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
 
         <p style={{ display: isEditing ? 'none' : 'block' }}>
           <strong>Breed:</strong> {report.pet_breed}
@@ -216,7 +223,6 @@ export default function ReportDetails() {
           required
           style={{ display: isEditing ? 'block' : 'none' }}
         >
-          <option value=""></option>
           {breeds.map((b) => (
             <option key={b} value={b}>
               {b}
