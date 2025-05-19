@@ -78,6 +78,7 @@ class User {
   // to format the user and returns or returns null if not.
   static async find(id) {
     const result = await knex("users").where("id", id).returning("*");
+    console.log(result);
     return result ? new User(result[0]) : null;
   }
 
@@ -110,9 +111,12 @@ class User {
     return rawUpdatedUser ? new User(rawUpdatedUser) : null;
   }
 
-  static async getProfilePicture (userId) {
-    const result = await knex.select('profile_pic_name').from("users").where("id", userId)
-    return result[0].profile_pic_name ?? null
+  static async getProfilePicture(userId) {
+    const result = await knex
+      .select("profile_pic_name")
+      .from("users")
+      .where("id", userId);
+    return result[0].profile_pic_name ?? null;
   }
 
   static async deleteUser(userId) {
