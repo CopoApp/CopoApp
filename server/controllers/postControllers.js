@@ -19,41 +19,43 @@ exports.createPost = async (req, res) => {
     pet_name,
     pet_height,
     pet_weight,
-    pet_breed,
+    pet_type,
     pet_color,
     last_seen_location,
     last_seen_location_latitude,
     last_seen_location_longitude,
   } = req.body;
 
-  const images = []
+  const images = [];
 
   req.files.forEach((file) => {
     images.push({
       img_name: file.key,
-      img_src: file.location
-    })
-  })
+      img_src: file.location,
+    });
+  });
 
-  const result = await Post.create({
-    userId,
-    status,
-    title,
-    content,
-    contact_email,
-    contact_phone_number,
-    pet_name,
-    pet_height,
-    pet_weight,
-    pet_breed,
-    pet_color,
-    last_seen_location,
-    last_seen_location_latitude,
-    last_seen_location_longitude,
-  }, images)
+  const result = await Post.create(
+    {
+      userId,
+      status,
+      title,
+      content,
+      contact_email,
+      contact_phone_number,
+      pet_name,
+      pet_height,
+      pet_weight,
+      pet_type,
+      pet_color,
+      last_seen_location,
+      last_seen_location_latitude,
+      last_seen_location_longitude,
+    },
+    images
+  );
 
-
-  res.send(result)
+  res.send(result);
 };
 
 /* 
@@ -88,7 +90,6 @@ PATCH /api/posts/:id
 Updates a single post (if found) and only if authorized
 */
 exports.updatePost = async (req, res) => {
-
   const userId = req.session.userId;
   const postId = req.params.id;
   const {
@@ -100,39 +101,43 @@ exports.updatePost = async (req, res) => {
     pet_name,
     pet_height,
     pet_weight,
-    pet_breed,
+    pet_type,
     pet_color,
     last_seen_location,
     last_seen_location_latitude,
     last_seen_location_longitude,
   } = req.body;
 
-  const addedImages = req.files?.map((file) => {return { img_name: file?.key, img_src : file?.location }})
-
+  const addedImages = req.files?.map((file) => {
+    return { img_name: file?.key, img_src: file?.location };
+  });
 
   try {
     // A user is only authorized to modify their own post information
     const isUserAuthor = await Post.verifyPostOwnership(postId, userId);
 
-    if (!isUserAuthor) return res.status(403).send({ message: "Unauthorized." });
-    
+    if (!isUserAuthor)
+      return res.status(403).send({ message: "Unauthorized." });
 
-    const updatedPost = await Post.updatePost({
-      postId,
-      status,
-      title,
-      content,
-      contact_email,
-      contact_phone_number,
-      pet_name,
-      pet_height,
-      pet_weight,
-      pet_breed,
-      pet_color,
-      last_seen_location,
-      last_seen_location_latitude,
-      last_seen_location_longitude,
-    }, addedImages);
+    const updatedPost = await Post.updatePost(
+      {
+        postId,
+        status,
+        title,
+        content,
+        contact_email,
+        contact_phone_number,
+        pet_name,
+        pet_height,
+        pet_weight,
+        pet_type,
+        pet_color,
+        last_seen_location,
+        last_seen_location_latitude,
+        last_seen_location_longitude,
+      },
+      addedImages
+    );
 
     res.send(updatedPost);
   } catch (error) {
@@ -167,7 +172,7 @@ exports.getUserPosts = async (req, res) => {
   const userId = req.session.userId;
   try {
     const posts = await Post.getUserPosts(userId);
-    console.log(posts)
+    console.log(posts);
     res.send(posts);
   } catch (error) {
     res.send({ message: error.message });

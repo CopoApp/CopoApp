@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar';
 import CurrentUserContext from '../contexts/current-user-context';
 import { getUserPosts } from '../adapters/post-adapter';
 import ReportCard from '../components/PetCard';
+import { Container, Flex, Heading } from '@radix-ui/themes';
+import { EyeClosedIcon } from '@radix-ui/react-icons';
 
 export default function MyReports() {
   const [userPosts, setPosts] = useState([]);
@@ -22,13 +24,29 @@ export default function MyReports() {
   }, [currentUser]);
 
   return (
-    <div>
-      {userPosts.length > 0
-        ? userPosts.map((post) => {
-            return <ReportCard key={post.id} reportInformation={post} />;
-          })
-        : `No posts`}
+    <>
+      <Container
+        className="reports-list-container"
+        size={'2'}
+        pb={'100px'}
+        pt={'30px'}
+        pl={'4'}
+        pr={'4'}
+      >
+        <Flex direction={'column'} gap={'10px'}>
+          {userPosts.length > 0 ? (
+            userPosts.map((post) => {
+              return <ReportCard key={post.id} reportInformation={post} />;
+            })
+          ) : (
+            <Flex direction={'column'} justify={'center'} align={'center'}>
+              <EyeClosedIcon width={'20vw'} height={'20vh'}></EyeClosedIcon>
+              <Heading align={'center'}>You haven't made any reports</Heading>
+            </Flex>
+          )}
+        </Flex>
+      </Container>
       <Navbar />
-    </div>
+    </>
   );
 }

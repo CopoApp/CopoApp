@@ -1,20 +1,21 @@
-import { useContext, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import SignUpPage from "./pages/SignUp";
-import LoginPage from "./pages/Login";
-import SiteHeadingAndNav from "./components/SiteHeadingAndNav";
-import NotFoundPage from "./pages/NotFound";
-import UserContext from "./contexts/current-user-context";
-import { checkForLoggedInUser } from "./adapters/auth-adapter";
-import UsersPage from "./pages/Users";
-import UserPage from "./pages/Profile";
-import Feed from "./pages/Feed";
-import MyReports from "./pages/MyReports";
-import Profile from "./pages/Profile";
-import PetReportForm from "./pages/PetReportForm";
-import Test from "./pages/Test";
-import ReportDetails from "./pages/ReportDetails";
+import { useContext, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import SignUpPage from './pages/SignUp';
+import LoginPage from './pages/Login';
+import SiteHeadingAndNav from './components/SiteHeadingAndNav';
+import NotFoundPage from './pages/NotFound';
+import UserContext from './contexts/current-user-context';
+import { checkForLoggedInUser } from './adapters/auth-adapter';
+import UsersPage from './pages/Users';
+import UserPage from './pages/Profile';
+import Feed from './pages/Feed';
+import MyReports from './pages/MyReports';
+import Profile from './pages/Profile';
+import PetReportForm from './pages/PetReportForm';
+import Test from './pages/Test';
+import ReportDetails from './pages/ReportDetails';
+import SavedReports from './pages/SavedReports';
 
 export default function App() {
   const { setCurrentUser } = useContext(UserContext);
@@ -43,8 +44,9 @@ export default function App() {
           <Route path="/feed" element={<Feed />} />
           <Route path="/reports-log" element={<MyReports />} />
           <Route path="/report" element={<PetReportForm />} />
-          <Route path="/posts/:id" element={<ReportDetails/>}/>
+          <Route path="/posts/:id" element={<ReportDetails />} />
           <Route path="/users/:id" element={<Profile />} />
+          <Route path="/bookmarks" element={<SavedReports />} />
 
           {/* Dev Testing */}
           <Route path="/test" element={<Test />} />

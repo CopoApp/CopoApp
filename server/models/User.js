@@ -110,9 +110,12 @@ class User {
     return rawUpdatedUser ? new User(rawUpdatedUser) : null;
   }
 
-  static async getProfilePicture (userId) {
-    const result = await knex.select('profile_pic_name').from("users").where("id", userId)
-    return result[0].profile_pic_name ?? null
+  static async getProfilePicture(userId) {
+    const result = await knex
+      .select("profile_pic_name")
+      .from("users")
+      .where("id", userId);
+    return result[0].profile_pic_name ?? null;
   }
 
   static async deleteUser(userId) {

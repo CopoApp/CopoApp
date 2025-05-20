@@ -18,6 +18,7 @@ const authControllers = require("./controllers/authControllers");
 const userControllers = require("./controllers/userControllers");
 const postControllers = require("./controllers/postControllers");
 const commentControllers = require("./controllers/commentControllers");
+const bookmarkControllers = require("./controllers/bookmarkControllers");
 const app = express();
 
 // middleware
@@ -128,6 +129,31 @@ app.get("*", (req, res, next) => {
 });
 
 app.use(logErrors);
+
+///////////////////////////////
+// Bookmark Routes
+///////////////////////////////
+
+// Create a bookmark
+app.post(
+  "/api/post/:id/bookmarks",
+  checkAuthentication,
+  bookmarkControllers.createBookmark
+);
+
+// // Get all bookmarks for a user
+app.get(
+  "/api/post/:id/bookmarks",
+  checkAuthentication,
+  bookmarkControllers.listBookmarks
+);
+
+// Delete a bookmark
+app.delete(
+  "/api/post/:id/bookmarks",
+  checkAuthentication,
+  bookmarkControllers.deleteBookmark
+);
 
 ///////////////////////////////
 // Start Listening
