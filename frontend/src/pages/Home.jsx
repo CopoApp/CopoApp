@@ -5,18 +5,20 @@ import { Text } from '@radix-ui/themes';
 
 import { Section } from '@radix-ui/themes';
 import { Flex } from '@radix-ui/themes';
-import { Grid } from '@radix-ui/themes';
-import { Box } from '@radix-ui/themes';
-import { AspectRatio } from '@radix-ui/themes';
 import { Container } from '@radix-ui/themes';
 import { Button } from '@radix-ui/themes';
-import { Card } from '@radix-ui/themes';
 import FeatureCard from '../components/FeatureCard';
 import StepCard from '../components/StepCard';
 import { Cell } from '@radix-ui/themes/components/table';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useRef } from 'react';
 
 export default function Home() {
+  const sectionRef = useRef(null);
+
+  const scrollToSection = () => {
+    sectionRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
   return (
     <>
       <Section pl="5" pr="5" id="hero-section" size="1" minHeight="10vh">
@@ -31,7 +33,7 @@ export default function Home() {
               <NavLink to={'/sign-up'}>
                 <Button size="3">Get Started</Button>
               </NavLink>
-              <Button variant="outline" size="3">
+              <Button variant="outline" size="3" onClick={scrollToSection}>
                 How it Works
               </Button>
             </Flex>
@@ -81,7 +83,7 @@ export default function Home() {
           </Flex>
         </Flex>
       </Section>
-      <Section id="how-it-works-section">
+      <Section id="how-it-works-section" ref={sectionRef}>
         <Flex direction="column" align="center" gap="5">
           <Heading size="7" align="center">
             How it Works

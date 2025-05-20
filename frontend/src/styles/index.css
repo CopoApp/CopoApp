@@ -28,6 +28,9 @@ header {
 }
 
 #logo {
+  margin-left: 15px;
+  border-radius: 5px;
+  width: 35px;
   position: absolute;
 }
 

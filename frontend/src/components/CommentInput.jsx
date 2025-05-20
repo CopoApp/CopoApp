@@ -91,23 +91,30 @@ export default function CommentInput({ handleUpdate }) {
         </Flex>
 
         <ul>
-          {fileData?.length > 0 &&
-            fileData?.map((img, index) => {
-              return (
-                <li key={index}>
-                  <Flex direction={'column'} width={'fit-content'} align={'center'}>
-                    <img
-                      src={URL.createObjectURL(img)}
-                      alt="Attached Image"
-                      style={{ height: '100px' }}
-                    />
-                    <IconButton type="button" color="red" value={index} onClick={handleRemoveImage}>
-                      <TrashIcon style={{ pointerEvents: 'none' }} />
-                    </IconButton>
-                  </Flex>
-                </li>
-              );
-            })}
+          <Flex gap={'3'}>
+            {fileData?.length > 0 &&
+              fileData?.map((img, index) => {
+                return (
+                  <li key={index}>
+                    <Flex direction={'column'} width={'fit-content'} align={'center'}>
+                      <img
+                        src={URL.createObjectURL(img)}
+                        alt="Attached Image"
+                        style={{ height: '100px' }}
+                      />
+                      <IconButton
+                        type="button"
+                        color="red"
+                        value={index}
+                        onClick={handleRemoveImage}
+                      >
+                        <TrashIcon style={{ pointerEvents: 'none' }} />
+                      </IconButton>
+                    </Flex>
+                  </li>
+                );
+              })}
+          </Flex>
         </ul>
       </Card>
     </form>

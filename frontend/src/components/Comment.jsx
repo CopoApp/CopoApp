@@ -3,7 +3,7 @@ import CurrentUserContext from '../contexts/current-user-context';
 import FileAttachmentButton from './FileAttachmentButton';
 import { updateComment, deleteCommentImages } from '../adapters/comment-adapter';
 import { deleteComment } from '../adapters/comment-adapter';
-import { Card, Button, TextArea, Text, Flex, Box, IconButton } from '@radix-ui/themes';
+import { Card, Button, TextArea, Text, Flex, Box, IconButton, Heading } from '@radix-ui/themes';
 import { FilePlusIcon, TrashIcon } from '@radix-ui/react-icons';
 
 export default function Comment({ comment, setPostComments, handleUpdate, currentComment }) {
@@ -99,50 +99,69 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
                 <Text>{comment?.content}</Text>
               )}
               <ul className="image-list-container">
-                {comment.images.length > 0 &&
-                  comment.images.map((img) => {
-                    return (
-                      <li key={img.id}>
-                        <img src={img.img_src} alt="Attached Image" style={{ height: '100px' }} />
-                        {currentComment?.id === comment.id && isEditing && (
-                          <button onClick={() => handleRemoveImage(comment.id, img.id)}>
-                            Remove Image
-                          </button>
-                        )}
-                      </li>
-                    );
-                  })}
+                <Flex gap={'3'}>
+                  {comment.images.length > 0 &&
+                    comment.images.map((img) => {
+                      return (
+                        <li key={img.id}>
+                          <Flex
+                            direction={'column'}
+                            width={'fit-content'}
+                            justify={'center'}
+                            align={'center'}
+                          >
+                            <img
+                              src={img.img_src}
+                              alt="Attached Image"
+                              style={{ height: '100px' }}
+                            />
+                            {currentComment?.id === comment.id && isEditing && (
+                              <IconButton
+                                type="button"
+                                color="red"
+                                onClick={() => handleRemoveImage(comment.id, img.id)}
+                              >
+                                <TrashIcon style={{ pointerEvents: 'none' }} />
+                              </IconButton>
+                            )}
+                          </Flex>
+                        </li>
+                      );
+                    })}
+                </Flex>
               </ul>
             </Flex>
           </Flex>
 
           <ul>
-            {currentComment?.id === comment.id &&
-              isEditing &&
-              fileData.map((file, index) => {
-                return (
-                  <li key={index}>
-                    <Flex direction={'column'} width={'fit-content'} align={'center'}>
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt="Attached Image"
-                        style={{ height: '100px' }}
-                      />
-                      <IconButton
-                        type="button"
-                        color="red"
-                        value={index}
-                        onClick={removeAttachedFile}
-                      >
-                        <TrashIcon style={{ pointerEvents: 'none' }} />
-                      </IconButton>
-                    </Flex>
-                  </li>
-                );
-              })}
+            <Flex gap={'3'}>
+              {currentComment?.id === comment.id &&
+                isEditing &&
+                fileData.map((file, index) => {
+                  return (
+                    <li key={index}>
+                      <Flex direction={'column'} width={'fit-content'} align={'center'}>
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt="Attached Image"
+                          style={{ height: '100px' }}
+                        />
+                        <IconButton
+                          type="button"
+                          color="red"
+                          value={index}
+                          onClick={removeAttachedFile}
+                        >
+                          <TrashIcon style={{ pointerEvents: 'none' }} />
+                        </IconButton>
+                      </Flex>
+                    </li>
+                  );
+                })}
+            </Flex>
           </ul>
 
-          <Flex justify={'end'} align={'center'} gap={'2'}>
+          <Flex justify={'end'} align={'center'} gap={'2'} wrap={'wrap'}>
             {currentComment?.id === comment.id && isEditing && (
               <FileAttachmentButton handleChange={handleChange} innerText={'Upload Image'} />
             )}
@@ -153,7 +172,7 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
             )}
             {userCanEdit(comment.user_id) && (
               <Button value={comment.id} onClick={() => handleEdit(comment?.content)}>
-                {currentComment?.id === comment.id && isEditing ? 'Stop Editing' : 'Edit Comment'}
+                {currentComment?.id === comment.id && isEditing ? 'Cancel' : 'Edit Comment'}
               </Button>
             )}
             {currentComment?.id === comment.id && isEditing && (

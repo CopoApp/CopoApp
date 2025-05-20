@@ -19,6 +19,8 @@ export default function SiteHeadingAndNav() {
     if (pathname === '/report') setCurrentPage('Report Missing Pet');
     if (pathname.startsWith('/posts/')) setCurrentPage('Report Details');
     if (pathname.includes('/users')) setCurrentPage('Profile');
+    if (pathname === '/bookmarks') setCurrentPage('Saved Posts');
+    if (pathname === '/sign-up' || pathname === '/login') setCurrentPage('Copo');
   });
 
   return (
@@ -30,7 +32,11 @@ export default function SiteHeadingAndNav() {
           style={{ cursor: 'pointer' }}
           onClick={() => navigate('/')}
         >
-          <img id="logo" src="" alt="" />
+          <img
+            id="logo"
+            src="https://copoapp-images.s3.us-east-1.amazonaws.com/other/Logo2"
+            alt="Copo Logo"
+          />
         </Flex>
 
         <Flex justify={'center'} width={'100%'}>

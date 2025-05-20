@@ -7,13 +7,13 @@ import {
   PersonIcon,
   CardStackIcon,
   DrawingPinIcon,
+  BookmarkIcon,
 } from '@radix-ui/react-icons';
 import { Box, Flex } from '@radix-ui/themes';
 import NavBarButton from './NavBarButton';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  // if (!userId) return <></>;
   const { currentUser } = useContext(CurrentUserContext);
   const navigate = useNavigate();
 
@@ -32,9 +32,10 @@ const Navbar = () => {
           handleClick={() => navigate('/report')}
         />
         <NavBarButton
-          icon={DrawingPinIcon}
-          text={'Pinned Reports'}
-          handleClick={() => navigate('')}
+          icon={BookmarkIcon}
+          text={'Bookmarks'}
+          className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+          handleClick={() => navigate('/bookmarks')}
         />
         <NavBarButton
           icon={PersonIcon}

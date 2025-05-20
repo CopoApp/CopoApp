@@ -135,6 +135,7 @@ export default function PetReportForm() {
             <Flex direction={'column'}>
               <Text weight={'medium'}>Pet Type</Text>
               <select name="pet_type" value={formData.pet_type} onChange={handleChange}>
+                <option value=""></option>
                 {types.map((b) => (
                   <option key={b} value={b}>
                     {b}

@@ -1,9 +1,10 @@
 import React from 'react';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import CurrentUserContext from '../contexts/current-user-context';
 import user_placeholder from '../pages/Assets/user_placeholder.svg';
 import { useNavigate } from 'react-router-dom';
 import MissingImage from './MissingImage';
+import { createBookmark, deleteBookmark, listBookmarks } from '../adapters/book-adapter.js';
 
 import { Box, Flex } from '@radix-ui/themes';
 import { Heading } from '@radix-ui/themes';
@@ -12,13 +13,32 @@ import { Text } from '@radix-ui/themes';
 import { Card } from '@radix-ui/themes';
 import { AspectRatio } from '@radix-ui/themes';
 import { IconButton } from '@radix-ui/themes';
-import { BookmarkIcon } from '@radix-ui/react-icons';
+import { BookmarkIcon, BookmarkFilledIcon } from '@radix-ui/react-icons';
 
-export default function ReportCard({ reportInformation }) {
+export default function ReportCard({ reportInformation, setBookmarkedPosts }) {
   const navigate = useNavigate();
   const { id, author, author_user_id, status, pet_name, last_seen_location, content, images } =
     reportInformation;
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  useEffect(() => {
+    const loadBookmarks = async () => {
+      try {
+        const [bookmarks, error] = await listBookmarks(currentUser.id);
+        if (error) throw error;
+
+        const bookmarked = bookmarks.some((bookmark) => bookmark.id === id);
+        setIsBookmarked(bookmarked);
+      } catch (err) {
+        console.error('Error fetching bookmarks:', err);
+      }
+    };
+
+    if (currentUser) {
+      loadBookmarks();
+    }
+  }, [currentUser, id]);
 
   const checkStatus = () => {
     if (status === 'Found') return 'green';
@@ -28,6 +48,28 @@ export default function ReportCard({ reportInformation }) {
 
   const trimContentPreview = () => {
     return content.split(' ').slice(0, 10).join(' ');
+  };
+
+  const handleBookmarkToggle = async () => {
+    try {
+      if (isBookmarked) {
+        const [result, error] = await deleteBookmark(id);
+        if (error) throw error;
+
+        if (setBookmarkedPosts) {
+          setBookmarkedPosts((prev) => prev.filter((post) => post.id !== id));
+        }
+
+        setIsBookmarked(false);
+      } else {
+        const [result, error] = await createBookmark(id);
+        if (error) throw error;
+
+        setIsBookmarked(true);
+      }
+    } catch (err) {
+      console.error('Error toggling bookmark:', err);
+    }
   };
 
   return (
@@ -69,16 +111,17 @@ export default function ReportCard({ reportInformation }) {
             />
           </AspectRatio>
         )}
-        {/* //  : (
-        //   <MissingImage />
-        // )} */}
         <Heading size={'4'}>{pet_name}</Heading>
         <Heading size={'3'} weight={'medium'}>{`Last Seen: ${last_seen_location}`}</Heading>
         <Text>{content ? trimContentPreview() : 'No Description Provided'}</Text>
       </Flex>
       <Flex justify={'end'} pt={'2'}>
-        <IconButton>
-          <BookmarkIcon width={'20px'} height={'20px'} />
+        <IconButton onClick={handleBookmarkToggle}>
+          {isBookmarked ? (
+            <BookmarkFilledIcon width={'20px'} height={'20px'} />
+          ) : (
+            <BookmarkIcon width={'20px'} height={'20px'} />
+          )}
         </IconButton>
       </Flex>
     </Card>

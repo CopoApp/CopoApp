@@ -27,6 +27,11 @@ import {
   Strong,
 } from '@radix-ui/themes';
 import { TrashIcon } from '@radix-ui/react-icons';
+import { AspectRatio } from '@radix-ui/themes';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import Slider from 'react-slick';
 
 const types = ['Dogs', 'Cats', 'Rabbits', 'Guinea Pigs', 'Reptiles', 'Ferrets'];
 
@@ -42,6 +47,14 @@ export default function ReportDetails() {
   const [formData, setFormData] = useState({});
   const [fileData, setFileData] = useState([]);
   const navigate = useNavigate();
+
+  const imageCarouselSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   useEffect(() => {
     const loadReportDetails = async () => {
@@ -169,22 +182,30 @@ export default function ReportDetails() {
 
             <div className="report-images">
               <ul>
-                {formData.images?.length > 0 &&
-                  formData.images?.map((img, index) => {
-                    return (
-                      <li key={index}>
-                        <Flex direction={'column'} justify={'center'} align={'center'} gap={'2'}>
-                          <img src={img.img_src} alt="Post image" />
+                <Slider {...imageCarouselSettings}>
+                  {formData.images?.length > 0 &&
+                    formData.images?.map((img, index) => {
+                      return (
+                        <li key={index}>
+                          <Flex direction={'column'} justify={'center'} align={'center'} gap={'2'}>
+                            <Flex align={'center'} justify={'center'}>
+                              <img
+                                src={img.img_src}
+                                alt="Post image"
+                                style={{ width: '100%', height: '500px' }}
+                              />
+                            </Flex>
 
-                          {isEditing && (
-                            <IconButton color="red" value={img.id} onClick={handleDeleteImages}>
-                              <TrashIcon style={{ pointerEvents: 'none' }} />
-                            </IconButton>
-                          )}
-                        </Flex>
-                      </li>
-                    );
-                  })}
+                            {isEditing && (
+                              <IconButton color="red" value={img.id} onClick={handleDeleteImages}>
+                                <TrashIcon style={{ pointerEvents: 'none' }} />
+                              </IconButton>
+                            )}
+                          </Flex>
+                        </li>
+                      );
+                    })}
+                </Slider>
               </ul>
               <div id="file-attachment-container" style={{ display: isEditing ? 'block' : 'none' }}>
                 {fileData.map((file, index) => (
