@@ -26,7 +26,6 @@ async function createBookmark(req, res) {
   }
   
 
-// // Get all bookmarks for a user
 // Get all bookmarks for a user
 async function listBookmarks(req, res) {
     try {

@@ -24,7 +24,6 @@ export default function ReportCard({ reportInformation, setBookmarkedPosts }) {
         const [bookmarks, error] = await listBookmarks(currentUser.id);
         if (error) throw error;
 
-        // Adjust this if your bookmark data shape is different
         const bookmarked = bookmarks.some((bookmark) => bookmark.id === id);
         setIsBookmarked(bookmarked);
       } catch (err) {
@@ -42,11 +41,9 @@ export default function ReportCard({ reportInformation, setBookmarkedPosts }) {
       if (isBookmarked) {
         const [result, error] = await deleteBookmark(id);
         if (error) throw error;
-        setBookmarkedPosts(result)
       } else {
         const [result, error] = await createBookmark(id);
         if (error) throw error;
-        setBookmarkedPosts(result)
       }
       setIsBookmarked(!isBookmarked);
 
