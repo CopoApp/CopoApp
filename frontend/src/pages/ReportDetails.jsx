@@ -199,6 +199,7 @@ export default function ReportDetails() {
                   fileData={fileData}
                   setFileData={setFileData}
                   handleChange={handleInput}
+                  innerText={'Upload Files'}
                 ></FileAttachmentButton>
               </div>
             </div>
@@ -346,7 +347,7 @@ export default function ReportDetails() {
             )}
 
             {currentUser?.id === report?.author_user_id && (
-              <Button color={isEditing ? 'amber' : ''} type="button" onClick={handleEdit}>
+              <Button type="button" onClick={handleEdit}>
                 {isEditing ? 'Exit Editing' : 'Edit Post'}
               </Button>
             )}

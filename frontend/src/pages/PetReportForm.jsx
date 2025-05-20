@@ -223,6 +223,7 @@ export default function PetReportForm() {
               fileData={fileData}
               setFileData={setFileData}
               handleChange={handleChange}
+              innerText={'Upload Files'}
             ></FileAttachmentButton>
 
             {/* Pet name field */}

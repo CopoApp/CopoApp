@@ -55,7 +55,7 @@ export default function ReportCard({ reportInformation }) {
             {status}
           </Badge>
         </Flex>
-        {images?.length > 0 ? (
+        {images?.length > 0 && (
           <AspectRatio ratio={16 / 9}>
             <img
               src={images[0].img_src}
@@ -68,9 +68,10 @@ export default function ReportCard({ reportInformation }) {
               }}
             />
           </AspectRatio>
-        ) : (
-          <MissingImage />
         )}
+        {/* //  : (
+        //   <MissingImage />
+        // )} */}
         <Heading size={'4'}>{pet_name}</Heading>
         <Heading size={'3'} weight={'medium'}>{`Last Seen: ${last_seen_location}`}</Heading>
         <Text>{content ? trimContentPreview() : 'No Description Provided'}</Text>
