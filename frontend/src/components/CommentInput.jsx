@@ -4,6 +4,8 @@ import CurrentUserContext from '../contexts/current-user-context';
 import FileAttachmentButton from './FileAttachmentButton';
 import { createComment } from '../adapters/comment-adapter';
 import { useParams } from 'react-router-dom';
+import { Card, Button, TextArea, Text, Flex, Box, IconButton } from '@radix-ui/themes';
+import { FilePlusIcon, TrashIcon } from '@radix-ui/react-icons';
 
 export default function CommentInput({ handleUpdate }) {
   const { id } = useParams();
@@ -37,6 +39,7 @@ export default function CommentInput({ handleUpdate }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log('hit');
 
     const body = new FormData();
     body.append('content', content);
@@ -57,30 +60,56 @@ export default function CommentInput({ handleUpdate }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <p>{userInformation.username}</p>
-      <img src={userInformation.profile_pic} alt="profile picture" style={{ height: '100px' }} />
-      <input type="text" onChange={handleChange} name="content" value={content} />
-      <FileAttachmentButton handleChange={handleChange} />
-      <button type="submit" name="images">
-        Submit
-      </button>
-      <ul>
-        {fileData?.length > 0 &&
-          fileData?.map((img, index) => {
-            return (
-              <li key={index}>
-                <img
-                  src={URL.createObjectURL(img)}
-                  alt="Attached Image"
-                  style={{ height: '100px' }}
-                />
-                <button type="button" value={index} onClick={handleRemoveImage}>
-                  Delete Image
-                </button>
-              </li>
-            );
-          })}
-      </ul>
+      <Card>
+        <Flex gap={'3'} justify={'center'} align={'center'}>
+          <Box>
+            <img
+              src={userInformation.profile_pic}
+              alt="profile picture"
+              style={{ height: '100px', borderRadius: '50%', width: '50px', height: '50px' }}
+            />
+          </Box>
+          <Flex direction={'column'} width={'100%'}>
+            <Text weight={'medium'}>{userInformation.username}</Text>
+            <TextArea
+              type="text"
+              onChange={handleChange}
+              name="content"
+              value={content}
+              placeholder="Write a comment..."
+            />
+          </Flex>
+        </Flex>
+        <Flex justify={'end'} align={'center'} gap={'2'}>
+          <FileAttachmentButton
+            innerText={<FilePlusIcon width={'20px'} height={'20px'} />}
+            handleChange={handleChange}
+          />
+          <Button type="submit" color="green" name="images">
+            Submit
+          </Button>
+        </Flex>
+
+        <ul>
+          {fileData?.length > 0 &&
+            fileData?.map((img, index) => {
+              return (
+                <li key={index}>
+                  <Flex direction={'column'} width={'fit-content'} align={'center'}>
+                    <img
+                      src={URL.createObjectURL(img)}
+                      alt="Attached Image"
+                      style={{ height: '100px' }}
+                    />
+                    <IconButton type="button" color="red" value={index} onClick={handleRemoveImage}>
+                      <TrashIcon style={{ pointerEvents: 'none' }} />
+                    </IconButton>
+                  </Flex>
+                </li>
+              );
+            })}
+        </ul>
+      </Card>
     </form>
   );
 }

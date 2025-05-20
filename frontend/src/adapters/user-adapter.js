@@ -5,9 +5,9 @@ import {
   getPatchOptions,
   getFilePatchOptions,
   getPostOptions,
-} from "../utils/fetchingUtils";
+} from '../utils/fetchingUtils';
 
-const baseUrl = "/api/users";
+const baseUrl = '/api/users';
 
 export const createUser = async ({ username, password }) => {
   return fetchHandler(baseUrl, getPostOptions({ username, password }));
@@ -22,8 +22,7 @@ export const getUser = async (id) => {
 };
 
 export const updateUserProfile = async (id, userProfileInformation, deletingPfp) => {
-  console.log( `${baseUrl}/${id}?del=${deletingPfp}`)
- return fetchHandler(
+  return fetchHandler(
     `${baseUrl}/${id}?del=${deletingPfp}`,
     getFilePatchOptions(userProfileInformation)
   );

@@ -3,6 +3,8 @@ import CurrentUserContext from '../contexts/current-user-context';
 import FileAttachmentButton from './FileAttachmentButton';
 import { updateComment, deleteCommentImages } from '../adapters/comment-adapter';
 import { deleteComment } from '../adapters/comment-adapter';
+import { Card, Button, TextArea, Text, Flex, Box, IconButton } from '@radix-ui/themes';
+import { FilePlusIcon, TrashIcon } from '@radix-ui/react-icons';
 
 export default function Comment({ comment, setPostComments, handleUpdate, currentComment }) {
   const { currentUser } = useContext(CurrentUserContext);
@@ -74,62 +76,94 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
 
   return (
     <li key={comment.id} className="comment-container">
-      {comment.profile_pic && (
-        <img src={comment?.profile_pic} alt="Profile Picture" style={{ height: '100px' }} />
-      )}
-      {<p>{comment.username}</p>}
-      {currentComment?.id === comment.id && isEditing && userCanEdit(comment.user_id) ? (
-        <input type="text" value={commentData.content} onChange={handleChange} />
-      ) : (
-        <p>{comment?.content}</p>
-      )}
-      <ul className="image-list-container">
-        {comment.images.length > 0 &&
-          comment.images.map((img) => {
-            return (
-              <li key={img.id}>
-                <img src={img.img_src} alt="Attached Image" style={{ height: '100px' }} />
-                {currentComment?.id === comment.id && isEditing && (
-                  <button onClick={() => handleRemoveImage(comment.id, img.id)}>
-                    Remove Image
-                  </button>
-                )}
-              </li>
-            );
-          })}
-      </ul>
-      <ul>
-        {currentComment?.id === comment.id &&
-          isEditing &&
-          fileData.map((file, index) => {
-            return (
-              <li key={index}>
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt="Attached Image"
-                  style={{ height: '100px' }}
+      <Card style={{ width: '100%' }}>
+        <Flex direction={'column'}>
+          <Flex gap={'2'}>
+            {comment.profile_pic && (
+              <img
+                src={comment?.profile_pic}
+                alt="Profile Picture"
+                style={{ height: '100px', borderRadius: '50%', width: '50px', height: '50px' }}
+              />
+            )}
+            <Flex direction={'column'} width={'100%'}>
+              {<Text weight={'bold'}>{comment.username}</Text>}
+              {currentComment?.id === comment.id && isEditing && userCanEdit(comment.user_id) ? (
+                <TextArea
+                  type="text"
+                  value={commentData.content}
+                  onChange={handleChange}
+                  placeholder="Write a comment..."
                 />
-                <button value={index} onClick={removeAttachedFile}>
-                  Remove Attached Image
-                </button>
-              </li>
-            );
-          })}
-      </ul>
-      {currentComment?.id === comment.id && isEditing && (
-        <FileAttachmentButton handleChange={handleChange} />
-      )}
-      {userCanEdit(comment.user_id) && (
-        <button value={comment.id} onClick={() => handleEdit(comment?.content)}>
-          {currentComment?.id === comment.id && isEditing ? 'Stop Editing' : 'Edit Comment'}
-        </button>
-      )}
-      {currentComment?.id === comment.id && isEditing && (
-        <button onClick={handleSubmit}>Save Changes</button>
-      )}
-      {userCanEdit(comment.user_id) && (
-        <button onClick={() => handleDelete()}>Delete Comment</button>
-      )}
+              ) : (
+                <Text>{comment?.content}</Text>
+              )}
+              <ul className="image-list-container">
+                {comment.images.length > 0 &&
+                  comment.images.map((img) => {
+                    return (
+                      <li key={img.id}>
+                        <img src={img.img_src} alt="Attached Image" style={{ height: '100px' }} />
+                        {currentComment?.id === comment.id && isEditing && (
+                          <button onClick={() => handleRemoveImage(comment.id, img.id)}>
+                            Remove Image
+                          </button>
+                        )}
+                      </li>
+                    );
+                  })}
+              </ul>
+            </Flex>
+          </Flex>
+
+          <ul>
+            {currentComment?.id === comment.id &&
+              isEditing &&
+              fileData.map((file, index) => {
+                return (
+                  <li key={index}>
+                    <Flex direction={'column'} width={'fit-content'} align={'center'}>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Attached Image"
+                        style={{ height: '100px' }}
+                      />
+                      <IconButton
+                        type="button"
+                        color="red"
+                        value={index}
+                        onClick={removeAttachedFile}
+                      >
+                        <TrashIcon style={{ pointerEvents: 'none' }} />
+                      </IconButton>
+                    </Flex>
+                  </li>
+                );
+              })}
+          </ul>
+
+          <Flex justify={'end'} align={'center'} gap={'2'}>
+            {currentComment?.id === comment.id && isEditing && (
+              <FileAttachmentButton handleChange={handleChange} innerText={'Upload Image'} />
+            )}
+            {userCanEdit(comment.user_id) && (
+              <Button color="red" onClick={() => handleDelete()}>
+                Delete Comment
+              </Button>
+            )}
+            {userCanEdit(comment.user_id) && (
+              <Button value={comment.id} onClick={() => handleEdit(comment?.content)}>
+                {currentComment?.id === comment.id && isEditing ? 'Stop Editing' : 'Edit Comment'}
+              </Button>
+            )}
+            {currentComment?.id === comment.id && isEditing && (
+              <Button color={isEditing ? 'green' : ''} onClick={handleSubmit}>
+                Save Changes
+              </Button>
+            )}
+          </Flex>
+        </Flex>
+      </Card>
     </li>
   );
 }

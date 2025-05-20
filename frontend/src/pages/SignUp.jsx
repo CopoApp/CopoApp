@@ -1,22 +1,29 @@
-import { useContext, useState } from "react";
-import { useNavigate, Navigate, Link } from "react-router-dom";
-import CurrentUserContext from "../contexts/current-user-context";
-import { registerUser } from "../adapters/auth-adapter";
+import { useContext, useState } from 'react';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
+import CurrentUserContext from '../contexts/current-user-context';
+import { registerUser } from '../adapters/auth-adapter';
+import { NavLink } from 'react-router-dom';
 
-import user_icon from "./assets/person.png";
-import email_icon from "./assets/email.png";
-import password_icon from "./assets/password.png";
-import user_avatar from "./assets/userAvatar.png";
+import { Card } from '@radix-ui/themes';
+import { Header } from '@radix-ui/themes/components/table';
+import { Text } from '@radix-ui/themes';
+import { Box } from '@radix-ui/themes';
+import { TextField } from '@radix-ui/themes';
+import { Button } from '@radix-ui/themes';
+import { Flex } from '@radix-ui/themes';
+import { Callout } from '@radix-ui/themes';
+import { Container } from '@radix-ui/themes';
+import { AspectRatio } from '@radix-ui/themes';
 
 // Controlling the sign up form is a good idea because we want to add (eventually)
 // more validation and provide real time feedback to the user about usernames and passwords
 export default function SignUpPage() {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
-  const [errorText, setErrorText] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [errorText, setErrorText] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   // users shouldn't be able to see the sign up page if they are already logged in.
   // if the currentUser exists in the context, navigate the user to
@@ -25,21 +32,15 @@ export default function SignUpPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setErrorText("");
-
-    const formData = new FormData(event.target);
-    const username = formData.get("username");
-    const email = formData.get("email");
-    const password = formData.get("password");
+    setErrorText('');
 
     if (!username || !email || !password)
-      return setErrorText("Missing username, email or password");
+      return setErrorText('Missing username, email or password');
 
     const [user, error] = await registerUser({ username, email, password });
 
     // Handle missing email, username or password
-    if (error && error.cause === 400)
-      return setErrorText(`Email, username, and password required`);
+    if (error && error.cause === 400) return setErrorText(`Email, username, and password required`);
 
     // Handle only unique emails and usernames
     if (error && error.cause === 409)
@@ -55,115 +56,66 @@ export default function SignUpPage() {
     if (error) return setErrorText(error.message);
 
     setCurrentUser(user);
-    navigate("/feed");
+    navigate('/feed');
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    if (name === "username") setUsername(value);
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
+    if (name === 'username') setUsername(value);
+    if (name === 'email') setEmail(value);
+    if (name === 'password') setPassword(value);
   };
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        onChange={handleChange}
-        aria-labelledby="create-heading"
-        className="signupContainer"
-      >
-        <div className="userAvatar">
-          <img
-            src={user_avatar}
-            alt="blank profile picture"
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <div className="header">
-          <h2 className="text">Create New User</h2>
-          <div className="underline"></div>
-        </div>
-        {/* <label htmlFor="username">Username</label> */}
-        <div className="inputs">
-          <div className="input">
-            <img
-              src={user_icon}
-              alt="user icon"
-              style={{ width: "15px", height: "auto", padding: "none" }}
-              className="userIconLogin"
-            />
-            <input
-              autoComplete="off"
+      <Flex justify="center" align="center" height="100vh">
+        <Card>
+          <Flex direction="column" gap="3" width="300px">
+            <Header>Sign Up</Header>
+            <TextField.Root
               type="text"
-              placeholder="Username"
+              autoComplete="username"
               id="username"
               name="username"
-              onChange={handleChange}
               value={username}
-              required
-            />
-          </div>
-          <div className="input">
-            <img
-              src={email_icon}
-              alt="email icon"
-              style={{ width: "15px", height: "auto", padding: "none" }}
-              className="userEmailIcon"
-            />
-            <input
-              autoComplete="off"
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+            ></TextField.Root>
+            <TextField.Root
               type="text"
-              placeholder="Email"
+              autoComplete="email"
               id="email"
               name="email"
-              onChange={handleChange}
               value={email}
-              required
-            />
-          </div>
-
-          {/* <label htmlFor="password">Password</label> */}
-          <div className="input">
-            <img
-              src={password_icon}
-              alt="password icon"
-              style={{ width: "15px", height: "auto", padding: "none" }}
-              className="userPasswordIcon"
-            />
-            <input
-              autoComplete="off"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+            ></TextField.Root>
+            <TextField.Root
               type="password"
-              placeholder="Password"
+              autoComplete="password"
               id="password"
               name="password"
-              onChange={handleChange}
               value={password}
-              required
-            />
-          </div>
-
-          {/* In reality, we'd want a LOT more validation on signup, so add more things if you have time
-            <label htmlFor="password-confirm">Password Confirm</label>
-            <input autoComplete="off" type="password" id="password-confirm" name="passwordConfirm" />
-          */}
-        </div>
-        {!!errorText && <p>{errorText}</p>}
-        <div className="submit-container">
-          <button className="submit" type="submit">
-            Sign Up Now!
-          </button>
-        </div>
-        <div className="haveAccount">
-          Already have an account with us? <span className="loginSpan"></span>
-          <Link to="/login">Log in!</Link>
-        </div>
-      </form>
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+            ></TextField.Root>
+            {errorText && (
+              <Callout.Root color="red" size="1">
+                <Callout.Text>{errorText}</Callout.Text>
+              </Callout.Root>
+            )}
+            <Flex justify="end" gap="5">
+              <Button onClick={handleSubmit}>Sign Up</Button>
+            </Flex>
+          </Flex>
+          <Flex align="center" direction="column" gap="3" pt="2">
+            <Text>Already have an account?</Text>
+            <NavLink to="/login">
+              <Button variant="soft">Log In</Button>
+            </NavLink>
+          </Flex>
+        </Card>
+      </Flex>
     </>
   );
 }

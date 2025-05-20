@@ -14,6 +14,19 @@ import Comment from '../components/Comment';
 import CurrentUserContext from '../contexts/current-user-context';
 import CommentSection from '../components/CommentSection';
 import FileAttachmentButton from '../components/FileAttachmentButton';
+import ReportDetail from '../components/ReportDetail';
+import {
+  Container,
+  Text,
+  Heading,
+  Flex,
+  Card,
+  Button,
+  IconButton,
+  Box,
+  Strong,
+} from '@radix-ui/themes';
+import { TrashIcon } from '@radix-ui/react-icons';
 
 const breeds = ['Labrador', 'German Shepherd', 'Bulldog', 'Poodle', 'Mixed']; // example list
 
@@ -128,217 +141,227 @@ export default function ReportDetails() {
 
   return (
     <>
-      <div className="report-details">
-        {currentUser?.id !== report?.author_user_id ? (
-          <></>
-        ) : (
-          <button type="button" onClick={handleEdit}>
-            {isEditing ? 'Exit Editing' : 'Edit Post'}
-          </button>
-        )}
-        {isEditing ? (
-          <button type="button" onClick={handleDeletePost}>
-            Delete Post
-          </button>
-        ) : (
-          <></>
-        )}
+      <Container size={'2'} pb={'100px'} pt={'30px'} pl={'4'} pr={'4'}>
+        <Card>
+          <Flex direction={'column'} gap={'2'}>
+            <Box>
+              {!isEditing && <Heading size={'8'}>{report.pet_name}</Heading>}
+              {!isEditing && (
+                <>
+                  <Text size={'3'}>
+                    {<Strong>Reported By: </Strong>} {report.username}
+                  </Text>
+                </>
+              )}
+            </Box>
+            {isEditing && <Text weight={'bold'}>Pet Name</Text>}
 
-        <h2 style={{ display: isEditing ? 'none' : 'block' }}>{report.pet_name}</h2>
-        <input
-          onChange={handleInput}
-          name="pet_name"
-          id="pet-name"
-          type="text"
-          value={formData?.pet_name}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <input
+              onChange={handleInput}
+              name="pet_name"
+              id="pet-name"
+              type="text"
+              value={formData?.pet_name}
+              style={{ display: isEditing ? 'block' : 'none' }}
+            />
 
-        <div className="report-images">
-          <ul>
-            {formData.images?.length > 0 &&
-              formData.images?.map((img, index) => {
-                return (
-                  <li key={index}>
-                    <img src={img.img_src} alt="Post image" style={{ height: '100px' }} />
+            <div className="report-images">
+              <ul>
+                {formData.images?.length > 0 &&
+                  formData.images?.map((img, index) => {
+                    return (
+                      <li key={index}>
+                        <Flex direction={'column'} justify={'center'} align={'center'} gap={'2'}>
+                          <img src={img.img_src} alt="Post image" />
 
-                    <button
-                      value={img.id}
-                      style={{ display: isEditing ? 'block' : 'none' }}
-                      onClick={handleDeleteImages}
-                    >
-                      Delete Photo
-                    </button>
+                          {isEditing && (
+                            <IconButton color="red" value={img.id} onClick={handleDeleteImages}>
+                              <TrashIcon style={{ pointerEvents: 'none' }} />
+                            </IconButton>
+                          )}
+                        </Flex>
+                      </li>
+                    );
+                  })}
+              </ul>
+              <div id="file-attachment-container" style={{ display: isEditing ? 'block' : 'none' }}>
+                {fileData.map((file, index) => (
+                  <li key={file.name} style={{ listStyle: 'none' }}>
+                    <Flex justify={'start'} align={'center'} gap={'2'}>
+                      <IconButton color="red" value={index} onClick={handleRemoveLocalImage}>
+                        <TrashIcon style={{ pointerEvents: 'none' }} />
+                      </IconButton>
+                      <Text>{file.name}</Text>
+                    </Flex>
                   </li>
-                );
-              })}
-          </ul>
-          <div id="file-attachment-container" style={{ display: isEditing ? 'block' : 'none' }}>
-            {fileData.map((file, index) => (
-              <li key={file.name}>
-                <button value={index} onClick={handleRemoveLocalImage}>
-                  Remove Image
-                </button>
-                {file.name}
-              </li>
-            ))}
-            <FileAttachmentButton
-              fileData={fileData}
-              setFileData={setFileData}
-              handleChange={handleInput}
-            ></FileAttachmentButton>
-          </div>
-        </div>
+                ))}
+                <FileAttachmentButton
+                  fileData={fileData}
+                  setFileData={setFileData}
+                  handleChange={handleInput}
+                ></FileAttachmentButton>
+              </div>
+            </div>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Status:</strong> {report.status}
-        </p>
-        <label htmlFor="status" style={{ display: isEditing ? 'block' : 'none' }}>
-          Status:{' '}
-        </label>
-        <input
-          onChange={handleInput}
-          name="status"
-          id="status"
-          type="text"
-          value={formData?.status}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <ReportDetail
+              title={'Status'}
+              data={report.status}
+              isEditing={isEditing}
+              input={
+                <input
+                  onChange={handleInput}
+                  name="status"
+                  id="status"
+                  type="text"
+                  value={formData?.status}
+                />
+              }
+            ></ReportDetail>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Breed:</strong> {report.pet_breed}
-        </p>
-        <label style={{ display: isEditing ? 'block' : 'none' }}>Breed:</label>
-        <select
-          name="pet_breed"
-          value={formData.pet_breed}
-          onChange={handleInput}
-          required
-          style={{ display: isEditing ? 'block' : 'none' }}
-        >
-          <option value=""></option>
-          {breeds.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </select>
+            <ReportDetail
+              title={'Breed'}
+              data={report.pet_breed}
+              isEditing={isEditing}
+              input={
+                <select name="pet_breed" value={formData.pet_breed} onChange={handleInput} required>
+                  <option value=""></option>
+                  {breeds.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              }
+            ></ReportDetail>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Color:</strong> {report.pet_color || 'No color specified'}
-        </p>
-        <label htmlFor="color" style={{ display: isEditing ? 'block' : 'none' }}>
-          Color:{' '}
-        </label>
-        <input
-          type="color"
-          name="pet_color"
-          id="pet-color"
-          value={formData?.pet_color || '#000000'}
-          onChange={handleInput}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Weight:</strong> {report.pet_weight} lb
-        </p>
-        <label htmlFor="weight" style={{ display: isEditing ? 'block' : 'none' }}>
-          Weight:{' '}
-        </label>
-        <input
-          onChange={handleInput}
-          name="pet_weight"
-          id="weight"
-          type="number"
-          value={formData?.pet_weight}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <ReportDetail
+              title={'Color'}
+              data={report.pet_color ? report.pet_color : 'Color Not Provided'}
+              isEditing={isEditing}
+              input={
+                <input
+                  type="color"
+                  name="pet_color"
+                  id="pet-color"
+                  value={formData?.pet_color || '#000000'}
+                  onChange={handleInput}
+                />
+              }
+            ></ReportDetail>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Height:</strong> {report.pet_height} in
-        </p>
-        <label htmlFor="height" style={{ display: isEditing ? 'block' : 'none' }}>
-          Height:{' '}
-        </label>
-        <input
-          onChange={handleInput}
-          name="pet_height"
-          id="height"
-          type="number"
-          value={formData?.pet_height}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <ReportDetail
+              title={'Weight (lb)'}
+              data={report.pet_weight}
+              isEditing={isEditing}
+              input={
+                <input
+                  onChange={handleInput}
+                  name="pet_weight"
+                  id="weight"
+                  type="number"
+                  value={formData?.pet_weight}
+                />
+              }
+            ></ReportDetail>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Last Seen:</strong> {report.last_seen_location}
-        </p>
-        <label htmlFor="last_seen_location" style={{ display: isEditing ? 'block' : 'none' }}>
-          Last Seen:{' '}
-        </label>
-        <input
-          onChange={handleInput}
-          name="last_seen_location"
-          id="location"
-          type="text"
-          value={formData?.last_seen_location}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <ReportDetail
+              title={'Height (in)'}
+              data={report.pet_height}
+              isEditing={isEditing}
+              input={
+                <input
+                  onChange={handleInput}
+                  name="pet_height"
+                  id="height"
+                  type="number"
+                  value={formData?.pet_height}
+                />
+              }
+            ></ReportDetail>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Contact Email:</strong> {report.contact_email}
-        </p>
-        <label htmlFor="contact_email" style={{ display: isEditing ? 'block' : 'none' }}>
-          Contact Email:{' '}
-        </label>
-        <input
-          onChange={handleInput}
-          name="contact_email"
-          id="email"
-          type="text"
-          value={formData?.contact_email}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <ReportDetail
+              title={'Last Seen At'}
+              data={report.last_seen_location}
+              isEditing={isEditing}
+              input={
+                <input
+                  onChange={handleInput}
+                  name="last_seen_location"
+                  id="location"
+                  type="text"
+                  value={formData?.last_seen_location}
+                />
+              }
+            ></ReportDetail>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Contact Phone:</strong> {report.contact_phone_number}
-        </p>
-        <label htmlFor="contact_phone_number" style={{ display: isEditing ? 'block' : 'none' }}>
-          Contact Phone:{' '}
-        </label>
-        <input
-          onChange={handleInput}
-          name="contact_phone_number"
-          id="phone-number"
-          type="text"
-          value={formData?.contact_phone_number}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <ReportDetail
+              title={'Contact Email'}
+              data={report.contact_email}
+              isEditing={isEditing}
+              input={
+                <input
+                  onChange={handleInput}
+                  name="contact_email"
+                  id="email"
+                  type="text"
+                  value={formData?.contact_email}
+                />
+              }
+            ></ReportDetail>
 
-        <p style={{ display: isEditing ? 'none' : 'block' }}>
-          <strong>Description:</strong> {report.content}
-        </p>
-        <label htmlFor="content" style={{ display: isEditing ? 'block' : 'none' }}>
-          Description:{' '}
-        </label>
-        <input
-          onChange={handleInput}
-          name="content"
-          id="content"
-          type="text"
-          value={formData?.content}
-          style={{ display: isEditing ? 'block' : 'none' }}
-        />
+            <ReportDetail
+              title={'Contact Phone'}
+              data={report.contact_phone_number}
+              isEditing={isEditing}
+              input={
+                <input
+                  onChange={handleInput}
+                  name="contact_phone_number"
+                  id="phone-number"
+                  type="text"
+                  value={formData?.contact_phone_number}
+                />
+              }
+            ></ReportDetail>
 
-        {isEditing ? (
-          <>
-            <button type="submit" onClick={handleSaveChanges}>
-              Save Changes{' '}
-            </button>
-          </>
-        ) : (
-          <></>
-        )}
-      </div>
-      <CommentSection />
+            <ReportDetail
+              title={'Description'}
+              data={report.content}
+              isEditing={isEditing}
+              input={
+                <input
+                  onChange={handleInput}
+                  name="content"
+                  id="content"
+                  type="text"
+                  value={formData?.content}
+                />
+              }
+            ></ReportDetail>
+
+            {isEditing && (
+              <Button type="submit" onClick={handleSaveChanges}>
+                Save Changes
+              </Button>
+            )}
+
+            {currentUser?.id === report?.author_user_id && (
+              <Button color={isEditing ? 'amber' : ''} type="button" onClick={handleEdit}>
+                {isEditing ? 'Exit Editing' : 'Edit Post'}
+              </Button>
+            )}
+            {isEditing && (
+              <Button type="button" color="red" onClick={handleDeletePost}>
+                Delete Post
+              </Button>
+            )}
+          </Flex>
+        </Card>
+        <Heading size={'7'} mt={'2'} mb={'2'}>
+          Comments
+        </Heading>
+        <CommentSection />
+      </Container>
       <Navbar />
     </>
   );

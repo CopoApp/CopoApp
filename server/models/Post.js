@@ -21,7 +21,7 @@ class Post {
       last_seen_location_latitude,
       last_seen_location_longitude,
     } = postInformation;
-    
+
     try {
       // 1st create post
       const post = await knex("posts").insert(
@@ -43,13 +43,13 @@ class Post {
         },
         // Additional "*" argument to tell insert function to return all the data. Shortahand for .returning()
         "*"
-      )
+      );
 
-      const createdPostId = post[0]?.id
+      const createdPostId = post[0]?.id;
 
-      const createdImages = []
+      const createdImages = [];
 
-      if (images?.length > 0){
+      if (images?.length > 0) {
         for (const image of images) {
           const newImage = await knex("post_images").insert(
             {
@@ -57,21 +57,20 @@ class Post {
               img_name: image.img_name,
               img_src: image.img_src,
             },
-            '*'
-          )
-          createdImages.push(newImage[0])
+            "*"
+          );
+          createdImages.push(newImage[0]);
         }
       }
-      
 
-      const result = {...post[0], images: images}
-      
+      const result = { ...post[0], images: images };
+
       // 2. Use the created comment information to attach the images
 
       if (!result || result.length === 0)
         throw new Error(`Comment could not be inserted. Please try again.`);
 
-      return result
+      return result;
     } catch (error) {
       throw error;
     }
@@ -81,28 +80,29 @@ class Post {
   static async list() {
     try {
       // Selects all of the post information and only the username from the users table by joining on the author_user_id
-      const images = await knex.select('*').from('post_images');
+      const images = await knex.select("*").from("post_images");
 
       const posts = await knex
         .select("posts.*", "users.username as author")
         .from("posts")
         .leftJoin("users", "author_user_id", "users.id")
+        .orderBy("created_at", "desc")
         .returning("*");
 
       const result = posts.map((post) => {
-        const postImages = []
+        const postImages = [];
         for (let image of images) {
           if (image.post_id === post.id) {
-            postImages.push(image)
+            postImages.push(image);
           }
         }
-        return {...post, 'images': postImages}
-      })
+        return { ...post, images: postImages };
+      });
 
       if (!result || result.length === 0)
         throw new Error(`Query returned no data`);
 
-      return result
+      return result;
     } catch (error) {
       throw error;
     }
@@ -124,9 +124,13 @@ class Post {
 
   static async findPost(id) {
     try {
-      const post = await knex("posts").where("id", id);
+      const post = await knex("posts")
+        .leftJoin("users", "posts.author_user_id", "=", "users.id")
+        .where("posts.id", id)
+        .select("posts.*", "users.username");
+
       const images = await await knex("post_images").where("post_id", id);
-      return { ...post[0], 'images': images }
+      return { ...post[0], images: images };
     } catch (error) {
       throw error;
     }
@@ -179,7 +183,7 @@ class Post {
         })
         .returning("*");
 
-      // // Delete Images 
+      // // Delete Images
       // if (deletedImages.length > 0) {
       //   for (let image of deletedImages) {
       //     // delete from S3
@@ -195,31 +199,33 @@ class Post {
       //     .del();
       //   }
       // }
-      
+
       // Update Images in the database
       if (addedImages.length > 0) {
         for (let image of addedImages) {
-          await knex("post_images")
-          .insert({
+          await knex("post_images").insert({
             post_id: postId,
             img_name: image.img_name,
-            img_src: image.img_src
-          })
+            img_src: image.img_src,
+          });
         }
       }
 
-      const updatedPostImages = await knex.select('*').from('post_images').where('post_id', postId);
+      const updatedPostImages = await knex
+        .select("*")
+        .from("post_images")
+        .where("post_id", postId);
 
-      return { ...updatedPost[0], 'images': updatedPostImages }
+      return { ...updatedPost[0], images: updatedPostImages };
     } catch (error) {
-      console.log( Error(error))
+      console.log(Error(error));
       throw error;
     }
   }
 
   static async deletePost(id) {
     try {
-        // 1. Get list of posts from the DB
+      // 1. Get list of posts from the DB
       const postImages = await Post.getPostImages(id);
 
       // 2. Delete every image that belongs to the post in the S3 Bucket
@@ -236,7 +242,7 @@ class Post {
         .where("id", id)
         .returning("*")
         .del();
-      
+
       return deletedPost[0];
     } catch (error) {
       console.error(error);
@@ -245,24 +251,27 @@ class Post {
   }
 
   static async getUserPosts(userId) {
-      // Selects all of the post information and only the username from the users table by joining on the author_user_id
-      const posts = await knex
+    // Selects all of the post information and only the username from the users table by joining on the author_user_id
+    const posts = await knex
       .select("posts.*", "users.username as author")
       .from("posts")
       .leftJoin("users", "posts.author_user_id", "users.id")
       .where("posts.author_user_id", userId);
 
-      const result = []
+    const result = [];
 
-      for (let post of posts) {
-        const postImages = await knex.select('*').from('post_images').where('post_id', post.id);
-        result.push({...post, 'images': postImages})
-      }
+    for (let post of posts) {
+      const postImages = await knex
+        .select("*")
+        .from("post_images")
+        .where("post_id", post.id);
+      result.push({ ...post, images: postImages });
+    }
 
-      if (!result || result.length === 0)
-        throw new Error(`Query returned no data`);
+    if (!result || result.length === 0)
+      throw new Error(`Query returned no data`);
 
-      return result
+    return result;
   }
 
   static async attachImage(imageInformation) {
