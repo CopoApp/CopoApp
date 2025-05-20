@@ -42,18 +42,22 @@ export default function ReportCard({ reportInformation, setBookmarkedPosts }) {
         const [result, error] = await deleteBookmark(id);
         if (error) throw error;
   
-        setBookmarkedPosts((prev) => prev.filter((post) => post.id !== id));
+        if (setBookmarkedPosts) {
+          setBookmarkedPosts((prev) => prev.filter((post) => post.id !== id));
+        }
+  
+        setIsBookmarked(false);
       } else {
         const [result, error] = await createBookmark(id);
         if (error) throw error;
   
+        setIsBookmarked(true);
       }
-  
-      setIsBookmarked(!isBookmarked);
     } catch (err) {
       console.error("Error toggling bookmark:", err);
     }
   };
+  
   
 
   return (
