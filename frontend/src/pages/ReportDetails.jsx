@@ -28,7 +28,8 @@ import {
 } from '@radix-ui/themes';
 import { TrashIcon } from '@radix-ui/react-icons';
 
-const breeds = ['Labrador', 'German Shepherd', 'Bulldog', 'Poodle', 'Mixed']; // example list
+const types = ['Dogs', 'Cats', 'Rabbits', 'Guinea Pigs', 'Reptiles', 'Ferrets'];
+
 const statuses = ['Lost', 'Found', 'Searching'];
 
 export default function ReportDetails() {
@@ -62,7 +63,7 @@ export default function ReportDetails() {
       pet_name: report?.pet_name || '',
       pet_weight: report?.pet_weight || 0,
       pet_height: report?.pet_height || 0,
-      pet_breed: report?.pet_breed || '',
+      pet_type: report?.pet_type || '',
       pet_color: report?.pet_color || '',
       last_seen_location: report?.last_seen_location || '',
       last_seen_location_latitude: report?.last_seen_location_latitude || '',
@@ -227,18 +228,18 @@ export default function ReportDetails() {
             </select>
 
             <p style={{ display: isEditing ? 'none' : 'block' }}>
-              <strong>Breed:</strong> {report.pet_breed}
+              <strong>Pet Type:</strong> {report.pet_type}
             </p>
-            <label style={{ display: isEditing ? 'block' : 'none' }}>Breed:</label>
+            <label style={{ display: isEditing ? 'block' : 'none' }}>Pet Type:</label>
             <select
-              name="pet_breed"
-              value={formData.pet_breed}
+              name="pet_type"
+              value={formData.pet_type}
               onChange={handleInput}
               required
               style={{ display: isEditing ? 'block' : 'none' }}
             >
               <option value=""></option>
-              {breeds.map((b) => (
+              {types.map((b) => (
                 <option key={b} value={b}>
                   {b}
                 </option>

@@ -6,13 +6,18 @@ import { NavLink } from 'react-router-dom';
 
 import { Card } from '@radix-ui/themes';
 import { Header } from '@radix-ui/themes/components/table';
-import { Text } from '@radix-ui/themes';
-import { Box } from '@radix-ui/themes';
 import { TextField } from '@radix-ui/themes';
 import { Button } from '@radix-ui/themes';
 import { Flex } from '@radix-ui/themes';
 import { Callout } from '@radix-ui/themes';
-import { Container } from '@radix-ui/themes';
+
+import * as yup from 'yup';
+
+// schema for yup validation
+const schema = yup.object().shape({
+  email: yup.string().email().required('Email is required'),
+  password: yup.string().required('Password is required'),
+});
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -29,6 +34,14 @@ export default function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorText('');
+
+    // Input Validation Checks
+    try {
+      await schema.validate({ email, password });
+    } catch (error) {
+      const { message } = error;
+      return setErrorText(message);
+    }
 
     if (email.length === 0 || password.length === 0)
       return setErrorText(`Username and password required`);

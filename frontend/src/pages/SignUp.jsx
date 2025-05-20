@@ -15,6 +15,17 @@ import { Callout } from '@radix-ui/themes';
 import { Container } from '@radix-ui/themes';
 import { AspectRatio } from '@radix-ui/themes';
 
+import * as yup from 'yup';
+
+// schema for yup validation
+const schema = yup.object().shape({
+  email: yup.string().email().required('Email is required'),
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 6 characters'),
+});
+
 // Controlling the sign up form is a good idea because we want to add (eventually)
 // more validation and provide real time feedback to the user about usernames and passwords
 export default function SignUpPage() {
@@ -33,6 +44,14 @@ export default function SignUpPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorText('');
+
+    // Input Validation Checks
+    try {
+      await schema.validate({ email, password });
+    } catch (error) {
+      const { message } = error;
+      return setErrorText(message);
+    }
 
     if (!username || !email || !password)
       return setErrorText('Missing username, email or password');

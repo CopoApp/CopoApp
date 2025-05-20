@@ -5,7 +5,8 @@ import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import FileAttachmentButton from '../components/FileAttachmentButton';
 
-const breeds = ['Labrador', 'German Shepherd', 'Bulldog', 'Poodle', 'Mixed']; // example list
+const types = ['Dogs', 'Cats', 'Rabbits', 'Guinea Pigs', 'Reptiles', 'Ferrets'];
+// example list
 
 import {
   Box,
@@ -45,7 +46,7 @@ export default function PetReportForm() {
     pet_name: '',
     pet_height: 0,
     pet_weight: 0,
-    pet_breed: '',
+    pet_type: '',
     pet_color: '',
     last_seen_location: '',
     last_seen_location_latitude: 0,
@@ -132,9 +133,9 @@ export default function PetReportForm() {
 
             {/* List of Breeds */}
             <Flex direction={'column'}>
-              <Text weight={'medium'}>Breed</Text>
-              <select name="pet_breed" value={formData.pet_breed} onChange={handleChange}>
-                {breeds.map((b) => (
+              <Text weight={'medium'}>Pet Type</Text>
+              <select name="pet_type" value={formData.pet_type} onChange={handleChange}>
+                {types.map((b) => (
                   <option key={b} value={b}>
                     {b}
                   </option>
