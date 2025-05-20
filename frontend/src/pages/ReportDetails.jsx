@@ -29,6 +29,7 @@ import {
 import { TrashIcon } from '@radix-ui/react-icons';
 
 const breeds = ['Labrador', 'German Shepherd', 'Bulldog', 'Poodle', 'Mixed']; // example list
+const statuses = ['Lost', 'Found', 'Searching'];
 
 export default function ReportDetails() {
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
@@ -204,66 +205,74 @@ export default function ReportDetails() {
               </div>
             </div>
 
-            <ReportDetail
-              title={'Status'}
-              data={report.status}
-              isEditing={isEditing}
-              input={
-                <input
-                  onChange={handleInput}
-                  name="status"
-                  id="status"
-                  type="text"
-                  value={formData?.status}
-                />
-              }
-            ></ReportDetail>
+            <p style={{ display: isEditing ? 'none' : 'block' }}>
+              <strong>Status:</strong> {report.status}
+            </p>
+            <label htmlFor="status" style={{ display: isEditing ? 'block' : 'none' }}>
+              Status:{' '}
+            </label>
+            <select
+              onChange={handleInput}
+              name="status"
+              id="status"
+              value={formData?.status}
+              style={{ display: isEditing ? 'block' : 'none' }}
+              required
+            >
+              {statuses.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
 
-            <ReportDetail
-              title={'Breed'}
-              data={report.pet_breed}
-              isEditing={isEditing}
-              input={
-                <select name="pet_breed" value={formData.pet_breed} onChange={handleInput} required>
-                  <option value=""></option>
-                  {breeds.map((b) => (
-                    <option key={b} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </select>
-              }
-            ></ReportDetail>
+            <p style={{ display: isEditing ? 'none' : 'block' }}>
+              <strong>Breed:</strong> {report.pet_breed}
+            </p>
+            <label style={{ display: isEditing ? 'block' : 'none' }}>Breed:</label>
+            <select
+              name="pet_breed"
+              value={formData.pet_breed}
+              onChange={handleInput}
+              required
+              style={{ display: isEditing ? 'block' : 'none' }}
+            >
+              <option value=""></option>
+              {breeds.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
 
-            <ReportDetail
-              title={'Color'}
-              data={report.pet_color ? report.pet_color : 'Color Not Provided'}
-              isEditing={isEditing}
-              input={
-                <input
-                  type="color"
-                  name="pet_color"
-                  id="pet-color"
-                  value={formData?.pet_color || '#000000'}
-                  onChange={handleInput}
-                />
-              }
-            ></ReportDetail>
-
-            <ReportDetail
-              title={'Weight (lb)'}
-              data={report.pet_weight}
-              isEditing={isEditing}
-              input={
-                <input
-                  onChange={handleInput}
-                  name="pet_weight"
-                  id="weight"
-                  type="number"
-                  value={formData?.pet_weight}
-                />
-              }
-            ></ReportDetail>
+            <p style={{ display: isEditing ? 'none' : 'block' }}>
+              <strong>Color:</strong> {report.pet_color || 'No color specified'}
+            </p>
+            <label htmlFor="color" style={{ display: isEditing ? 'block' : 'none' }}>
+              Color:{' '}
+            </label>
+            <input
+              type="color"
+              name="pet_color"
+              id="pet-color"
+              value={formData?.pet_color || '#000000'}
+              onChange={handleInput}
+              style={{ display: isEditing ? 'block' : 'none' }}
+            />
+            <p style={{ display: isEditing ? 'none' : 'block' }}>
+              <strong>Weight:</strong> {report.pet_weight} lb
+            </p>
+            <label htmlFor="weight" style={{ display: isEditing ? 'block' : 'none' }}>
+              Weight:{' '}
+            </label>
+            <input
+              onChange={handleInput}
+              name="pet_weight"
+              id="weight"
+              type="number"
+              value={formData?.pet_weight}
+              style={{ display: isEditing ? 'block' : 'none' }}
+            />
 
             <ReportDetail
               title={'Height (in)'}

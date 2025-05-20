@@ -30,7 +30,7 @@ export default function SiteHeadingAndNav() {
           style={{ cursor: 'pointer' }}
           onClick={() => navigate('/')}
         >
-          <img id="logo" src="" alt="ok" />
+          <img id="logo" src="" alt="" />
         </Flex>
 
         <Flex justify={'center'} width={'100%'}>
