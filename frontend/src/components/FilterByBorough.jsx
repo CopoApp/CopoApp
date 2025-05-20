@@ -1,7 +1,8 @@
 import React from 'react';
 
 const FilterByBorough = ({ selectedBorough, onChange, arrayOfPosts }) => {
-  const uniqueBorough = ['All', ...new Set(arrayOfPosts.map((post) => post.last_seen_location))];
+  // Fixed list of NYC boroughs
+  const boroughs = ['All', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island', 'Unknown'];
 
   return (
     <div className="filter-container-borough">
@@ -13,7 +14,7 @@ const FilterByBorough = ({ selectedBorough, onChange, arrayOfPosts }) => {
         value={selectedBorough}
         onChange={(e) => onChange(e.target.value)}
       >
-        {uniqueBorough.map((borough) => (
+        {boroughs.map((borough) => (
           <option key={borough} value={borough}>
             {borough}
           </option>

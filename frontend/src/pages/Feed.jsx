@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import ReportCard from '../components/PetCard';
 import FilterByBorough from '../components/FilterByBorough';
 import FilterByStatus from '../components/FilterByStatus';
+import { getBorough } from '../utils/boroughMapper';
 
 export default function Feed() {
   const [selectedBorough, setSelectedBorough] = useState('All');
@@ -17,24 +18,28 @@ export default function Feed() {
     const loadReports = async () => {
       const [posts, error] = await getAllPosts();
       if (error) setError(error);
-      else if (posts) setPosts(posts);
+      else if (posts) {
+        // Add borough property to each post based on last_seen_location
+
+        const processedPosts = posts.map((post) => ({
+          ...post,
+          borough: getBorough(post.last_seen_location),
+        }));
+        setPosts(processedPosts);
+      }
     };
     loadReports();
   }, []);
 
   const filteredPosts = posts.filter((post) => {
-    const matchesBorough = selectedBorough === 'All' || post.last_seen_location === selectedBorough;
+    const matchesBorough = selectedBorough === 'All' || post.borough === selectedBorough;
     const matchesStatus = selectedStatus === 'All' || post.status === selectedStatus;
     return matchesBorough && matchesStatus;
   });
 
   return (
     <>
-      <FilterByBorough
-        arrayOfPosts={posts}
-        selectedBorough={selectedBorough}
-        onChange={setSelectedBorough}
-      />
+      <FilterByBorough selectedBorough={selectedBorough} onChange={setSelectedBorough} />
 
       <FilterByStatus
         selectedStatus={selectedStatus}
