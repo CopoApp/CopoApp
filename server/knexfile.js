@@ -30,7 +30,10 @@ module.exports = {
   },
   production: {
     client: "pg",
-    connection: process.env.PG_CONNECTION_STRING,
+    connection: {
+      connectionString: process.env.PG_CONNECTION_STRING,
+      ssl: { rejectUnauthorized: false },
+    },
     migrations: {
       directory: migrationsDirectory,
     },

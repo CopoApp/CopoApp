@@ -1,4 +1,4 @@
-const knex = require("../db/knex");
+const db = require("../db/knex.js");
 const { s3 } = require("../awsConfig");
 const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 require("dotenv").config();
@@ -24,7 +24,7 @@ class Post {
 
     try {
       // 1st create post
-      const post = await knex("posts").insert(
+      const post = await db("posts").insert(
         {
           author_user_id: userId,
           status,
@@ -51,7 +51,7 @@ class Post {
 
       if (images?.length > 0) {
         for (const image of images) {
-          const newImage = await knex("post_images").insert(
+          const newImage = await db("post_images").insert(
             {
               post_id: createdPostId,
               img_name: image.img_name,
@@ -80,9 +80,9 @@ class Post {
   static async list() {
     try {
       // Selects all of the post information and only the username from the users table by joining on the author_user_id
-      const images = await knex.select("*").from("post_images");
+      const images = await db.select("*").from("post_images");
 
-      const posts = await knex
+      const posts = await db
         .select("posts.*", "users.username as author")
         .from("posts")
         .leftJoin("users", "author_user_id", "users.id")
@@ -110,7 +110,7 @@ class Post {
 
   static async listImages(postId) {
     try {
-      const result = await knex("post_images")
+      const result = await db("post_images")
         .where("post_id", postId)
         .returning("*");
 
@@ -124,12 +124,12 @@ class Post {
 
   static async findPost(id) {
     try {
-      const post = await knex("posts")
+      const post = await db("posts")
         .leftJoin("users", "posts.author_user_id", "=", "users.id")
         .where("posts.id", id)
         .select("posts.*", "users.username");
 
-      const images = await await knex("post_images").where("post_id", id);
+      const images = await await db("post_images").where("post_id", id);
       return { ...post[0], images: images };
     } catch (error) {
       throw error;
@@ -137,7 +137,7 @@ class Post {
   }
 
   static async verifyPostOwnership(postId, userId) {
-    const result = await knex("posts").where({
+    const result = await db("posts").where({
       id: postId,
       author_user_id: userId,
     });
@@ -164,7 +164,7 @@ class Post {
 
     try {
       // Update post
-      const updatedPost = await knex("posts")
+      const updatedPost = await db("posts")
         .where("id", postId)
         .update({
           status,
@@ -194,7 +194,7 @@ class Post {
       //     await s3.send(command);
 
       //     // Delete from database
-      //     await knex("post_images")
+      //     await db("post_images")
       //     .where("id", image.id)
       //     .del();
       //   }
@@ -203,7 +203,7 @@ class Post {
       // Update Images in the database
       if (addedImages.length > 0) {
         for (let image of addedImages) {
-          await knex("post_images").insert({
+          await db("post_images").insert({
             post_id: postId,
             img_name: image.img_name,
             img_src: image.img_src,
@@ -211,7 +211,7 @@ class Post {
         }
       }
 
-      const updatedPostImages = await knex
+      const updatedPostImages = await db
         .select("*")
         .from("post_images")
         .where("post_id", postId);
@@ -238,7 +238,7 @@ class Post {
       }
 
       // Deletes post and post_image
-      const deletedPost = await knex("posts")
+      const deletedPost = await db("posts")
         .where("id", id)
         .returning("*")
         .del();
@@ -252,7 +252,7 @@ class Post {
 
   static async getUserPosts(userId) {
     // Selects all of the post information and only the username from the users table by joining on the author_user_id
-    const posts = await knex
+    const posts = await db
       .select("posts.*", "users.username as author")
       .from("posts")
       .leftJoin("users", "posts.author_user_id", "users.id")
@@ -261,7 +261,7 @@ class Post {
     const result = [];
 
     for (let post of posts) {
-      const postImages = await knex
+      const postImages = await db
         .select("*")
         .from("post_images")
         .where("post_id", post.id);
@@ -275,7 +275,7 @@ class Post {
   }
 
   static async attachImage(imageInformation) {
-    const result = await knex("post_images")
+    const result = await db("post_images")
       .insert(imageInformation)
       .returning("*");
 
@@ -283,7 +283,7 @@ class Post {
   }
 
   static async setCoverImage(postId, imageSource) {
-    const result = await knex("posts")
+    const result = await db("posts")
       .where("id", postId)
       .update({
         cover_img_src: imageSource,
@@ -294,7 +294,7 @@ class Post {
   }
 
   static async getPostImages(postId) {
-    const result = await knex
+    const result = await db
       .select("post_images.img_name")
       .from("post_images")
       .where("post_id", postId);
@@ -304,7 +304,7 @@ class Post {
 
   static async deleteImage(imageId) {
     try {
-      const deletedImage = await knex("post_images")
+      const deletedImage = await db("post_images")
         .where("id", imageId)
         .returning("*")
         .del();
@@ -316,37 +316,25 @@ class Post {
   }
 
   static async saveBookmark(user_id, post_id) {
-    const bookmark = await knex("saved_posts")
-    .insert({ user_id , post_id })
-    .returning("*");
+    const bookmark = await db("saved_posts")
+      .insert({ user_id, post_id })
+      .returning("*");
 
     return bookmark[0];
   }
 
-static async deleteBookmark(user_id, post_id) {
-  const deleted = await knex("saved_posts")
-    .where( 'post_id', post_id)
-    .andWhere('user_id', user_id)
-    .del();
+  static async deleteBookmark(user_id, post_id) {
+    const deleted = await db("saved_posts")
+      .where("post_id", post_id)
+      .andWhere("user_id", user_id)
+      .del();
 
-    return deleted
-}
+    return deleted;
+  }
 
-// Get all bookmarks for a user
-static async getBookmarks(user_id) {
-  return await knex("saved_posts")
-    .where( "user_id",  user_id )
-    .returning('*')
-}
-
-  static async enableAlerts(user_id, post_id) {
-    const query = `INSERT INTO post_alerts (user_id, post_id)
-    VALUES (?, ?) RETURNING *`;
-
-    const result = await knex.raw(query, [user_id, post_id]);
-
-    const rawUserData = result.rows[0];
-    return rawUserData;
+  // Get all bookmarks for a user
+  static async getBookmarks(user_id) {
+    return await db("saved_posts").where("user_id", user_id).returning("*");
   }
 }
 
