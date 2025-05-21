@@ -1,0 +1,112 @@
+[
+  {
+    "username": "wanderlust123",
+    "email": "alice@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Nature lover and hiker. Looking for a furry friend.",
+    "profile_pic": "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d",
+    "location": "Denver, CO",
+    "location_latitude": 39.7392,
+    "location_longitude": -104.9903,
+    "saved_pets_count": 2
+  },
+  {
+    "username": "citypaws",
+    "email": "jason@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Dog dad and coffee enthusiast. I love city walks.",
+    "profile_pic": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde",
+    "location": "New York, NY",
+    "location_latitude": 40.7128,
+    "location_longitude": -74.006,
+    "saved_pets_count": 5
+  },
+  {
+    "username": "beachbuddy",
+    "email": "emily@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Beach runner and cat whisperer.",
+    "profile_pic": "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+    "location": "Santa Monica, CA",
+    "location_latitude": 34.0195,
+    "location_longitude": -118.4912,
+    "saved_pets_count": 1
+  },
+  {
+    "username": "midwestmutts",
+    "email": "michael@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Helping rescue dogs find homes in the Midwest.",
+    "profile_pic": "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    "location": "Chicago, IL",
+    "location_latitude": 41.8781,
+    "location_longitude": -87.6298,
+    "saved_pets_count": 3
+  },
+  {
+    "username": "sunshinecat",
+    "email": "sophia@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Cat mom and plant lover 🌿",
+    "profile_pic": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
+    "location": "Austin, TX",
+    "location_latitude": 30.2672,
+    "location_longitude": -97.7431,
+    "saved_pets_count": 0
+  },
+  {
+    "username": "mountain_mike",
+    "email": "mike@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Climber and mountain biker — always outdoors.",
+    "profile_pic": "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126",
+    "location": "Boise, ID",
+    "location_latitude": 43.615,
+    "location_longitude": -116.2023,
+    "saved_pets_count": 4
+  },
+  {
+    "username": "floridafins",
+    "email": "dani@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Born to swim. Looking for a pup to hit the beach with.",
+    "profile_pic": "https://images.unsplash.com/photo-1517841905240-472988babdf9",
+    "location": "Miami, FL",
+    "location_latitude": 25.7617,
+    "location_longitude": -80.1918,
+    "saved_pets_count": 2
+  },
+  {
+    "username": "desertdude",
+    "email": "tom@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Off-road adventurer and dog lover in the desert.",
+    "profile_pic": "https://images.unsplash.com/photo-1527980965255-d3b416303d12",
+    "location": "Phoenix, AZ",
+    "location_latitude": 33.4484,
+    "location_longitude": -112.074,
+    "saved_pets_count": 1
+  },
+  {
+    "username": "pnwpetpal",
+    "email": "laura@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Rescue advocate and weekend hiker.",
+    "profile_pic": "https://images.unsplash.com/photo-1546456073-6712f79251bb",
+    "location": "Portland, OR",
+    "location_latitude": 45.5051,
+    "location_longitude": -122.675,
+    "saved_pets_count": 6
+  },
+  {
+    "username": "coffeekitty",
+    "email": "nina@example.com",
+    "password_hash": "password_hash",
+    "about_me": "Coffee shop regular and proud cat companion.",
+    "profile_pic": "https://images.unsplash.com/photo-1552058544-f2b08422138a",
+    "location": "Seattle, WA",
+    "location_latitude": 47.6062,
+    "location_longitude": -122.3321,
+    "saved_pets_count": 4
+  }
+]

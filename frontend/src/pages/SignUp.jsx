@@ -53,22 +53,24 @@ export default function SignUpPage() {
       return setErrorText(message);
     }
 
+    // Handle missing email, username or password
     if (!username || !email || !password)
       return setErrorText('Missing username, email or password');
 
     const [user, error] = await registerUser({ username, email, password });
 
-    // Handle missing email, username or password
-    if (error && error.cause === 400) return setErrorText(`Email, username, and password required`);
+    if (error && error.cause === 400)
+      return setErrorText(
+        `There is currently an ongoing session please log out or clear cookies first.`
+      );
 
     // Handle only unique emails and usernames
     if (error && error.cause === 409)
       return setErrorText(
-        `User with same email and username already exists. Please try again with a different email and username.`
+        `User with same email or username already exists. Please try again with a different email and username.`
       );
 
     if (error) {
-      console.error(error);
       return setErrorText(error.message);
     }
 

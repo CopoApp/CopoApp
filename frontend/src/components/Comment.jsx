@@ -5,6 +5,7 @@ import { updateComment, deleteCommentImages } from '../adapters/comment-adapter'
 import { deleteComment } from '../adapters/comment-adapter';
 import { Card, Button, TextArea, Text, Flex, Box, IconButton, Heading } from '@radix-ui/themes';
 import { FilePlusIcon, TrashIcon } from '@radix-ui/react-icons';
+import user_placeholder from '../pages/Assets/user_placeholder.svg';
 
 export default function Comment({ comment, setPostComments, handleUpdate, currentComment }) {
   const { currentUser } = useContext(CurrentUserContext);
@@ -28,7 +29,7 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
     }
   };
 
-  const userCanEdit = (userId) => currentUser.id === userId;
+  const userCanEdit = (userId) => currentUser?.id === userId;
 
   const handleEdit = (content) => {
     setIsEditing(!isEditing);
@@ -79,13 +80,13 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
       <Card style={{ width: '100%' }}>
         <Flex direction={'column'}>
           <Flex gap={'2'}>
-            {comment.profile_pic && (
+            {
               <img
-                src={comment?.profile_pic}
+                src={comment?.profile_pic || user_placeholder}
                 alt="Profile Picture"
-                style={{ height: '50px', borderRadius: '50%', width: '50px' }}
+                style={{ objectFit: 'cover', height: '50px', borderRadius: '50%', width: '50px' }}
               />
-            )}
+            }
             <Flex direction={'column'} width={'100%'}>
               {<Text weight={'bold'}>{comment.username}</Text>}
               {currentComment?.id === comment.id && isEditing && userCanEdit(comment.user_id) ? (

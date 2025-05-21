@@ -6,6 +6,7 @@ import { createComment } from '../adapters/comment-adapter';
 import { useParams } from 'react-router-dom';
 import { Card, Button, TextArea, Text, Flex, Box, IconButton } from '@radix-ui/themes';
 import { FilePlusIcon, TrashIcon } from '@radix-ui/react-icons';
+import user_placeholder from '../pages/Assets/user_placeholder.svg';
 
 export default function CommentInput({ handleUpdate }) {
   const { id } = useParams();
@@ -64,7 +65,7 @@ export default function CommentInput({ handleUpdate }) {
         <Flex gap={'3'} justify={'center'} align={'center'}>
           <Box>
             <img
-              src={userInformation.profile_pic}
+              src={userInformation.profile_pic || user_placeholder}
               alt="profile picture"
               style={{ height: '50px', borderRadius: '50%', width: '50px' }}
             />

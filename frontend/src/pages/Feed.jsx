@@ -7,7 +7,7 @@ import FilterByBorough from '../components/FilterByBorough';
 import FilterByStatus from '../components/FilterByStatus';
 import { Flex } from '@radix-ui/themes';
 import { Section } from '@radix-ui/themes';
-import { Container, Card, Box, Heading } from '@radix-ui/themes';
+import { Container, Card, Box, Heading, Callout } from '@radix-ui/themes';
 import { getBorough } from '../utils/boroughMapper';
 
 export default function Feed() {
@@ -20,7 +20,8 @@ export default function Feed() {
   useEffect(() => {
     const loadReports = async () => {
       const [posts, error] = await getAllPosts();
-      if (error) setError(error);
+
+      if (error) return setError('An error has occured while fetching posts');
       else if (posts) {
         const processedPosts = posts.map((post) => ({
           ...post,
@@ -62,10 +63,20 @@ export default function Feed() {
             </Flex>
           </Card>
 
-          {filteredPosts.length === 0 ? (
-            <p>
-              No posts found in {selectedBorough} with status {selectedStatus}.
-            </p>
+          {error && (
+            <Callout.Root color="red" size="1">
+              <Callout.Text>{error}</Callout.Text>
+            </Callout.Root>
+          )}
+
+          {filteredPosts.length === 0 && !error ? (
+            <Flex justify={'center'}>
+              <Callout.Root color="amber" size="1">
+                <Callout.Text>
+                  No posts found in {selectedBorough} with status {selectedStatus}.
+                </Callout.Text>
+              </Callout.Root>
+            </Flex>
           ) : (
             filteredPosts.map((post) => (
               <ReportCard

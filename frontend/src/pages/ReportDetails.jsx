@@ -204,7 +204,11 @@ export default function ReportDetails() {
                               <img
                                 src={img.img_src}
                                 alt="Post image"
-                                style={{ width: '100%', height: '500px' }}
+                                style={{
+                                  objectFit: 'cover',
+                                  width: '100%',
+                                  height: '500px',
+                                }}
                               />
                             </Flex>
 

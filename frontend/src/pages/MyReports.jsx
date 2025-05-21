@@ -40,7 +40,10 @@ export default function MyReports() {
             })
           ) : (
             <Flex direction={'column'} justify={'center'} align={'center'}>
-              <EyeClosedIcon width={'20vw'} height={'20vh'}></EyeClosedIcon>
+              <Flex gap={'30px'}>
+                <EyeClosedIcon width={'15vw'} height={'15vh'}></EyeClosedIcon>
+                <EyeClosedIcon width={'15vw'} height={'15vh'}></EyeClosedIcon>
+              </Flex>
               <Heading align={'center'}>You haven't made any reports</Heading>
             </Flex>
           )}
