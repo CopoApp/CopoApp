@@ -8,6 +8,7 @@ import FilterByStatus from '../components/FilterByStatus';
 import { Flex } from '@radix-ui/themes';
 import { Section } from '@radix-ui/themes';
 import { Container, Card, Box, Heading } from '@radix-ui/themes';
+import { getBorough } from '../utils/boroughMapper';
 
 export default function Feed() {
   const [selectedBorough, setSelectedBorough] = useState('All');
@@ -20,13 +21,19 @@ export default function Feed() {
     const loadReports = async () => {
       const [posts, error] = await getAllPosts();
       if (error) setError(error);
-      else if (posts) setPosts(posts);
+      else if (posts) {
+        const processedPosts = posts.map((post) => ({
+          ...post,
+          borough: getBorough(post.last_seen_location),
+        }));
+        setPosts(processedPosts);
+      }
     };
     loadReports();
   }, []);
 
   const filteredPosts = posts.filter((post) => {
-    const matchesBorough = selectedBorough === 'All' || post.last_seen_location === selectedBorough;
+    const matchesBorough = selectedBorough === 'All' || post.borough === selectedBorough;
     const matchesStatus = selectedStatus === 'All' || post.status === selectedStatus;
     return matchesBorough && matchesStatus;
   });
@@ -45,11 +52,7 @@ export default function Feed() {
           <Card>
             <Heading>Filters</Heading>
             <Flex gap={'3'} direction={'column'}>
-              <FilterByBorough
-                arrayOfPosts={posts}
-                selectedBorough={selectedBorough}
-                onChange={setSelectedBorough}
-              />
+              <FilterByBorough selectedBorough={selectedBorough} onChange={setSelectedBorough} />
 
               <FilterByStatus
                 selectedStatus={selectedStatus}
