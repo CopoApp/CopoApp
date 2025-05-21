@@ -1,4 +1,4 @@
-# Project Name
+# CopoApp
 
 > Project Mission Statement
 
@@ -10,10 +10,9 @@ because pets are not just animals they are family
 
 ## Team
 
-  - Azim: **Project Manager, Scrum Master, Developer**
-  - Jordi: **Developer**
-  - Mario: **Developer**
-  - Josue: **Developer**
+  - Azim: **Project Manager, Scrum Master, Full-Stack Developer**
+  - Jordi: **UI/UX Designer, Full-Stack Developer**
+  - Mario: **Full-Stack Developer**
 
 ## Table of Contents
 - [Getting Started](#getting-started)
@@ -72,7 +71,7 @@ cd server && npm start
 - Postgresql
 - React
 - Knex
-- etc...
+- AmazonS3
 
 ## Project Proposal
 
