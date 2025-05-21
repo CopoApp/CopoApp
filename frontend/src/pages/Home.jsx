@@ -22,8 +22,8 @@ export default function Home() {
   return (
     <>
       <Section pl="5" pr="5" id="hero-section" size="1" minHeight="10vh">
-        <Flex justify="center" gap="5">
-          <Flex direction="column" gap="5" justify="center">
+        <Flex justify="center" gap="5" className="hero-container">
+          <Flex direction="column" gap="5" justify="center" className="hero-content-container">
             <Heading size="8">Lost Pet? Let’s Bring Them Home—Together.</Heading>
             <Heading weight="medium" size="5">
               CopoApp makes it fast and easy to report missing pets and mobilize your local NYC
@@ -40,80 +40,88 @@ export default function Home() {
           </Flex>
           <Flex>
             <img
+              className="hero-image"
               src="https://copoapp-images.s3.us-east-1.amazonaws.com/other/homepic.jpg"
               alt="A woman hugging her dog"
               style={{
-                width: '100%',
-                height: '100%',
+                width: '20rem',
               }}
             />
           </Flex>
         </Flex>
       </Section>
-      <Section id="value-section">
-        <Flex direction="column" align="center" gap="5">
-          <Heading size="7" align="center">
-            What You Can Do with CopoApp
-          </Heading>
-          <Flex direction="column" gap="5">
-            <FeatureCard
-              title={'🚀 Post in Seconds'}
-              content={
-                'Whether your pet is missing or you’ve found someone else’s, you can create a report quickly—complete with photos, details, and location.'
-              }
-            ></FeatureCard>
-            <FeatureCard
-              title={'🌍 Community Comments & Tips'}
-              content={
-                'Neighbors can comment directly on your report to share sightings, encouragement, or updates.'
-              }
-            ></FeatureCard>
-            <FeatureCard
-              title={'🔖 Save Reports That Matter'}
-              content={
-                'Spotted a post you want to follow up on? Save it to your profile for easy tracking andfaster help.'
-              }
-            ></FeatureCard>
-            <FeatureCard
-              title={'🔧 Full Control of Your Posts'}
-              content={
-                'You can always go back to edit or update your reports and even your comments—because things change fast.'
-              }
-            ></FeatureCard>
+      <Container size={'8'} pt={'30px'} pl={'9'} pr={'9'}>
+        <Section id="value-section">
+          <Flex direction="column" align="center" gap="5">
+            <Heading size="7" align="center">
+              What You Can Do with CopoApp
+            </Heading>
+            <Flex direction="column" gap="5">
+              <FeatureCard
+                title={'🚀 Post in Seconds'}
+                content={
+                  'Whether your pet is missing or you’ve found someone else’s, you can create a report quickly—complete with photos, details, and location.'
+                }
+              ></FeatureCard>
+              <FeatureCard
+                title={'🌍 Community Comments & Tips'}
+                content={
+                  'Neighbors can comment directly on your report to share sightings, encouragement, or updates.'
+                }
+              ></FeatureCard>
+              <FeatureCard
+                title={'🔖 Save Reports That Matter'}
+                content={
+                  'Spotted a post you want to follow up on? Save it to your profile for easy tracking andfaster help.'
+                }
+              ></FeatureCard>
+              <FeatureCard
+                title={'🔧 Full Control of Your Posts'}
+                content={
+                  'You can always go back to edit or update your reports and even your comments—because things change fast.'
+                }
+              ></FeatureCard>
+            </Flex>
           </Flex>
-        </Flex>
-      </Section>
-      <Section id="how-it-works-section" ref={sectionRef}>
-        <Flex direction="column" align="center" gap="5">
-          <Heading size="7" align="center">
-            How it Works
-          </Heading>
-          <Flex direction="column" gap="5">
-            <StepCard
-              title={'Step 1'}
-              subtitle={'Create an Account'}
-              content={'Quick signup with just your email, username, and password.'}
-            ></StepCard>
-            <StepCard
-              title={'Step 2'}
-              subtitle={'Submit a Missing Pet Report'}
-              content={'Upload a photo, last known location, and details. Hit "Submit."'}
-            ></StepCard>
-            <StepCard
-              title={'Step 3'}
-              subtitle={'Engage the Community'}
-              content={
-                'Share your report via link or QR code. Neighbors comment and add sightings.'
-              }
-            ></StepCard>
-            <StepCard
-              title={'Step 4'}
-              subtitle={'Celebrate the Reunion'}
-              content={'Track updates, respond to tips, and rejoice when your pet comes home.'}
-            ></StepCard>
+        </Section>
+        <Section id="how-it-works-section" ref={sectionRef}>
+          <Flex direction="column" align="center" gap="5">
+            <Heading size="7" align="center">
+              How it Works
+            </Heading>
+            <Flex direction="column" gap="5">
+              <StepCard
+                title={'Step 1'}
+                subtitle={'Create an Account'}
+                content={'Quick signup with just your email, username, and password.'}
+                imgSrc={'https://copoapp-images.s3.us-east-1.amazonaws.com/other/feature1.png'}
+              ></StepCard>
+              <Flex justify={'center'}></Flex>
+              <StepCard
+                title={'Step 2'}
+                subtitle={'Submit a Missing Pet Report'}
+                content={'Upload a photo, last known location, and details. Hit "Submit."'}
+                imgSrc={'https://copoapp-images.s3.us-east-1.amazonaws.com/other/feature2.png'}
+              ></StepCard>
+              <StepCard
+                title={'Step 3'}
+                subtitle={'Engage the Community'}
+                content={'Neighbors comment and add sightings.'}
+                imgSrc={'https://copoapp-images.s3.us-east-1.amazonaws.com/other/feature3.png'}
+              ></StepCard>
+              <StepCard
+                title={'Step 4'}
+                subtitle={'Celebrate the Reunion'}
+                content={'Track updates, respond to tips, and rejoice when your pet comes home.'}
+                imgSrc={
+                  'https://copoapp-images.s3.us-east-1.amazonaws.com/other/happy_woman_with_dog.jpg'
+                }
+              ></StepCard>
+            </Flex>
           </Flex>
-        </Flex>
-      </Section>
+        </Section>
+      </Container>
+
       <Section id="call-to-action-section" pl="5" pr="5">
         <Flex direction="column" align="center" gap="5">
           <Heading size="7" align="center">
@@ -123,17 +131,7 @@ export default function Home() {
             Whether you're a pet parent, neighbor, or animal lover—you can help someone bring their
             best friend home.
           </Heading>
-          <Container size="5">
-            <img
-              style={{
-                objectFit: 'cover',
-                width: '100%',
-                height: '100%',
-              }}
-              src="https://copoapp-images.s3.us-east-1.amazonaws.com/other/happy_woman_with_dog.jpg"
-              alt="Happy woman with dog"
-            />
-          </Container>
+
           <NavLink to={'/sign-up'}>
             <Button size="3">Join CopoApp Today</Button>
           </NavLink>

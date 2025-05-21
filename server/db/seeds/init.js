@@ -1,15 +1,8 @@
-const User = require("../../models/User");
-const Post = require("../../models/Post");
-const Comment = require("../../models/Comment");
-const {
-  users,
-  posts,
-  post_images,
-  comments,
-  comment_images,
-  saved_posts,
-  post_alerts,
-} = require("../data/seedData");
+const users = require("../data/users.json");
+const posts = require("../data/posts.json");
+const posts_images = require("../data/post_images.json");
+const comments = require("../data/comments.json");
+const comment_images = require("../data/comment_images.json");
 
 /**
  * @param { import("knex").Knex } knex
@@ -31,15 +24,9 @@ exports.seed = async (knex) => {
   await knex.raw("ALTER SEQUENCE comments_id_seq RESTART WITH 1");
   await knex.raw("ALTER SEQUENCE comment_images_id_seq RESTART WITH 1");
 
-  for (let user of users) {
-    await User.create(user.email, user.username, user.password, user.role);
-  }
-
-  for (let post of posts) {
-    await Post.create(post);
-  }
-
-  for (let comment of comments) {
-    await Comment.create(comment);
-  }
+  await knex("users").insert(users);
+  await knex("posts").insert(posts);
+  await knex("post_images").insert(posts_images);
+  await knex("comments").insert(comments);
+  await knex("comment_images").insert(comment_images);
 };

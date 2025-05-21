@@ -22,6 +22,7 @@ export default function SavedReports() {
           throw new Error(`Error fetching bookmarks: ${response.statusText}`);
         }
         const data = await response.json();
+        console.log(data);
         setBookmarkedPosts(data);
       } catch (err) {
         setError(err.message);
@@ -45,7 +46,10 @@ export default function SavedReports() {
           ))
         ) : (
           <Flex direction={'column'} justify={'center'} align={'center'}>
-            <EyeClosedIcon width={'20vw'} height={'20vh'}></EyeClosedIcon>
+            <Flex gap={'30px'}>
+              <EyeClosedIcon width={'15vw'} height={'15vh'}></EyeClosedIcon>
+              <EyeClosedIcon width={'15vw'} height={'15vh'}></EyeClosedIcon>
+            </Flex>
             <Heading align={'center'}>You haven't saved any reports</Heading>
           </Flex>
         )}

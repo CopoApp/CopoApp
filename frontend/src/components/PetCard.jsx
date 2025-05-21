@@ -17,8 +17,17 @@ import { BookmarkIcon, BookmarkFilledIcon } from '@radix-ui/react-icons';
 
 export default function ReportCard({ reportInformation, setBookmarkedPosts }) {
   const navigate = useNavigate();
-  const { id, author, author_user_id, status, pet_name, last_seen_location, content, images } =
-    reportInformation;
+  const {
+    id,
+    username,
+    author,
+    author_user_id,
+    status,
+    pet_name,
+    last_seen_location,
+    content,
+    images,
+  } = reportInformation;
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -80,7 +89,7 @@ export default function ReportCard({ reportInformation, setBookmarkedPosts }) {
             <Box className="profile-pic-container">
               <img
                 className="post-author-profile-picture"
-                style={{ width: '50px' }}
+                style={{ objectFit: 'cover', height: '50px', borderRadius: '50%', width: '50px' }}
                 src={
                   currentUser?.id === author_user_id && currentUser?.profile_pic
                     ? currentUser?.profile_pic
@@ -90,7 +99,7 @@ export default function ReportCard({ reportInformation, setBookmarkedPosts }) {
               />
             </Box>
             <Heading className="username" size={'5'}>
-              {author}
+              {username || author}
             </Heading>
           </Flex>
           <Badge className="status" color={checkStatus()} size={'3'}>
