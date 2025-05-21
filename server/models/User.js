@@ -68,8 +68,7 @@ class User {
   static async list() {
     try {
       const result = await db("users").select("*");
-      if (!result || result.length === 0)
-        throw new Error(`Query returned no data`);
+      if (!result || result.length === 0) return [];
       return result.map((rawUserData) => new User(rawUserData));
     } catch (error) {
       throw error;

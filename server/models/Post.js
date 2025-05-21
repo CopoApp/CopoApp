@@ -99,8 +99,7 @@ class Post {
         return { ...post, images: postImages };
       });
 
-      if (!result || result.length === 0)
-        throw new Error(`Query returned no data`);
+      if (!result || result.length === 0) return [];
 
       return result;
     } catch (error) {
@@ -114,8 +113,7 @@ class Post {
         .where("post_id", postId)
         .returning("*");
 
-      if (!result || result.length === 0)
-        throw new Error(`Query returned no data`);
+      if (!result || result.length === 0) return [];
       return result;
     } catch (error) {
       throw error;
@@ -268,8 +266,7 @@ class Post {
       result.push({ ...post, images: postImages });
     }
 
-    if (!result || result.length === 0)
-      throw new Error(`Query returned no data`);
+    if (!result || result.length === 0) return [];
 
     return result;
   }

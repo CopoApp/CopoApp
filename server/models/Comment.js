@@ -20,8 +20,7 @@ class Comment {
         result.push({ ...comment, images: images });
       }
 
-      if (!result || result.length === 0)
-        throw new Error(`Query returned no data`);
+      if (!result || result.length === 0) return [];
 
       return result;
     } catch (error) {

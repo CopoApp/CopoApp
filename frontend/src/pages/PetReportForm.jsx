@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/index.css';
 import { createPost, attachPostImages } from '../adapters/post-adapter';
+import { getColorName } from '../adapters/color-adapter';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import FileAttachmentButton from '../components/FileAttachmentButton';
@@ -72,9 +73,21 @@ export default function PetReportForm() {
     // User cannot attach more than five files
     if (fileData.length > 5) return setMessage('You cannot attach more than 5 files');
 
+    // Get the color name from Colors API before storing to db
+    const hex = formData.pet_color.slice(1);
+    let updatedFormData = { ...formData };
+
+    if (hex) {
+      const [colorData, error] = await getColorName(hex);
+      if (colorData) {
+        updatedFormData.pet_color = colorData.name.value;
+        setFormData(updatedFormData);
+      }
+    }
+
     // Input Validation Checks
     try {
-      await schema.validate(formData);
+      await schema.validate(updatedFormData);
     } catch (error) {
       const { message } = error;
       return setMessage(message);
@@ -82,8 +95,8 @@ export default function PetReportForm() {
 
     const data = new FormData();
 
-    for (let item in formData) {
-      data.append(item, formData[item]);
+    for (let item in updatedFormData) {
+      data.append(item, updatedFormData[item]);
     }
 
     fileData.forEach((file) => data.append('files', file));
@@ -91,7 +104,7 @@ export default function PetReportForm() {
     const [post, error] = await createPost(data);
 
     if (post) {
-      console.log(`Post created sucessfully! 🎉`);
+      console.log(`Post created successfully! 🎉`);
       navigate('/feed');
     }
 
