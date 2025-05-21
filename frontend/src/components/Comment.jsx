@@ -83,7 +83,7 @@ export default function Comment({ comment, setPostComments, handleUpdate, curren
               <img
                 src={comment?.profile_pic}
                 alt="Profile Picture"
-                style={{ height: '100px', borderRadius: '50%', width: '50px', height: '50px' }}
+                style={{ height: '50px', borderRadius: '50%', width: '50px' }}
               />
             )}
             <Flex direction={'column'} width={'100%'}>

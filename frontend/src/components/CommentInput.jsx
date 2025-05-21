@@ -66,7 +66,7 @@ export default function CommentInput({ handleUpdate }) {
             <img
               src={userInformation.profile_pic}
               alt="profile picture"
-              style={{ height: '100px', borderRadius: '50%', width: '50px', height: '50px' }}
+              style={{ height: '50px', borderRadius: '50%', width: '50px' }}
             />
           </Box>
           <Flex direction={'column'} width={'100%'}>

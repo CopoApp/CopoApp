@@ -28,10 +28,10 @@ import {
 } from '@radix-ui/themes';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { AspectRatio } from '@radix-ui/themes';
-
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
+import { getColorName } from '../adapters/color-adapter';
 
 const types = ['Dogs', 'Cats', 'Rabbits', 'Guinea Pigs', 'Reptiles', 'Ferrets'];
 
@@ -92,9 +92,21 @@ export default function ReportDetails() {
   const handleSaveChanges = async (e) => {
     e.preventDefault();
 
+    // Get the color name from Colors API before storing to db
+    const hex = formData.pet_color.slice(1);
+    let updatedFormData = { ...formData };
+
+    if (hex) {
+      const [colorData, error] = await getColorName(hex);
+      if (colorData) {
+        updatedFormData.pet_color = colorData.name.value;
+        setFormData(updatedFormData);
+      }
+    }
+
     const form = new FormData();
 
-    for (let entry in formData) form.append(entry, formData[entry]);
+    for (let entry in updatedFormData) form.append(entry, updatedFormData[entry]);
     fileData.forEach((file) => form.append('files', file));
 
     await deletePostImages(id, deletedImages);
