@@ -111,6 +111,15 @@ class User {
     return result[0] ? new User(result[0]) : null;
   }
 
+  static async getProfilePicture(userId) {
+    const result = await db("users")
+      .select("profile_pic_name")
+      .where("id", userId)
+      .first();
+
+    return result?.profile_pic_name ?? null;
+  }
+
   static async deleteUser(userId) {
     try {
       await db("users").where("id", userId).del();
