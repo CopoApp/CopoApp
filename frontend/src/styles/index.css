@@ -16,6 +16,7 @@ ul {
 
 button {
   padding-inline: 0.25rem;
+  cursor: pointer;
 }
 
 header {
@@ -487,5 +488,3 @@ textarea.form-control {
 .report-card-container {
   cursor: pointer;
 }
-
-/* Navigation Bar Styling */

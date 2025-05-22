@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { getAllPosts } from '../adapters/post-adapter';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -9,15 +9,19 @@ import { Flex } from '@radix-ui/themes';
 import { Section } from '@radix-ui/themes';
 import { Container, Card, Box, Heading, Callout } from '@radix-ui/themes';
 import { getBorough } from '../utils/boroughMapper';
+import CurrentUserContext from '../contexts/current-user-context';
 
 export default function Feed() {
   const [selectedBorough, setSelectedBorough] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
+  const { currentUser } = useContext(CurrentUserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Redurects user if not logged in
+    if (!currentUser) navigate('/');
     const loadReports = async () => {
       const [posts, error] = await getAllPosts();
 

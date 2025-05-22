@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import '../styles/index.css';
 import { createPost, attachPostImages } from '../adapters/post-adapter';
 import { getColorName } from '../adapters/color-adapter';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import FileAttachmentButton from '../components/FileAttachmentButton';
+import CurrentUserContext from '../contexts/current-user-context';
 
 const types = ['Dogs', 'Cats', 'Rabbits', 'Guinea Pigs', 'Reptiles', 'Ferrets'];
 // example list
@@ -55,6 +57,12 @@ export default function PetReportForm() {
   });
   const [fileData, setFileData] = useState([]);
   const [message, setMessage] = useState('');
+  const { currentUser } = useContext(CurrentUserContext);
+
+  useEffect(() => {
+    // Redurects user if not logged in
+    if (!currentUser) navigate('/');
+  }, []);
 
   const handleChange = (event) => {
     const { name, value, type, files } = event.target;
