@@ -4,12 +4,7 @@ import { logUserIn } from '../adapters/auth-adapter';
 import CurrentUserContext from '../contexts/current-user-context';
 import { NavLink } from 'react-router-dom';
 
-import { Card } from '@radix-ui/themes';
-import { Header } from '@radix-ui/themes/components/table';
-import { TextField } from '@radix-ui/themes';
-import { Button } from '@radix-ui/themes';
-import { Flex } from '@radix-ui/themes';
-import { Callout } from '@radix-ui/themes';
+import { Card, Heading, TextField, Button, Flex, Callout } from '@radix-ui/themes';
 
 import * as yup from 'yup';
 
@@ -68,7 +63,7 @@ export default function LoginPage() {
       <Flex justify="center" align="center" height="100vh">
         <Card>
           <Flex direction="column" gap="3" width="300px">
-            <Header>Sign in</Header>
+            <Heading>Sign in</Heading>
             <TextField.Root
               type="text"
               autoComplete="email"

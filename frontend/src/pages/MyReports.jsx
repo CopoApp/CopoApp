@@ -6,13 +6,20 @@ import { getUserPosts } from '../adapters/post-adapter';
 import ReportCard from '../components/PetCard';
 import { Container, Flex, Heading } from '@radix-ui/themes';
 import { EyeClosedIcon } from '@radix-ui/react-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyReports() {
   const [userPosts, setPosts] = useState([]);
   const [error, setError] = useState(null);
   const { currentUser } = useContext(CurrentUserContext);
+  const navigate = useNavigate();
+
+  // Redirects user if not logged in
+  if (!currentUser) navigate('/');
 
   useEffect(() => {
+    // Redurects user if not logged in
+    if (!currentUser) navigate('/');
     const loadReports = async () => {
       if (currentUser === null) return console.log(`No user session detected`);
       console.log(`User session detected!`);

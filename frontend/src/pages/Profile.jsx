@@ -33,6 +33,7 @@ export default function EditProfile() {
 
   // Load user profile data
   useEffect(() => {
+    if (!currentUser) navigate('/');
     const loadUser = async () => {
       setIsLoading(true);
       const [user, error] = await getUser(id);

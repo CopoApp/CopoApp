@@ -50,13 +50,13 @@ export default function Home() {
           </Flex>
         </Flex>
       </Section>
-      <Container size={'8'} pt={'30px'} pl={'9'} pr={'9'}>
+      <Container size={'8'} pt={'30px'} pl={'5vw'} pr={'5vw'}>
         <Section id="value-section">
-          <Flex direction="column" align="center" gap="5">
+          <Flex direction="column" align="center" gap="5" justify={'center'}>
             <Heading size="7" align="center">
               What You Can Do with CopoApp
             </Heading>
-            <Flex direction="column" gap="5">
+            <Flex direction="column" gap="5" align={'center'} justify={'center'}>
               <FeatureCard
                 title={'🚀 Post in Seconds'}
                 content={
@@ -89,7 +89,7 @@ export default function Home() {
             <Heading size="7" align="center">
               How it Works
             </Heading>
-            <Flex direction="column" gap="5">
+            <Flex direction="column" gap="5" align={'center'} justify={'center'}>
               <StepCard
                 title={'Step 1'}
                 subtitle={'Create an Account'}

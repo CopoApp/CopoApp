@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CurrentUserContext from '../contexts/current-user-context';
 import ReportCard from '../components/PetCard';
 import Navbar from '../components/Navbar';
@@ -6,11 +7,14 @@ import { Container, Flex, Heading } from '@radix-ui/themes';
 import { EyeClosedIcon } from '@radix-ui/react-icons';
 
 export default function SavedReports() {
+  const navigate = useNavigate();
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const [error, setError] = useState(null);
   const { currentUser } = useContext(CurrentUserContext);
 
   useEffect(() => {
+    // Redurects user if not logged in
+    if (!currentUser) navigate('/');
     async function loadBookmarks() {
       if (!currentUser) {
         console.log('No user logged in');

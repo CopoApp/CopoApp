@@ -3,17 +3,7 @@ import { useNavigate, Navigate, Link } from 'react-router-dom';
 import CurrentUserContext from '../contexts/current-user-context';
 import { registerUser } from '../adapters/auth-adapter';
 import { NavLink } from 'react-router-dom';
-
-import { Card } from '@radix-ui/themes';
-import { Header } from '@radix-ui/themes/components/table';
-import { Text } from '@radix-ui/themes';
-import { Box } from '@radix-ui/themes';
-import { TextField } from '@radix-ui/themes';
-import { Button } from '@radix-ui/themes';
-import { Flex } from '@radix-ui/themes';
-import { Callout } from '@radix-ui/themes';
-import { Container } from '@radix-ui/themes';
-import { AspectRatio } from '@radix-ui/themes';
+import { Card, TextField, Text, Heading, Button, Flex, Callout } from '@radix-ui/themes';
 
 import * as yup from 'yup';
 
@@ -92,7 +82,7 @@ export default function SignUpPage() {
       <Flex justify="center" align="center" height="100vh">
         <Card>
           <Flex direction="column" gap="3" width="300px">
-            <Header>Sign Up</Header>
+            <Heading>Sign Up</Heading>
             <TextField.Root
               type="text"
               autoComplete="username"
