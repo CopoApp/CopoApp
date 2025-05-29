@@ -13,12 +13,22 @@ const FileAttachmentButton = ({ handleChange, innerText }) => {
         ref={fileInput}
         accept="image/*"
         name="images"
-        onChange={handleChange}
+        // Stop user from sending objects to S3
+        // onChange={handleChange}
         style={{ display: 'none' }}
       />
       {/* Button triggers the click event on the invisible input element stored in fileInput */}
-      <Button type="button" mt={'1'} mb={'1'} onClick={() => fileInput.current.click()}>
-        {innerText}
+      <Button
+        type="button"
+        mt={'1'}
+        mb={'1'}
+        variant="surface"
+        color="gray"
+        // Stop user from sending objects to S3
+        // onClick={() => fileInput.current.click()}
+      >
+        {/* {innerText} */}
+        File Attachments Disabled
       </Button>
     </>
   );
