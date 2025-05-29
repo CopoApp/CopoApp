@@ -34,7 +34,7 @@ export default function SiteHeadingAndNav() {
         >
           <img
             id="logo"
-            src="https://copoapp-images.s3.us-east-1.amazonaws.com/other/Logo2"
+            src="https://copoapp-images.s3.us-east-1.amazonaws.com/other/logo"
             alt="Copo Logo"
           />
         </Flex>
