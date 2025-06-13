@@ -23,7 +23,7 @@ class Post {
     } = postInformation;
 
     try {
-      // 1st create post
+      // Create post in database
       const post = await db("posts").insert(
         {
           author_user_id: userId,
@@ -45,12 +45,15 @@ class Post {
         "*"
       );
 
+      // Get the post id from newly created post
       const createdPostId = post[0]?.id;
 
+      // Array to store images created for the post
       const createdImages = [];
 
       if (images?.length > 0) {
         for (const image of images) {
+          // Create new image in the database that has a foreign key relationship with newly created post id
           const newImage = await db("post_images").insert(
             {
               post_id: createdPostId,
@@ -59,16 +62,15 @@ class Post {
             },
             "*"
           );
+          // Store newly created image in array to send all images that belong to the post in an array
           createdImages.push(newImage[0]);
         }
       }
 
+      // Include the post and image data
       const result = { ...post[0], images: images };
 
-      // 2. Use the created comment information to attach the images
-
-      if (!result || result.length === 0)
-        throw new Error(`Comment could not be inserted. Please try again.`);
+      if (Object.keys(result).length <= 1) return {};
 
       return result;
     } catch (error) {

@@ -9,7 +9,9 @@ POST /api/posts
 Creates a new post and returns its information
 */
 exports.createPost = async (req, res) => {
+  // Get user id from cookie
   const userId = req.session.userId;
+  // Grab information from the request body
   const {
     status,
     title,
@@ -26,9 +28,11 @@ exports.createPost = async (req, res) => {
     last_seen_location_longitude,
   } = req.body;
 
+  // Array of uploaded files to attach to the created post
   const images = [];
 
   req.files.forEach((file) => {
+    // Include the link to the uploaded image and its name
     images.push({
       img_name: file.key,
       img_src: file.location,
