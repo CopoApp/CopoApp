@@ -11,7 +11,7 @@ because pets are not just animals they are family
 ## Team
 
   - Azim: **Project Manager, Scrum Master, Full-Stack Developer**
-  - Jordi: **UI/UX Designer, Full-Stack Developer**
+  - Jordi: **UI/UX Designer, Backend Developer, Full-Stack Developer**
   - Mario: **Full-Stack Developer**
 
 ## Table of Contents
